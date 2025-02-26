@@ -1,13 +1,13 @@
-name: FAQ
-icon: question
+name: Card Group
+icon: image
 fields:
   heading:
     label: Section Heading
     type: writer
     inline: true
     marks: true
-  faq:
-    label: FAQ
+  cards:
+    label: cards
     type: blocks
     fieldsets:
-      - accordion
+      - card

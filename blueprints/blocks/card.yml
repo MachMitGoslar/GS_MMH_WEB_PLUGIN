@@ -1,4 +1,4 @@
-name: field.blocks.card.name
+name: Card
 icon: image
 fields:
   cardType:
@@ -24,8 +24,16 @@ fields:
     uploads: image
     when:
       cardType: manual
-  heading:
-    label: Heading
+  headline:
+    label: Titel
+    inline: true
+    required: true
+    marks: false
+    type: writer
+    when:
+      cardType: manual
+  subheadline:
+    label: Untertitel
     inline: true
     marks: false
     type: writer

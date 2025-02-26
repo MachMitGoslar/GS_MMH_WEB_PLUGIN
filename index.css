@@ -1,3 +1,26 @@
+.grid {
+  --grid-colums-count: 1;
+  --grid-gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-colums-count), 1fr);
+  gap: var(--grid-gap);
+  @media  (width > 489px) {
+    --grid-gap: 1rem;
+    --grid-colums-count: 1;
+  }
+  @media  (width > 767px) {
+    --grid-gap: 1rem;
+    --grid-colums-count: 8;
+  }
+  @media  (width > 1039px) {
+    --grid-colums-count: 12;
+  }
+  @media  (width > 1439px) {
+    --grid-colums-count: 12;
+    --grid-gap: 2rem;
+  }
+}
+
 .k-block-type-box {
     position: relative;
     padding: 10px;
@@ -44,9 +67,47 @@
   .k-block-container:hover .fieldtype {
     display: block
   }
+  .k-block-type-card {
+    grid-column: span 4;
+    display: flex;
+    padding-bottom: 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0rem;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: #FFF;
+    overflow: hidden;
+  }
+
+  .k-block-type-card-image {
+    --aspected-ration: 24/9;
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--aspected-ration);
+    -o-object-fit: cover;
+    object-fit: cover;
+    background: red;
   
-  .k-block-type-card-heading {
-    margin: 1rem 0;
+    @media  (width > 489px) {
+     --aspected-ration: 21/9;
+    }
+    @media  (width > 767px) {
+  
+    }
+    @media  (width > 1039px) {
+  
+    }
+    @media  (width > 1439px) {
+  
+    }
+}
+  .k-block-type-card-headline {
+    font-weight: 800;
+  }
+  .k-block-type-card-subheadline {
+    font-weight: 500;
   }
   
   .k-block-type-card-category {

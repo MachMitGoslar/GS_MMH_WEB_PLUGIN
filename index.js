@@ -1,4 +1,4 @@
-panel.plugin("gs_mmh/GS_MMH_WEB_PLUGIN", {
+panel.plugin("gs-mmh/gs-mmh-web-plugin", {
     blocks: {
      box: {
        computed: {
@@ -187,8 +187,8 @@ panel.plugin("gs_mmh/GS_MMH_WEB_PLUGIN", {
           cardType() {
             return this.content.cardtype;
           },
-          heading() {
-            return (this.cardType === 'manual') ? this.content.heading : this.page.text;
+          headline() {
+            return (this.cardType === 'manual') ? this.content.headline : this.page.text;
           },
           image() {
             if(this.cardType === 'manual') {
@@ -232,20 +232,102 @@ panel.plugin("gs_mmh/GS_MMH_WEB_PLUGIN", {
           }
         },
         template: `
-          <div @dblclick="open">
-            <k-aspect-ratio
-              class="k-block-type-card-image"
-              cover="true"
-              ratio="1/1"
-            >
-              <img
-                v-if="image.url"
-                :src="image.url"
-                alt=""
+          <div @dblclick="open" >
+            <div class="k-block-type-card">
+              <k-frame
+                class="k-block-type-card-image"
+                cover="true"
+                ratio="1/1"
               >
-            </k-aspect-ratio>
-            <h2 class="k-block-type-card-heading">{{ heading }}</h2>
-            <div class="k-block-type-card-text">{{ text }}</div>
+                <img
+                  v-if="image.url"
+                  :src="image.url"
+                  alt=""
+                />
+              </k-frame
+              <h2 class="k-block-type-card-headline">{{ headline }}</h2>
+              <h3 v-if="content.subheadline" class="k-block-type-card-subheadline">{{ content.subheadline }}</h3>
+
+              <div class="k-block-type-card-text">{{ text }}</div>
+            </div>
+          </div>
+        `
+      },
+      cardGroup: {
+        computed: {
+          items() {
+            return this.content.cards || {};
+          },
+          headingField() {
+            return this.field("heading") || '';
+          }
+        },
+        methods: {
+          updateItem(content, index, name, value) {
+            console.log(content.cards[index].content["image"]["0"]);
+            content.cards[index].content[name]= value;
+            this.$emit("update", {
+                ...this.content,
+                ...content
+              });
+          }
+        },
+        template: `
+          <div @dblclick="open">
+            <h2 class="k-block-type-card-heading">
+              <k-writer
+                ref="heading"
+                :inline="headingField.inline"
+                :marks="headingField.marks"
+                :placeholder="headingField.placeholder || 'Add a heading'"
+                :value="content.heading"
+                @input="update({ heading: $event })"
+              />
+            </h2>
+            <div v-if="content.cards.length" class="grid">
+              <div
+                class="k-block-type-card"
+                v-for="(item, index) in items"
+                :key="index"
+              >
+              <k-frame
+                class="k-block-type-card-image"
+                cover="true"
+                ratio="1/1"
+                >
+                <img
+                  :src="item.content.image[0].url"
+                  :alt="item.content.image[0].url"
+                />
+              </k-frame>
+              <k-writer
+                class="k-block-type-card-headline" 
+                ref="headline"
+                :inline="true"
+                :marks="false"
+                :value="item.content.headline"
+                @input="updateItem(content, index, 'headline', $event)" 
+              />
+              <k-writer
+                v-if="item.content.subheadline" 
+                class="k-block-type-card-subheadline" 
+                ref="subheadline"
+                :inline="true"
+                :marks="false"
+                :value="item.content.subheadline"
+                @input="updateItem(content, index, 'subheadline', $event)" 
+              />
+
+              <k-writer 
+                class="k-block-type-card-text"
+                ref="text"
+                :inline="true"
+                :marks="false"
+                :value="item.content.text"
+                @input="updateItem(content, index, 'text', $event)" 
+              />
+            </div>
+            <div v-else>No items yet</div>
           </div>
         `
       },

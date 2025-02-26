@@ -1,7 +1,7 @@
-<?php $faqItems = $block->faq()->toBlocks(); ?>
-<div class="faq-section">
+<?php $cards = $block->cards()->toBlocks(); ?>
+<div class="c-card-group grid">
   <?php if($faqItems->isNotEmpty()): ?>
     <h2 class="font-headline mb-2"><?= $block->heading() ?></h2>
-    <?= $faqItems ?>
+    <?= $cards ?>
   <?php endif; ?>
 </div>

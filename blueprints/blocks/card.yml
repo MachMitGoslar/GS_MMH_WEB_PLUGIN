@@ -14,10 +14,7 @@ fields:
     query: kirby.page('photography').children.listed
     when:
       cardType: page
-  link:
-    type: url
-    when:
-      cardType: manual
+
   image:
     label: Image
     type: files
@@ -39,9 +36,23 @@ fields:
     type: writer
     when:
       cardType: manual
-  text:
-    label: Text
-    type: writer
+  description_content:
+    label: Inhalt
+    type: blocks
     marks: false
+    nodes: false
+
+    fieldsets:
+      - quote
+      - text
+      - list
+      - button
     when:
       cardType: manual
+  color:
+    type: select
+    label: Farbe
+    default: primary
+    options:
+      primary: Hell
+      secondary: Dunkel

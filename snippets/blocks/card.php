@@ -23,7 +23,6 @@ $text     = $cardType === 'manual' ? $block->description_content(): ($page ? $pa
       <div class="body">
         <?php if($text->type() == "text"): ?>
           <?= $text->kirbytext() ?>
-          <p> Test 2111</p>
         <?php else: ?>
           <?php foreach ($text->toBlocks() as $block): ?>
             <?= $block ?>

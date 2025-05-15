@@ -58,12 +58,19 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           // Return response with correct header type
           return new Kirby\Cms\Response($content, 'application/xml');
         }
+      ],
+      [
+        'pattern' => 'ferienpass.json',
+        'action' => function() {
+          $content = snippet('components/ferienpass/events', [], true);
+          return new Kirby\Cms\Response($content, 'application/json');
+        }
       ]
     ],
     'hooks' => [
       'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
           if($oldPage->intendedTemplate()->name() == 'project_step') {
-              print($oldPage->template());
+              
               if($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
                   $newPage->parent()->update([
                       "project_status" => $newPage->project_status_to()

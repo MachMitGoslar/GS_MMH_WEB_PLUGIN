@@ -60,7 +60,32 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         }
       ],
       [
-        'pattern' => 'ferienpass.json',
+        'pattern' => '/app/(:any)',
+        'action' => function($any) {
+
+          $data['url'] = $any;
+          $data['day'] = date("Y-m-d");
+
+          if ($app_request = Db::first('app_requests', '*', ['url' => $data['url'], 'day' => $data['day']])) {
+              $data['requests'] = $app_request->requests();
+              return Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
+          } else {
+              $data['requests'] = 1;
+              return Db::insert('app_requests', $data);
+          }
+
+          $this->next();
+        }
+      ],
+      [
+        'pattern' => '/app/ferienpass.json',
+        'action' => function() {
+          $content = snippet('components/ferienpass/event_random', [], true);
+          return new Kirby\Cms\Response($content, 'application/json');
+        }
+      ],
+      [
+        'pattern' => '/app/ferienpass_index.json',
         'action' => function() {
           $content = snippet('components/ferienpass/events', [], true);
           return new Kirby\Cms\Response($content, 'application/json');

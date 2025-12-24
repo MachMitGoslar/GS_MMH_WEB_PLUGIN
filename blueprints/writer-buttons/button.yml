@@ -1,0 +1,5 @@
+type: button
+name: button
+label: Button
+icon: bolt
+command: insertButton

@@ -1,0 +1,28 @@
+name: Timeline
+icon: list
+fields:
+  title:
+    label: Titel
+    type: text
+    placeholder: z.B. "Jahresrückblick" oder "Projekt Timeline"
+  
+  entries:
+    label: Timeline Einträge
+    type: structure
+    fields:
+      year:
+        label: Datum/Jahr
+        type: text
+        required: true
+        placeholder: z.B. "März 2024" oder "2023"
+      summary:
+        label: Beschreibung
+        type: textarea
+        required: true
+        placeholder: Kurze Beschreibung des Ereignisses
+      image:
+        label: Bild
+        type: files
+        query: page.images
+        uploads: true
+        required: false

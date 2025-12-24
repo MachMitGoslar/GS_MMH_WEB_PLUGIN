@@ -1,0 +1,31 @@
+name: texty
+
+icon: text
+wysiwyg: true
+preview: text
+fields:
+  text:
+    type: writer
+    nodes: false
+    placeholder: field.blocks.text.placeholder
+    toolbar:
+      inline: true
+      marks:
+        - bold
+        - italic
+        - underline
+        - strike
+        - code
+        - button
+        - badge
+        - highlight
+        - footnote
+
+    nodes:
+        - titleXXL
+        - titleXL
+        - title
+        - headline
+        - subheadline
+        - blockquote
+        - paragraph

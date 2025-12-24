@@ -1,0 +1,18 @@
+/* Import the complete design system for panel components */
+
+/* First import the base variables */
+@import './colors.css';
+@import './fonts.css';
+
+/* Then import the button component styles */
+@import './buttons.css';
+
+/* Panel-specific overrides */
+.gs-c-btn {
+  /* Panel preview adjustments */
+  pointer-events: none;
+  
+  /* Ensure it displays properly in panel context */
+  position: relative;
+  z-index: 1;
+}

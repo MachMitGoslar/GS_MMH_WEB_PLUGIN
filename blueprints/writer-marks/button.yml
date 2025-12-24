@@ -1,0 +1,18 @@
+name: buttonMark
+label: Button  
+icon: bolt
+fields:
+  href:
+    type: url
+    label: Link
+    placeholder: "https://example.com"
+  target:
+    type: select
+    label: Target
+    options:
+      "": Same window
+      _blank: New window
+    width: 1/2
+  buttonType:
+    extends: fields/buttonType
+    width: 1/2

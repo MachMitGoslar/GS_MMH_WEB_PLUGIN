@@ -6,14 +6,18 @@
         Timeline
       </h3>
     </header>
-
+    
     <div class="k-block-body">
       <div v-if="content.title" class="k-block-timeline-title">
         <strong>{{ content.title }}</strong>
       </div>
-
+      
       <div v-if="hasEntries" class="k-block-timeline-preview">
-        <div v-for="(entry, index) in displayEntries" :key="index" class="k-block-timeline-item">
+        <div 
+          v-for="(entry, index) in displayEntries" 
+          :key="index"
+          class="k-block-timeline-item"
+        >
           <div class="k-block-timeline-date">{{ entry.year || 'No year' }}</div>
           <div class="k-block-timeline-text">{{ entry.summary || 'No summary' }}</div>
           <div v-if="entry.image" class="k-block-timeline-image">📷</div>
@@ -22,8 +26,10 @@
           ... und {{ totalEntries - 3 }} weitere Einträge
         </div>
       </div>
-
-      <div v-else class="k-block-empty">Noch keine Timeline-Einträge vorhanden</div>
+      
+      <div v-else class="k-block-empty">
+        Noch keine Timeline-Einträge vorhanden
+      </div>
     </div>
   </div>
 </template>
@@ -36,14 +42,14 @@ export default {
       if (!this.content || !this.content.entries) {
         return [];
       }
-
+      
       const entries = this.content.entries;
-
+      
       // If it's already an array, return it
       if (Array.isArray(entries)) {
         return entries;
       }
-
+      
       // If it's a string, try to parse it
       if (typeof entries === 'string') {
         try {
@@ -54,12 +60,12 @@ export default {
           return [];
         }
       }
-
+      
       // If it's an object, convert to array
       if (typeof entries === 'object' && entries !== null) {
         return Object.values(entries);
       }
-
+      
       return [];
     },
     hasEntries() {
@@ -85,13 +91,13 @@ export default {
         console.warn('Error getting total entries:', e);
         return 0;
       }
-    },
+    }
   },
   methods: {
     open() {
       this.$emit('open');
-    },
-  },
+    }
+  }
 };
 </script>
 

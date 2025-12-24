@@ -1,5 +1,10 @@
 <?php 
 
+use Kirby\Cms\App as Kirby;
+use Kirby\Database\Db as Db;
+use Kirby\Cms\Response as Response;
+use Kirby\Cms\Page as Page;
+
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -56,7 +61,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           $content = snippet('components/newsletter/rss_feed', compact('pages', 'parent'), true);
   
           // Return response with correct header type
-          return new Kirby\Cms\Response($content, 'application/xml');
+          return new Response($content, 'application/xml');
         }
       ],
       [
@@ -81,19 +86,19 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         'pattern' => '/app/ferienpass.json',
         'action' => function() {
           $content = snippet('components/ferienpass/event_random', [], true);
-          return new Kirby\Cms\Response($content, 'application/json');
+          return new Response($content, 'application/json');
         }
       ],
       [
         'pattern' => '/app/ferienpass_index.json',
         'action' => function() {
           $content = snippet('components/ferienpass/events', [], true);
-          return new Kirby\Cms\Response($content, 'application/json');
+          return new Response($content, 'application/json');
         }
       ]
     ],
     'hooks' => [
-      'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
+      'page.update:after' => function (Page $newPage, Page $oldPage) {
           if($oldPage->intendedTemplate()->name() == 'project_step') {
               
               if($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {

@@ -2,10 +2,10 @@
 export default {
   get button() {
     return {
-      icon: "quote",
-      id: "blockquote",
-      label: "Quote",
-      when: ["paragraph"]
+      icon: 'quote',
+      id: 'blockquote',
+      label: 'Quote',
+      when: ['paragraph'],
     };
   },
 
@@ -14,25 +14,25 @@ export default {
   },
 
   get name() {
-    return "blockquote";
+    return 'blockquote';
   },
 
   get schema() {
     return {
-      content: "paragraph+",
-      group: "block",
+      content: 'paragraph+',
+      group: 'block',
       defining: false,
       draggable: false,
       priority: 69,
       parseDOM: [
         {
-          tag: "blockquote"
-        }
+          tag: 'blockquote',
+        },
       ],
       toDOM(node) {
-        return ["blockquote", 0];
-      }
+        return ['blockquote', 0];
+      },
     };
-  }
+  },
 };
 </script>

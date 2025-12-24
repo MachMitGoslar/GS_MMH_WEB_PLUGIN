@@ -1,0 +1,5 @@
+node_modules
+vendor
+index.js
+index.css
+*.log

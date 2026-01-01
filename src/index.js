@@ -1,27 +1,53 @@
+// Block imports
 import Accordion from "./panel_components/blocks/accordion.vue";
 import Box from "./panel_components/blocks/box.vue";
+import Button from "./panel_components/blocks/button.vue";
 import Card from "./panel_components/blocks/card.vue";
 import Cta from "./panel_components/blocks/cta.vue";
 import Faq from "./panel_components/blocks/faq.vue";
 import Testimonial from "./panel_components/blocks/testimonial.vue";
+import Timeline from "./panel_components/blocks/timeline.vue";
+
+// Node imports
+import Blockquote from "./panel_components/nodes/blockquote.vue";
+import Headline from "./panel_components/nodes/headline.vue";
+import Subheadline from "./panel_components/nodes/subheadline.vue";
 import Title from "./panel_components/nodes/title.vue";
 import TitleXL from "./panel_components/nodes/titleXL.vue";
 import TitleXXL from "./panel_components/nodes/titleXXL.vue";
 
+// Writer marks imports
+import BadgeMark from "./panel_components/writer_marks/Badge.js";
+import ButtonMark from "./panel_components/writer_marks/Button.js";
+import FootnoteMark from "./panel_components/writer_marks/Footnote.js";
+import HighlightMark from "./panel_components/writer_marks/Highlight.js";
+
 panel.plugin("gs-mmh/gs-mmh-web-plugin", {
   blocks: {
-    box: Box,
     accordion: Accordion,
+    box: Box,
+    button: Button,
+    card: Card,
     cta: Cta,
     faq: Faq,
-    card: Card,
-    testimonial: Testimonial
+    testimonial: Testimonial,
+    timeline: Timeline
   },
 
   writerNodes: {
-    titleXXL: TitleXXL,
+    blockquote: Blockquote,
+    headline: Headline,
+    subheadline: Subheadline,
+    title: Title,
     titleXL: TitleXL,
-    title: Title
+    titleXXL: TitleXXL
+  },
+
+  writerMarks: {
+    badge: BadgeMark,
+    button: ButtonMark,
+    footnote: FootnoteMark,
+    highlight: HighlightMark
   }
 });
 

@@ -1,5 +1,10 @@
 <?php 
 
+use Kirby\Database\Db;
+use Kirby\Cms\Response;
+use Kirby\Cms\Page;
+use Kirby\Cms\App as Kirby;
+
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -11,6 +16,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
       'blocks/button' => __DIR__ . '/blueprints/blocks/button.yml',
       'fields/buttonType' => __DIR__ . '/blueprints/fields/buttonType.yml',
+      'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
+      'blocks/timeline' => __DIR__ . '/blueprints/blocks/timeline.yml'
 
     ],
     'snippets' => [
@@ -21,6 +28,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
       'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
+      'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
+      'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php'
 
     ],
     'translations' => [
@@ -56,7 +65,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           $content = snippet('components/newsletter/rss_feed', compact('pages', 'parent'), true);
   
           // Return response with correct header type
-          return new Kirby\Cms\Response($content, 'application/xml');
+          return new Response($content, 'application/xml');
         }
       ],
       [
@@ -81,24 +90,50 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         'pattern' => '/app/ferienpass.json',
         'action' => function() {
           $content = snippet('components/ferienpass/event_random', [], true);
-          return new Kirby\Cms\Response($content, 'application/json');
+          return new Response($content, 'application/json');
         }
       ],
       [
         'pattern' => '/app/ferienpass_index.json',
         'action' => function() {
           $content = snippet('components/ferienpass/events', [], true);
-          return new Kirby\Cms\Response($content, 'application/json');
+          return new Response($content, 'application/json');
         }
       ]
     ],
     'hooks' => [
-      'page.update:after' => function (Kirby\Cms\Page $newPage, Kirby\Cms\Page $oldPage) {
+      'page.update:after' => function (Page $newPage, Page $oldPage) {
           if($oldPage->intendedTemplate()->name() == 'project_step') {
               
               if($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
                   $newPage->parent()->update([
                       "project_status" => $newPage->project_status_to()
+                  ]);
+              }
+          }
+
+      },
+      'page.changeStatus:after' => function (Page $newPage, Page $oldPage) {
+          // Auto-set publish date for newsletters when published for the first time
+          if ($newPage->intendedTemplate()->name() === 'newsletter') {
+              // Check if page is being published (listed) and doesn't have a publish date yet
+              if ($newPage->status() === 'listed' && 
+                  $oldPage->status() !== 'listed' && 
+                  $newPage->published()->isEmpty()) {
+                  
+                  $newPage->update([
+                      'published' => date('Y-m-d')
+                  ]);
+              }
+          }
+          if($newPage->intendedTemplate()->name() === 'notes') {
+              // Check if page is being published (listed) and doesn't have a publish date yet
+              if ($newPage->status() === 'listed' && 
+                  $oldPage->status() !== 'listed' && 
+                  $newPage->published()->isEmpty()) {
+                  
+                  $newPage->update([
+                      'published' => date('Y-m-d')
                   ]);
               }
           }

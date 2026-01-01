@@ -27,13 +27,13 @@
         new Chart(ctx, {
             type: 'bar',
             data: {
-            labels: ['<?=implode("','",$days)?>'],
+            labels: ['<?=implode("','", $days)?>'],
 
             datasets: [
-                <?php foreach($datasets as $url => $values): ?>
+                <?php foreach ($datasets as $url => $values) : ?>
                 {
                 label: "<?= $url ?>",
-                data: [<?=implode(",",$values)?>],
+                data: [<?=implode(",", $values)?>],
                 borderWidth: 1
                 },
                 <?php endforeach ?>
@@ -56,5 +56,3 @@
 
 
 <?php
-
-

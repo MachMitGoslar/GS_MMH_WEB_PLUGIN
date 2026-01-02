@@ -1,4 +1,4 @@
-<canvas?php
+<?php
 /**
 * @var \Kirby\Cms\Site $site
 * @var \Kirby\Cms\Page $page
@@ -27,13 +27,12 @@
         new Chart(ctx, {
             type: 'bar',
             data: {
-            labels: ['<?=implode("','",$days)?>'],
+            labels: ['<?=implode("','", $days)?>'],
 
             datasets: [
-                <?php foreach($datasets as $url => $values): ?>
-                {
-                label: "<?= $url ?>",
-                data: [<?=implode(",",$values)?>],
+                <?php foreach ($datasets as $url => $values) : ?>
+                { label: "<?= $url ?>",
+                data: [<?=implode(",", $values)?>],
                 borderWidth: 1
                 },
                 <?php endforeach ?>
@@ -56,5 +55,3 @@
 
 
 <?php
-
-

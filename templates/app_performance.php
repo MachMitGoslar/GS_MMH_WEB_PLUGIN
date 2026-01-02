@@ -1,4 +1,4 @@
-<canvas?php
+<?php
 /**
 * @var \Kirby\Cms\Site $site
 * @var \Kirby\Cms\Page $page
@@ -31,8 +31,7 @@
 
             datasets: [
                 <?php foreach ($datasets as $url => $values) : ?>
-                {
-                label: "<?= $url ?>",
+                { label: "<?= $url ?>",
                 data: [<?=implode(",", $values)?>],
                 borderWidth: 1
                 },

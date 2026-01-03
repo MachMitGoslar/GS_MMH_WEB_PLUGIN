@@ -1,39 +1,3 @@
-<script>
-export default {
-  props: {
-    content: Object,
-    endpoints: Object,
-    fieldset: Object
-  },
-  methods: {
-    open() {
-      this.$emit('open');
-    }
-  }
-};
-</script>
-
-<template>
-  <div @dblclick="open">
-    <header class="k-block-header">
-      <h3 class="k-block-title">
-        <k-icon type="button" />
-        Button
-      </h3>
-    </header>
-    
-    <div
-      class="gs-c-btn"
-      :data-style="(content.buttontype && content.buttontype.style) || 'pill'"
-      :data-type="(content.buttontype && content.buttontype.color) || 'primary'"
-      :data-size="((content.buttontype && content.buttontype.size) === 'normal') ? 'regular' : ((content.buttontype && content.buttontype.size) || 'regular')"
-    >
-      {{ content.linktext || 'Click here' }}
-    </div>
-  </div>
-</template>
-
-<style scoped>
 /* Button styles from main design system for Kirby panel preview */
 
 .gs-c-btn {
@@ -206,4 +170,3 @@ export default {
   --_height: 2.75rem;
   --_font-size: 1rem;
 }
-</style>

@@ -1,9 +1,8 @@
 type: object
 default:
   color: primary
-  size: normal
+  size: regular
   style: pill
-  look: fill
 fields:
   color:
     type: select
@@ -14,11 +13,11 @@ fields:
     default: primary
   size:
     type: select
-    default: normal
+    default: regular
     options:
-      small: small
-      normal: normal
-      large: large
+      small: Klein
+      regular: Normal  
+      large: Groß
   style:
     type: select
     default: pill

@@ -2,12 +2,12 @@ name: Button
 icon: button
 default:
   link: https://machmit.goslar.de
-  linkText: Jetzt anmelden!
+  linktext: Jetzt anmelden!
   target: false
-  buttonType:
+  buttontype:
     color: primary
-    size: normal
-    look: fill
+    size: regular
+    style: pill
 
 tabs:
   hyperlink:
@@ -15,7 +15,7 @@ tabs:
       link:
         type: link
         placeholder: Test
-      linkText:
+      linktext:
           type: text
           placeholder: Link Button Text
           marks: false
@@ -24,11 +24,10 @@ tabs:
         text: Open in new window?
   style:
     fields:
-      buttonType:
+      buttontype:
         extends: fields/buttonType
         label: Link Button
         default:
           color: primary
-          size: normal
+          size: regular
           style: pill
-          look: fill

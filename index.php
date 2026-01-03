@@ -8,9 +8,7 @@ use Kirby\Cms\Page as Page;
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
       'blocks/accordion' => __DIR__ . '/blueprints/blocks/accordion.yml',
-      'blocks/box' => __DIR__ . '/blueprints/blocks/box.yml',
       'blocks/card' => __DIR__ . '/blueprints/blocks/card.yml',
-      'blocks/faq' => __DIR__ . '/blueprints/blocks/faq2.yml',
       'blocks/testimonial' => __DIR__ . '/blueprints/blocks/testimonial.yml',
       'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
       'blocks/button' => __DIR__ . '/blueprints/blocks/button.yml',
@@ -21,12 +19,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'snippets' => [
       'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
-      'blocks/box' => __DIR__ . '/snippets/blocks/box.php',
       'blocks/card' => __DIR__ . '/snippets/blocks/card.php',
-      'blocks/faq' => __DIR__ . '/snippets/blocks/faq2.php',
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
-      'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
 
@@ -138,8 +133,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       },
     ],
     'assets' => [
-      'colors.css' => __DIR__ . "assets/colors.css",
-      'fonts.css' => __DIR__ . "assets/fonts.css",
+      'design-system' => __DIR__ . "/src/design-system.css",
     ],
   ]);
 function getColor($status): string

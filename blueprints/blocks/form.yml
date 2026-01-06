@@ -1,0 +1,9 @@
+title: Formular
+icon: survey
+preview: fields
+wysiwyg: true
+
+fields:
+  form:
+    label: Hinterlege hier dein Formular
+    extends: dreamform/fields/form

@@ -1,9 +1,9 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
-use Kirby\Database\Db as Db;
-use Kirby\Cms\Response as Response;
 use Kirby\Cms\Page as Page;
+use Kirby\Cms\Response as Response;
+use Kirby\Database\Db as Db;
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -15,6 +15,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'fields/buttonType' => __DIR__ . '/blueprints/fields/buttonType.yml',
       'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
       'blocks/timeline' => __DIR__ . '/blueprints/blocks/timeline.yml',
+      'blocks/form' => __DIR__ . '/blueprints/blocks/form.yml',
 
     ],
     'snippets' => [
@@ -24,6 +25,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
+      'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
 
     ],
     'translations' => [

@@ -23,6 +23,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/card' => __DIR__ . '/snippets/blocks/card.php',
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
+      'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',

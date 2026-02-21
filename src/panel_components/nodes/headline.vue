@@ -2,10 +2,10 @@
 export default {
   get button() {
     return {
-      icon: "h5",
-      id: "headline",
-      label: "Headline",
-      when: ["heading", "paragraph"]
+      icon: 'h5',
+      id: 'headline',
+      label: 'Headline',
+      when: ['heading', 'paragraph'],
     };
   },
 
@@ -14,29 +14,30 @@ export default {
   },
 
   get name() {
-    return "headline";
+    return 'headline';
   },
 
   get schema() {
     return {
-      content: "text*",
-      group: "block",
+      content: 'text*',
+      group: 'block',
       defining: false,
       draggable: false,
       priority: 71,
       parseDOM: [
         {
-          tag: "h5",
-          attrs: { level: 5 }
-        }
+          tag: 'h5',
+          attrs: { level: 5 },
+        },
       ],
       toDOM(node) {
-        return ["h5", { class: "font-headline" }, 0];
-      }
+        return ['h5', { class: 'font-headline' }, 0];
+      },
     };
-  }
+  },
 };
-</script><script>
+</script>
+<script>
 export default {
   get button() {
     return {

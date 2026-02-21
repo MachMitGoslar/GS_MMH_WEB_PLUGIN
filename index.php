@@ -4,6 +4,10 @@ use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
 use Kirby\Database\Db as Db;
+use tobimori\DreamForm\DreamForm;
+
+@include_once __DIR__ . '/DatabaseAction.php';
+DreamForm::register(DatabaseAction::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -134,6 +138,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
               }
           }
       },
+    ],
+    'areas' => [
+      'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
     ],
     'assets' => [
       'design-system' => __DIR__ . "/src/design-system.css",

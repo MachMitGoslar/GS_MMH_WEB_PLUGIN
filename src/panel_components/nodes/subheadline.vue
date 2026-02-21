@@ -2,10 +2,10 @@
 export default {
   get button() {
     return {
-      icon: "h6",
-      id: "subheadline",
-      label: "Subheadline",
-      when: ["heading", "paragraph"]
+      icon: 'h6',
+      id: 'subheadline',
+      label: 'Subheadline',
+      when: ['heading', 'paragraph'],
     };
   },
 
@@ -14,29 +14,30 @@ export default {
   },
 
   get name() {
-    return "subheadline";
+    return 'subheadline';
   },
 
   get schema() {
     return {
-      content: "text*",
-      group: "block",
+      content: 'text*',
+      group: 'block',
       defining: false,
       draggable: false,
       priority: 70,
       parseDOM: [
         {
-          tag: "h6",
-          attrs: { level: 6 }
-        }
+          tag: 'h6',
+          attrs: { level: 6 },
+        },
       ],
       toDOM(node) {
-        return ["h6", { class: "font-subheadline" }, 0];
-      }
+        return ['h6', { class: 'font-subheadline' }, 0];
+      },
     };
-  }
+  },
 };
-</script><script>
+</script>
+<script>
 export default {
   get button() {
     return {

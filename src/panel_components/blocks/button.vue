@@ -3,13 +3,13 @@ export default {
   props: {
     content: Object,
     endpoints: Object,
-    fieldset: Object
+    fieldset: Object,
   },
   methods: {
     open() {
       this.$emit('open');
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -21,12 +21,16 @@ export default {
         Button
       </h3>
     </header>
-    
+
     <div
       class="gs-c-btn"
       :data-style="(content.buttontype && content.buttontype.style) || 'pill'"
       :data-type="(content.buttontype && content.buttontype.color) || 'primary'"
-      :data-size="((content.buttontype && content.buttontype.size) === 'normal') ? 'regular' : ((content.buttontype && content.buttontype.size) || 'regular')"
+      :data-size="
+        (content.buttontype && content.buttontype.size) === 'normal'
+          ? 'regular'
+          : (content.buttontype && content.buttontype.size) || 'regular'
+      "
     >
       {{ content.linktext || 'Click here' }}
     </div>

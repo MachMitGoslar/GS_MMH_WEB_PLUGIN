@@ -22,6 +22,10 @@ import ButtonMark from "./panel_components/writer_marks/Button.js";
 import FootnoteMark from "./panel_components/writer_marks/Footnote.js";
 import HighlightMark from "./panel_components/writer_marks/Highlight.js";
 
+// View imports
+import DreamformDbOverview from "./panel_components/views/DreamformDbOverview.vue";
+import DreamformDbForm from "./panel_components/views/DreamformDbForm.vue";
+
 panel.plugin("gs-mmh/gs-mmh-web-plugin", {
   blocks: {
     accordion: Accordion,
@@ -48,6 +52,11 @@ panel.plugin("gs-mmh/gs-mmh-web-plugin", {
     button: ButtonMark,
     footnote: FootnoteMark,
     highlight: HighlightMark
+  },
+
+  components: {
+    "k-dreamform-db-overview": DreamformDbOverview,
+    "k-dreamform-db-form": DreamformDbForm
   }
 });
 

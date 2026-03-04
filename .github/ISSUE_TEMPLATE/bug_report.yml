@@ -1,0 +1,84 @@
+name: Bug melden
+description: Einen Fehler im gs-mmh-web-plugin melden
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke, dass du dir die Zeit nimmst, einen Fehler zu melden!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      description: Was ist passiert?
+      placeholder: Beschreibe den Fehler so genau wie moeglich.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+      description: Was haettest du stattdessen erwartet?
+      placeholder: Beschreibe, was eigentlich passieren sollte.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte zum Reproduzieren
+      description: Wie kann der Fehler nachgestellt werden?
+      placeholder: |
+        1. Gehe zu '...'
+        2. Klicke auf '...'
+        3. Scrolle nach unten zu '...'
+        4. Fehler erscheint
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Falls moeglich, fuege Screenshots hinzu.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      description: Welcher Teil des Plugins ist betroffen?
+      options:
+        - Blocks (Accordion, Card, CTA, etc.)
+        - Writer Marks / Nodes
+        - DreamForm (Datenbank-Action / Formular-Eingaenge)
+        - Routes (Newsletter RSS, App API)
+        - Hooks (Status-Sync, Auto-Publish)
+        - Panel (Verwaltung)
+        - Build / Entwicklung
+        - Andere
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Umgebung
+      options:
+        - Lokal (DDEV)
+        - Produktion
+        - Beide
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Zusaetzlicher Kontext
+      description: Gibt es weitere Informationen, die hilfreich sein koennten? (PHP-Version, Node-Version, Kirby-Version)
+    validations:
+      required: false

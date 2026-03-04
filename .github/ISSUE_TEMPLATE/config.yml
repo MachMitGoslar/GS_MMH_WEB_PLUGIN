@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Fragen & Diskussionen
+    url: https://github.com/MachMitGoslar/GS_MMH_WEB_PLUGIN/discussions
+    about: Fuer allgemeine Fragen bitte eine Diskussion starten statt ein Issue.
+  - name: Website-Issues (kein Plugin-Bug)
+    url: https://github.com/MachMitGoslar/GS_MMH_WEB/issues
+    about: Fuer Fehler auf der Webseite, die nicht direkt das Plugin betreffen.

@@ -1,4 +1,5 @@
 <?php
+
 // Button mark renders selected text as a button with link functionality
 // Mark attributes: href, target, buttonType
 

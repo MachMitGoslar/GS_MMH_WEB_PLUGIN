@@ -7,7 +7,7 @@ $text = $cardType === 'manual' ? $block->description_content() : ($page ? $page-
 
 ?>
 <?php if ($block->isNotEmpty()) : ?>
-    <?php if (! empty($link)) : ?>
+    <?php if (!empty($link)) : ?>
     <a href="<?= $link ?>">
     <?php endif; ?>
     <?php if ($image) : ?>
@@ -23,7 +23,7 @@ $text = $cardType === 'manual' ? $block->description_content() : ($page ? $page-
         endif ?>
       </div>
       <div class="body">
-        <?php if ($text->type() == "text") : ?>
+        <?php if ($text->type() == 'text') : ?>
             <?= $text->kirbytext() ?>
         <?php else : ?>
             <?php foreach ($text->toBlocks() as $block) : ?>
@@ -32,7 +32,7 @@ $text = $cardType === 'manual' ? $block->description_content() : ($page ? $page-
         <?php endif ?>
       </div>
 
-    <?php if (! empty($link)) : ?>
+    <?php if (!empty($link)) : ?>
   </a>
     <?php endif; ?>
   </div>

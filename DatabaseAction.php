@@ -1,7 +1,8 @@
 <?php
 
+namespace GsMmh\WebPlugin;
+
 use Kirby\Database\Db;
-use Kirby\Toolkit\A;
 use tobimori\DreamForm\Actions\Action;
 
 class DatabaseAction extends Action
@@ -43,11 +44,11 @@ class DatabaseAction extends Action
 
         try {
             Db::insert($table, [
-                'form_slug'    => $this->form()->slug(),
-                'form_title'   => $this->form()->title()->value(),
-                'data'         => json_encode($values, JSON_UNESCAPED_UNICODE),
+                'form_slug' => $this->form()->slug(),
+                'form_title' => $this->form()->title()->value(),
+                'data' => json_encode($values, JSON_UNESCAPED_UNICODE),
                 'submitted_at' => date('Y-m-d H:i:s'),
-                'referer'      => $this->submission()->referer() ?? '',
+                'referer' => $this->submission()->referer() ?? '',
             ]);
         } catch (Throwable $e) {
             $this->cancel('Datenbankfehler: ' . $e->getMessage());

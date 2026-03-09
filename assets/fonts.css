@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
@@ -26,7 +25,7 @@
 }
 
 html {
-  font-family: Inter, system-ui, sans-serif;;
+  font-family: Inter, system-ui, sans-serif;
 }
 
 .font-title3XXL {
@@ -48,7 +47,7 @@ html {
   font-size: var(--typo-size-800);
   line-height: var(--typo-line-height-narrow);
   font-weight: var(--font-weight-bold);
-  @media  (width < 490px) {
+  @media (width < 490px) {
     font-size: var(--typo-size-700);
   }
 }
@@ -128,7 +127,7 @@ html {
   line-height: var(--typo-line-height-wide);
 }
 
-.font-weight-light{
+.font-weight-light {
   font-weight: var(--font-weight-light);
 }
 
@@ -150,7 +149,8 @@ html {
 
 .font-italic {
   font-style: italic;
-}/* Border Radius */:root {
+} /* Border Radius */
+:root {
   --border-radius-0: 0;
   --border-radius-1: 1px;
   --border-radius-2: 2px;
@@ -163,7 +163,8 @@ html {
   --border-radius-9: 48px;
   --border-radius-10: 64px;
   --border-radius-pill: 10000px;
-}/* Size */:root {
+} /* Size */
+:root {
   --size-0: 0;
   --size-1px: 1px;
   --size-2px: 2px;

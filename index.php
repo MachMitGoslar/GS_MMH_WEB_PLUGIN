@@ -73,17 +73,30 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         'pattern' => '/app/(:any)',
         'action' => function ($any) {
 
+            Db::execute('CREATE TABLE IF NOT EXISTS `app_requests` (
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `url` varchar(255) NOT NULL,
+                    `day` date NOT NULL,
+                    `requests` int(11) NOT NULL,
+                    PRIMARY KEY (`id`)
+                    ) 
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+            
             $data['url'] = $any;
             $data['day'] = date("Y-m-d");
 
             if ($app_request = Db::first('app_requests', '*', ['url' => $data['url'], 'day' => $data['day']])) {
                 $data['requests'] = $app_request->requests();
 
-                return Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
+                Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
+                $this->next();
+
+                
             } else {
                 $data['requests'] = 1;
-
-                return Db::insert('app_requests', $data);
+                Db::insert('app_requests', $data);
+                $this->next();
+                
             }
 
         },
@@ -91,15 +104,17 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       [
         'pattern' => '/app/ferienpass.json',
         'action' => function () {
-            $content = snippet('components/ferienpass/event_random', [], true);
+            
 
-            return new Response($content, 'application/json');
+        $content = snippet('content-types/ferienpass/event_random', ['id' => 74], true);
+        return new Response($content, 'application/json');
         },
       ],
       [
         'pattern' => '/app/ferienpass_index.json',
         'action' => function () {
-            $content = snippet('components/ferienpass/events', [], true);
+            
+            $content = snippet('content-types/ferienpass/events', [], true);
 
             return new Response($content, 'application/json');
         },
@@ -163,3 +178,4 @@ function getColor($status): string
             return "false";
     }
 }
+

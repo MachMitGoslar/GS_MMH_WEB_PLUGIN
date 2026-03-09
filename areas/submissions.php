@@ -14,6 +14,7 @@ function dfdbTableForForm($formPage): string|null
     foreach ($actions as $block) {
         if ($block->type() === 'database-action') {
             $name = $block->tablename()->value();
+
             return $name ?: 'dreamform_submissions';
         }
     }
@@ -28,7 +29,7 @@ function dfdbTableForForm($formPage): string|null
 function dfdbDiscoverForms(): array
 {
     $formsPage = DreamForm::findPageOrDraftRecursive(
-        DreamForm::option('page', 'forms')
+        DreamForm::option('page', 'forms'),
     );
 
     if (!$formsPage) {
@@ -41,7 +42,7 @@ function dfdbDiscoverForms(): array
         $table = dfdbTableForForm($form);
         if ($table !== null) {
             $result[] = [
-                'slug'  => $form->slug(),
+                'slug' => $form->slug(),
                 'title' => $form->title()->value(),
                 'table' => $table,
             ];
@@ -53,7 +54,7 @@ function dfdbDiscoverForms(): array
         $table = dfdbTableForForm($form);
         if ($table !== null) {
             $result[] = [
-                'slug'  => $form->slug(),
+                'slug' => $form->slug(),
                 'title' => $form->title()->value(),
                 'table' => $table,
             ];
@@ -73,22 +74,23 @@ function dfdbTableForSlug(string $slug): string|null
             return $form['table'];
         }
     }
+
     return null;
 }
 
 return function ($kirby) {
     return [
         'label' => 'Formular-Eingänge',
-        'icon'  => 'email',
-        'menu'  => true,
-        'link'  => 'formular-eingaenge',
+        'icon' => 'email',
+        'menu' => true,
+        'link' => 'formular-eingaenge',
         'views' => [
             /**
              * Overview: list all forms with submission counts
              */
             [
                 'pattern' => 'formular-eingaenge',
-                'action'  => function () {
+                'action' => function () {
                     $discovered = dfdbDiscoverForms();
                     $forms = [];
 
@@ -99,15 +101,15 @@ return function ($kirby) {
                             $last = $lastRow ? $lastRow->submitted_at() : null;
                         } catch (Throwable) {
                             $count = 0;
-                            $last  = null;
+                            $last = null;
                         }
 
                         $forms[] = [
-                            'slug'  => $entry['slug'],
+                            'slug' => $entry['slug'],
                             'title' => $entry['title'],
                             'table' => $entry['table'],
                             'count' => $count,
-                            'last'  => $last,
+                            'last' => $last,
                         ];
                     }
 
@@ -116,7 +118,7 @@ return function ($kirby) {
 
                     return [
                         'component' => 'k-dreamform-db-overview',
-                        'props'     => [
+                        'props' => [
                             'forms' => $forms,
                         ],
                     ];
@@ -128,25 +130,25 @@ return function ($kirby) {
              */
             [
                 'pattern' => 'formular-eingaenge/(:any)',
-                'action'  => function (string $formSlug) use ($kirby) {
+                'action' => function (string $formSlug) use ($kirby) {
                     $table = dfdbTableForSlug($formSlug);
 
                     if (!$table) {
                         return [
                             'component' => 'k-dreamform-db-form',
-                            'props'     => [
-                                'formSlug'    => $formSlug,
-                                'formTitle'   => $formSlug,
-                                'tableName'   => '',
+                            'props' => [
+                                'formSlug' => $formSlug,
+                                'formTitle' => $formSlug,
+                                'tableName' => '',
                                 'submissions' => [],
-                                'columns'     => [],
-                                'pagination'  => ['page' => 1, 'total' => 0, 'limit' => 25, 'pages' => 1],
+                                'columns' => [],
+                                'pagination' => ['page' => 1, 'total' => 0, 'limit' => 25, 'pages' => 1],
                             ],
                         ];
                     }
 
-                    $page   = max(1, (int) $kirby->request()->get('page', 1));
-                    $limit  = 25;
+                    $page = max(1, (int) $kirby->request()->get('page', 1));
+                    $limit = 25;
                     $offset = ($page - 1) * $limit;
 
                     // Form title from the discovered forms
@@ -154,6 +156,7 @@ return function ($kirby) {
                     foreach (dfdbDiscoverForms() as $f) {
                         if ($f['slug'] === $formSlug) {
                             $formTitle = $f['title'];
+
                             break;
                         }
                     }
@@ -165,7 +168,7 @@ return function ($kirby) {
                     $rows = Db::select($table, '*', ['form_slug' => $formSlug], 'submitted_at DESC', $offset, $limit);
 
                     // Build submissions array and discover columns
-                    $allKeys     = [];
+                    $allKeys = [];
                     $submissions = [];
 
                     foreach ($rows as $row) {
@@ -176,23 +179,23 @@ return function ($kirby) {
                             }
                         }
                         $submissions[] = [
-                            'id'          => (int) $row->id(),
-                            'data'        => $data,
+                            'id' => (int) $row->id(),
+                            'data' => $data,
                             'submittedAt' => $row->submitted_at(),
-                            'referer'     => $row->referer(),
+                            'referer' => $row->referer(),
                         ];
                     }
 
                     return [
                         'component' => 'k-dreamform-db-form',
-                        'props'     => [
-                            'formSlug'    => $formSlug,
-                            'formTitle'   => $formTitle,
-                            'tableName'   => $table,
+                        'props' => [
+                            'formSlug' => $formSlug,
+                            'formTitle' => $formTitle,
+                            'tableName' => $table,
                             'submissions' => $submissions,
-                            'columns'     => $allKeys,
-                            'pagination'  => [
-                                'page'  => $page,
+                            'columns' => $allKeys,
+                            'pagination' => [
+                                'page' => $page,
                                 'total' => $total,
                                 'limit' => $limit,
                                 'pages' => max(1, (int) ceil($total / $limit)),
@@ -216,15 +219,15 @@ return function ($kirby) {
                         throw new Exception('Eintrag nicht gefunden');
                     }
 
-                    $data   = json_decode($row->data(), true) ?? [];
+                    $data = json_decode($row->data(), true) ?? [];
                     $fields = [];
 
                     foreach ($data as $key => $value) {
                         $displayValue = is_array($value) ? implode(', ', $value) : (string) $value;
                         $fields[$key] = [
                             'label' => ucfirst(str_replace(['-', '_'], ' ', $key)),
-                            'type'  => 'info',
-                            'text'  => $displayValue ?: '(leer)',
+                            'type' => 'info',
+                            'text' => $displayValue ?: '(leer)',
                         ];
                     }
 
@@ -234,22 +237,22 @@ return function ($kirby) {
 
                     $fields['_submitted_at'] = [
                         'label' => 'Eingegangen am',
-                        'type'  => 'info',
-                        'text'  => $row->submitted_at(),
+                        'type' => 'info',
+                        'text' => $row->submitted_at(),
                     ];
 
                     if ($row->referer()) {
                         $fields['_referer'] = [
                             'label' => 'Seite',
-                            'type'  => 'info',
-                            'text'  => $row->referer(),
+                            'type' => 'info',
+                            'text' => $row->referer(),
                         ];
                     }
 
                     return [
                         'component' => 'k-form-dialog',
-                        'props'     => [
-                            'fields'       => $fields,
+                        'props' => [
+                            'fields' => $fields,
                             'submitButton' => false,
                         ],
                     ];
@@ -264,11 +267,11 @@ return function ($kirby) {
                 'load' => function (string $table, int $id) {
                     return [
                         'component' => 'k-text-dialog',
-                        'props'     => [
-                            'text'         => 'Soll dieser Eintrag wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.',
+                        'props' => [
+                            'text' => 'Soll dieser Eintrag wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.',
                             'submitButton' => [
-                                'text'  => 'Löschen',
-                                'icon'  => 'trash',
+                                'text' => 'Löschen',
+                                'icon' => 'trash',
                                 'theme' => 'negative',
                             ],
                         ],

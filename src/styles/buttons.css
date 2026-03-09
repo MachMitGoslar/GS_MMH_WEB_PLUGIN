@@ -10,7 +10,6 @@
   --_border: var(--_border-width) solid rgb(0 0 0 / 0%);
   --_border-radius: var(--border-radius-pill);
 
-  ;
   /* Font */
   --_font-size: 0.875rem;
   --_font-weight: 600;
@@ -52,12 +51,13 @@
 
     pointer-events: none;
   }
-}/* Type 
+} /* Type 
 can be
 - primary
 - secondary
 - tertiary
-*/.gs-c-btn {
+*/
+.gs-c-btn {
   &[data-type='primary'] {
     --_background-primary-enabled: var(--color-ripe-mango-700);
     --_background-primary-hover: var(--color-ripe-mango-300);
@@ -163,12 +163,13 @@ can be
       text-decoration-line: underline;
     }
   }
-}/* Style 
+} /* Style 
 can be
 - pill
 - rounded-corners
 - square
-*/.gs-c-btn {
+*/
+.gs-c-btn {
   &[data-style='pill'] {
     border-radius: var(--border-radius-pill);
   }
@@ -180,12 +181,13 @@ can be
   &[data-style='square'] {
     border-radius: var(--border-radius-0);
   }
-}/* Size 
+} /* Size 
 can be
 - small
 - regular
 - large
-*/.gs-c-btn {
+*/
+.gs-c-btn {
   &[data-size='small'] {
     --_height: 1.75rem;
     --_font-size: 0.75rem;

@@ -1,5 +1,6 @@
 <?php
 
+use GsMmh\WebPlugin\DatabaseAction;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
@@ -53,15 +54,14 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         'field.blocks.card.fields.cardType.label' => 'Kartentyp',
         'field.blocks.testimonial.name' => 'Testimonial',
 
-
       ],
     ],
     'routes' => [
       [
         'pattern' => 'newsletter.xml',
         'action' => function () {
-            $pages = site()->page("newsletter")->children()->listed();
-            $parent = site()->page(path: "newsletter");
+            $pages = site()->page('newsletter')->children()->listed();
+            $parent = site()->page(path: 'newsletter');
 
             $content = snippet('components/newsletter/rss_feed', compact('pages', 'parent'), true);
 
@@ -73,25 +73,35 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         'pattern' => '/app/(:any)',
         'action' => function ($any) {
 
+            Db::execute('CREATE TABLE IF NOT EXISTS `app_requests` (
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `url` varchar(255) NOT NULL,
+                    `day` date NOT NULL,
+                    `requests` int(11) NOT NULL,
+                    PRIMARY KEY (`id`)
+                    ) 
+                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
             $data['url'] = $any;
-            $data['day'] = date("Y-m-d");
+            $data['day'] = date('Y-m-d');
 
             if ($app_request = Db::first('app_requests', '*', ['url' => $data['url'], 'day' => $data['day']])) {
                 $data['requests'] = $app_request->requests();
 
-                return Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
+                Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
+                $this->next();
             } else {
                 $data['requests'] = 1;
-
-                return Db::insert('app_requests', $data);
+                Db::insert('app_requests', $data);
+                $this->next();
             }
-
         },
       ],
       [
         'pattern' => '/app/ferienpass.json',
         'action' => function () {
-            $content = snippet('components/ferienpass/event_random', [], true);
+
+            $content = snippet('content-types/ferienpass/event_random', ['id' => 74], true);
 
             return new Response($content, 'application/json');
         },
@@ -99,7 +109,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       [
         'pattern' => '/app/ferienpass_index.json',
         'action' => function () {
-            $content = snippet('components/ferienpass/events', [], true);
+
+            $content = snippet('content-types/ferienpass/events', [], true);
 
             return new Response($content, 'application/json');
         },
@@ -107,59 +118,63 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'hooks' => [
       'page.update:after' => function (Page $newPage, Page $oldPage) {
-          if ($oldPage->intendedTemplate()->name() == 'project_step') {
-              if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
-                  $newPage->parent()->update([
-                      "project_status" => $newPage->project_status_to(),
-                  ]);
-              }
-          }
+        if ($oldPage->intendedTemplate()->name() == 'project_step') {
+            if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
+                $newPage->parent()->update([
+                    'project_status' => $newPage->project_status_to(),
+                ]);
+            }
+        }
       },
       'page.changeStatus:after' => function (Page $newPage, Page $oldPage) {
           // Auto-set publish date for newsletters when published for the first time
-          if ($newPage->intendedTemplate()->name() === 'newsletter') {
-              // Check if page is being published (listed) and doesn't have a publish date yet
-              if ($newPage->status() === 'listed' &&
-                  $oldPage->status() !== 'listed' &&
-                  $newPage->published()->isEmpty()) {
-                  $newPage->update([
-                      'published' => date('Y-m-d'),
-                  ]);
-              }
-          }
-          if ($newPage->intendedTemplate()->name() === 'notes') {
-              // Check if page is being published (listed) and doesn't have a publish date yet
-              if ($newPage->status() === 'listed' &&
-                  $oldPage->status() !== 'listed' &&
-                  $newPage->published()->isEmpty()) {
-                  $newPage->update([
-                      'published' => date('Y-m-d'),
-                  ]);
-              }
-          }
+        if ($newPage->intendedTemplate()->name() === 'newsletter') {
+            // Check if page is being published (listed) and doesn't have a publish date yet
+            if (
+                $newPage->status() === 'listed' &&
+                $oldPage->status() !== 'listed' &&
+                $newPage->published()->isEmpty()
+            ) {
+                $newPage->update([
+                    'published' => date('Y-m-d'),
+                ]);
+            }
+        }
+        if ($newPage->intendedTemplate()->name() === 'notes') {
+            // Check if page is being published (listed) and doesn't have a publish date yet
+            if (
+                $newPage->status() === 'listed' &&
+                $oldPage->status() !== 'listed' &&
+                $newPage->published()->isEmpty()
+            ) {
+                $newPage->update([
+                    'published' => date('Y-m-d'),
+                ]);
+            }
+        }
       },
     ],
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
     ],
     'assets' => [
-      'design-system' => __DIR__ . "/src/design-system.css",
+      'design-system' => __DIR__ . '/src/design-system.css',
     ],
   ]);
 function getColor($status): string
 {
     switch ($status) {
-        case "in Planung":
-            return "planning";
-        case "in Vorbereitung":
-            return "preparing";
-        case "aktiv":
-            return "active";
-        case "in Auswertung":
-            return "review";
-        case "abgeschlossen":
-            return "done";
+        case 'in Planung':
+            return 'planning';
+        case 'in Vorbereitung':
+            return 'preparing';
+        case 'aktiv':
+            return 'active';
+        case 'in Auswertung':
+            return 'review';
+        case 'abgeschlossen':
+            return 'done';
         default:
-            return "false";
+            return 'false';
     }
 }

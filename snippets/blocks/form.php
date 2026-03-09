@@ -10,8 +10,7 @@
         'label' => ['class' => 'dreamform-label'],
         'error' => ['class' => 'dreamform-error'],
         'input' => ['class' => 'dreamform-input'],
-        'button' => ['class' => 'gs-c-btn'],
-, 
+        'button' => ['class' => 'gs-c-btn', 'data-type' => 'primary', 'data-size' => 'regular', 'data-style' => 'pill'],
 
         // Field-specific attributes
         'textarea' => [

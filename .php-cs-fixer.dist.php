@@ -7,9 +7,14 @@ use PhpCsFixer\Finder;
 
 $finder = Finder::create()
     ->in([
-        __DIR__ . '/snippets',
+        __DIR__ . '/areas',
         __DIR__ . '/controllers',
+        __DIR__ . '/snippets',
         __DIR__ . '/templates',
+    ])
+    ->append([
+        __DIR__ . '/index.php',
+        __DIR__ . '/DatabaseAction.php',
     ])
     ->name('*.php')
     ->exclude([
@@ -20,39 +25,44 @@ $finder = Finder::create()
 return (new Config())
     ->setRiskyAllowed(true)
     ->setRules([
+        // Base standard
         '@PSR12' => true,
+
+        // Modern PHP syntax
         'array_syntax' => ['syntax' => 'short'],
-        'binary_operator_spaces' => ['default' => 'single_space'],
-        'blank_line_after_opening_tag' => true,
-        'compact_nullable_typehint' => true,
-        'declare_equal_normalize' => true,
-        'function_typehint_space' => true,
-        'lowercase_cast' => true,
-        'lowercase_static_reference' => true,
-        'new_with_braces' => true,
-        'no_blank_lines_after_class_opening' => true,
-        'no_leading_import_slash' => true,
-        'no_whitespace_in_blank_line' => true,
-        'ordered_class_elements' => [
-            'order' => [
-                'use_trait',
-            ],
-        ],
-        'ordered_imports' => [
-            'imports_order' => [
-                'class',
-                'function',
-                'const',
-            ],
-        ],
-        'return_type_declaration' => true,
+        'list_syntax' => ['syntax' => 'short'],
         'short_scalar_cast' => true,
-        'single_blank_line_before_namespace' => true,
-        'single_trait_insert_per_statement' => true,
-        'ternary_operator_spaces' => true,
-        'visibility_required' => [
-            'elements' => ['method', 'property'],
+        'modernize_types_casting' => true,
+
+        // Imports
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'no_unused_imports' => true,
+        'no_leading_import_slash' => true,
+        'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
+
+        // Spacing & formatting
+        'binary_operator_spaces' => ['default' => 'single_space'],
+        'unary_operator_spaces' => true,
+        'cast_spaces' => ['space' => 'single'],
+        'concat_space' => ['spacing' => 'one'],
+        'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
+        'no_extra_blank_lines' => ['tokens' => ['extra', 'throw', 'use']],
+        'no_whitespace_in_blank_line' => true,
+
+        // Blank lines
+        'blank_line_before_statement' => [
+            'statements' => ['break', 'continue', 'declare', 'return', 'throw', 'try'],
         ],
-        'whitespace_after_comma_in_array' => true,
+        'blank_line_after_namespace' => true,
+
+        // Strings
+        'single_quote' => ['strings_containing_single_quote_chars' => false],
+
+        // PHPDoc
+        'phpdoc_scalar' => true,
+        'phpdoc_single_line_var_spacing' => true,
+        'phpdoc_var_without_name' => true,
+        'phpdoc_trim' => true,
+        'no_empty_phpdoc' => true,
     ])
     ->setFinder($finder);

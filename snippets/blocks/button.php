@@ -1,16 +1,17 @@
 <?php
+
 /** @var \Kirby\Cms\Block $block */
 
 // Felder aus button.yml
-$link     = $block->link()->toUrl();
-$text     = $block->linktext()->or('Button');
-$target   = $block->target()->toBool();
+$link = $block->link()->toUrl();
+$text = $block->linktext()->or('Button');
+$target = $block->target()->toBool();
 
 // Strukturfeld "buttontype"
-$type  = $block->buttontype()->toObject();
+$type = $block->buttontype()->toObject();
 
 $color = $type->color()->or('primary');
-$size  = $type->size()->or('regular');
+$size = $type->size()->or('regular');
 $style = $type->style()->or('pill');
 
 // Target behandeln

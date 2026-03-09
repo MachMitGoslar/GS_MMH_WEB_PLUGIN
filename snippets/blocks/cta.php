@@ -2,8 +2,6 @@
 
 $buttons = $block->buttons()->toBlocks();
 
-
-
 ?>
     <?= $block->title() ?>
     <p class="font-text mb-2"> <?=$block->description() ?></p>

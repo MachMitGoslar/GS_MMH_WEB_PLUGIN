@@ -1,4 +1,3 @@
-
 :root {
   --font-family-sans: 'Inter', sans-serif;
   --typo-size-80: 0.75rem; /* 12px */
@@ -24,7 +23,7 @@
 }
 
 html {
-  font-family: Inter, system-ui, sans-serif;;
+  font-family: Inter, system-ui, sans-serif;
 }
 
 .font-title3XXL {
@@ -46,7 +45,7 @@ html {
   font-size: var(--typo-size-800);
   line-height: var(--typo-line-height-narrow);
   font-weight: var(--font-weight-bold);
-  @media  (width < 490px) {
+  @media (width < 490px) {
     font-size: var(--typo-size-700);
   }
 }
@@ -126,7 +125,7 @@ html {
   line-height: var(--typo-line-height-wide);
 }
 
-.font-weight-light{
+.font-weight-light {
   font-weight: var(--font-weight-light);
 }
 
@@ -148,7 +147,8 @@ html {
 
 .font-italic {
   font-style: italic;
-}/* Border Radius */:root {
+} /* Border Radius */
+:root {
   --border-radius-0: 0;
   --border-radius-1: 1px;
   --border-radius-2: 2px;
@@ -311,7 +311,6 @@ html {
   --color-project-active: var(--color-ripe-mango-1200);
   --color-project-review: var(--color-violaceous-greti-1200);
   --color-project-done: var(--color-ripe-mango-1400);
-
 }
 
 :root {

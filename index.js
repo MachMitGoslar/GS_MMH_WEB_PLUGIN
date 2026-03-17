@@ -9,12 +9,19 @@
     );
   }
   const d = {
+    data() {
+      return { isOpen: !1 };
+    },
     computed: {
-      summaryField() {
-        return this.field('summary');
+      questionField() {
+        return this.field('question') || this.field('summary');
       },
-      detailsField() {
-        return this.field('details');
+      answerField() {
+        return this.field('answer') || this.field('details');
+      },
+      questionValue() {
+        const t = this.content.question || this.content.summary || '';
+        return String(t).replace(/<[^>]*>/g, '').trim();
       },
     },
   };
@@ -22,46 +29,64 @@
       var t = this,
         n = t._self._c;
       return n('div', { on: { dblclick: t.open } }, [
-        n(
-          'details',
-          [
-            n(
-              'summary',
-              [
-                n('k-writer', {
-                  ref: 'summary',
-                  attrs: {
-                    inline: !0,
-                    marks: 'false',
-                    placeholder: t.summaryField.placeholder || 'Add a summary…',
-                    value: t.content.summary,
-                  },
-                  on: {
-                    input: function (r) {
-                      return t.update({ summary: r });
-                    },
-                  },
-                }),
-              ],
-              1
-            ),
-            n('k-writer', {
-              ref: 'details',
-              attrs: {
-                inline: t.detailsField.inline || !1,
-                marks: t.detailsField.marks,
-                value: t.content.details,
-                placeholder: t.detailsField.placeholder || 'Add some details',
-              },
+        n('div', { staticClass: 'k-block-type-accordion-details', class: { 'is-open': t.isOpen } }, [
+          n(
+            'div',
+            {
+              staticClass: 'k-block-type-accordion-summary',
               on: {
-                input: function (r) {
-                  return t.update({ details: r });
+                click: function (r) {
+                  t.isOpen = !t.isOpen;
                 },
               },
-            }),
-          ],
-          1
-        ),
+            },
+            [
+              n('k-icon', {
+                staticClass: 'k-block-type-accordion-arrow',
+                attrs: { type: 'angle-right' },
+              }),
+              n(
+                'span',
+                { staticClass: 'k-block-type-accordion-question' },
+                [
+                  t._v(
+                    ' ' + t._s(t.questionValue || t.questionField.placeholder || 'Add a question…') + ' '
+                  ),
+                ]
+              ),
+              n('k-writer', {
+                ref: 'question',
+                attrs: {
+                  inline: !0,
+                  marks: 'false',
+                  placeholder: t.questionField.placeholder || 'Add a question…',
+                  value: t.questionValue,
+                },
+                on: {
+                  input: function (r) {
+                    return t.update({ question: r });
+                  },
+                },
+              }),
+            ],
+            1
+          ),
+          n('k-writer', {
+            ref: 'answer',
+            staticClass: 'k-block-type-accordion-answer',
+            attrs: {
+              inline: t.answerField.inline || !1,
+              marks: t.answerField.marks,
+              value: t.content.answer || t.content.details,
+              placeholder: t.answerField.placeholder || 'Add an answer',
+            },
+            on: {
+              input: function (r) {
+                return t.update({ answer: r });
+              },
+            },
+          }),
+        ]),
       ]);
     },
     p = [],
@@ -453,6 +478,13 @@
         headingField() {
           return this.field('heading') || '';
         },
+        headingText() {
+          const e = this.content.heading || '';
+          return String(e).replace(/<[^>]*>/g, '').trim();
+        },
+        headingTitle() {
+          return this.headingText || this.headingField.placeholder || 'FAQ';
+        },
       },
       methods: {
         updateItem(e, t, n, r) {
@@ -466,69 +498,18 @@
       var t = this,
         n = t._self._c;
       return n('div', { on: { dblclick: t.open } }, [
-        n(
-          'h2',
-          { staticClass: 'k-block-type-faq-heading' },
-          [
-            n('k-writer', {
-              ref: 'heading',
-              attrs: {
-                inline: t.headingField.inline,
-                marks: t.headingField.marks,
-                placeholder: t.headingField.placeholder || 'Add a heading',
-                value: t.content.heading,
-              },
-              on: {
-                input: function (r) {
-                  return t.update({ heading: r });
-                },
-              },
-            }),
-          ],
-          1
-        ),
-        t.content.faq.length
-          ? n(
-              'div',
-              t._l(t.items, function (r, a) {
-                return n('details', { key: a, staticClass: 'k-block-type-faq-item' }, [
-                  n(
-                    'summary',
-                    [
-                      n('k-writer', {
-                        ref: 'summary',
-                        refInFor: !0,
-                        attrs: { inline: !0, marks: !1, value: r.content.summary },
-                        on: {
-                          input: function (o) {
-                            return t.updateItem(t.content, a, 'summary', o);
-                          },
-                        },
-                      }),
-                    ],
-                    1
-                  ),
-                  n(
-                    'div',
-                    [
-                      n('k-writer', {
-                        ref: 'details',
-                        refInFor: !0,
-                        attrs: { marks: !0, value: r.content.details },
-                        on: {
-                          input: function (o) {
-                            return t.updateItem(t.content, a, 'details', o);
-                          },
-                        },
-                      }),
-                    ],
-                    1
-                  ),
-                ]);
-              }),
-              0
-            )
-          : n('div', [t._v('No items yet')]),
+        n('header', { staticClass: 'k-block-header' }, [
+          n(
+            'h3',
+            {
+              staticClass: 'k-block-title',
+              style: 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis',
+            },
+            [n('k-icon', { attrs: { type: 'question' } }), t._v(' ' + t._s(t.headingTitle) + ' ')],
+            1
+          ),
+        ]),
+        t.content.faq.length ? t._e() : n('div', [t._v('No items yet')]),
       ]);
     },
     I = [],

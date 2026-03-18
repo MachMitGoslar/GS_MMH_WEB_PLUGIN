@@ -166,6 +166,68 @@
   font-style: italic;
   margin-top: 0.25rem;
 }
+
+.k-block-type-accordion-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.k-block-type-accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.k-block-type-accordion-summary::marker {
+  content: '';
+}
+
+.k-block-type-accordion-arrow {
+  opacity: 0.7;
+  transition: transform 0.15s ease;
+}
+
+.k-block-type-accordion-details[open] .k-block-type-accordion-arrow {
+  transform: rotate(90deg);
+}
+
+.k-block-type-accordion-summary .k-writer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.k-block-type-accordion-summary .k-writer-input,
+.k-block-type-accordion-summary .k-writer-text {
+  display: block;
+  width: 100%;
+}
+
+.k-block-type-accordion-question {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.k-block-type-accordion-summary:focus-within .k-writer {
+  opacity: 1;
+}
+
+.k-block-type-accordion-summary:focus-within .k-block-type-accordion-question {
+  opacity: 0;
+}
+
+.k-block-type-accordion-details .k-block-type-accordion-answer {
+  display: none;
+}
+
+.k-block-type-accordion-details.is-open .k-block-type-accordion-answer {
+  display: block;
+}
 .k-block-empty[data-v-60dc79ac] {
   color: var(--color-text-light);
   font-style: italic;

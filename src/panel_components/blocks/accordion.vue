@@ -1,11 +1,18 @@
 <script>
 export default {
+  data() {
+    return { isOpen: false };
+  },
   computed: {
-    summaryField() {
-      return this.field('summary');
+    questionField() {
+      return this.field('question') || this.field('summary');
     },
-    detailsField() {
-      return this.field('details');
+    answerField() {
+      return this.field('answer') || this.field('details');
+    },
+    questionValue() {
+      const raw = this.content.question || this.content.summary || '';
+      return String(raw).replace(/<[^>]*>/g, '').trim();
     },
   },
 };
@@ -13,25 +20,30 @@ export default {
 
 <template>
   <div @dblclick="open">
-    <details>
-      <summary>
+    <div class="k-block-type-accordion-details" :class="{ 'is-open': isOpen }">
+      <div class="k-block-type-accordion-summary" @click="isOpen = !isOpen">
+        <k-icon class="k-block-type-accordion-arrow" type="angle-right" />
+        <span class="k-block-type-accordion-question">
+          {{ questionValue || (questionField.placeholder || 'Add a question…') }}
+        </span>
         <k-writer
-          ref="summary"
+          ref="question"
           :inline="true"
           marks="false"
-          :placeholder="summaryField.placeholder || 'Add a summary…'"
-          :value="content.summary"
-          @input="update({ summary: $event })"
+          :placeholder="questionField.placeholder || 'Add a question…'"
+          :value="questionValue"
+          @input="update({ question: $event })"
         />
-      </summary>
+      </div>
       <k-writer
-        ref="details"
-        :inline="detailsField.inline || false"
-        :marks="detailsField.marks"
-        :value="content.details"
-        :placeholder="detailsField.placeholder || 'Add some details'"
-        @input="update({ details: $event })"
+        ref="answer"
+        class="k-block-type-accordion-answer"
+        :inline="answerField.inline || false"
+        :marks="answerField.marks"
+        :value="content.answer || content.details"
+        :placeholder="answerField.placeholder || 'Add an answer'"
+        @input="update({ answer: $event })"
       />
-    </details>
+    </div>
   </div>
 </template>

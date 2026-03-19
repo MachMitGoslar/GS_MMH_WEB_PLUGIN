@@ -5,6 +5,49 @@ use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
 use Kirby\Database\Db as Db;
+
+function cleanupProjectGhost(string $root): void
+{
+    if (!$root || !is_dir($root)) {
+        return;
+    }
+
+    $entries = array_values(array_filter(scandir($root) ?: [], function ($entry) {
+        return $entry !== '.' && $entry !== '..';
+    }));
+
+    $nonChanges = array_values(array_filter($entries, function ($entry) {
+        return $entry !== '_changes';
+    }));
+
+    if (count($nonChanges) !== 1 || $nonChanges[0] !== 'project.txt') {
+        return;
+    }
+
+    $projectFile = $root . DIRECTORY_SEPARATOR . 'project.txt';
+    $content = is_file($projectFile) ? trim((string) file_get_contents($projectFile)) : '';
+    if (!preg_match('/^Uuid:\\s*\\S+$/', $content)) {
+        return;
+    }
+
+    @unlink($projectFile);
+    if (is_dir($root . DIRECTORY_SEPARATOR . '_changes')) {
+        $changesEntries = array_values(array_filter(scandir($root . DIRECTORY_SEPARATOR . '_changes') ?: [], function ($entry) {
+            return $entry !== '.' && $entry !== '..';
+        }));
+        if (count($changesEntries) === 0) {
+            @rmdir($root . DIRECTORY_SEPARATOR . '_changes');
+        }
+    }
+    @rmdir($root);
+}
+
+function cleanupProjectGhostDelayed(string $root): void
+{
+    register_shutdown_function(function () use ($root) {
+        cleanupProjectGhost($root);
+    });
+}
 use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
@@ -120,11 +163,44 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'hooks' => [
       'page.update:after' => function (Page $newPage, Page $oldPage) {
+        static $isMovingProject = false;
         if ($oldPage->intendedTemplate()->name() == 'project_step') {
             if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
                 $newPage->parent()->update([
                     'project_status' => $newPage->project_status_to(),
                 ]);
+            }
+        }
+
+        if ($newPage->intendedTemplate()->name() === 'project') {
+            if ($isMovingProject) {
+                return;
+            }
+            $site = $newPage->site();
+            $projectsRoot = $site->find('projects');
+            $archiveRoot = $site->find('project-archive');
+            $oldRoot = $oldPage->root();
+
+            if ($projectsRoot && $archiveRoot) {
+                $shouldArchive = $newPage->project_status()->value() === 'abgeschlossen';
+                $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
+                $isInProjects = $newPage->parent()->id() === $projectsRoot->id();
+
+                if ($shouldArchive && $isInProjects) {
+                    $isMovingProject = true;
+                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $archiveRoot, $oldRoot) {
+                        $newPage->move($archiveRoot);
+                        cleanupProjectGhostDelayed($oldRoot);
+                    });
+                    $isMovingProject = false;
+                } elseif (!$shouldArchive && $isInArchive) {
+                    $isMovingProject = true;
+                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $projectsRoot, $oldRoot) {
+                        $newPage->move($projectsRoot);
+                        cleanupProjectGhostDelayed($oldRoot);
+                    });
+                    $isMovingProject = false;
+                }
             }
         }
       },

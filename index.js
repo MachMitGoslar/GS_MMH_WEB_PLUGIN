@@ -21,7 +21,9 @@
       },
       questionValue() {
         const t = this.content.question || this.content.summary || '';
-        return String(t).replace(/<[^>]*>/g, '').trim();
+        return String(t)
+          .replace(/<[^>]*>/g, '')
+          .trim();
       },
     },
   };
@@ -29,64 +31,66 @@
       var t = this,
         n = t._self._c;
       return n('div', { on: { dblclick: t.open } }, [
-        n('div', { staticClass: 'k-block-type-accordion-details', class: { 'is-open': t.isOpen } }, [
-          n(
-            'div',
-            {
-              staticClass: 'k-block-type-accordion-summary',
-              on: {
-                click: function (r) {
-                  t.isOpen = !t.isOpen;
-                },
-              },
-            },
-            [
-              n('k-icon', {
-                staticClass: 'k-block-type-accordion-arrow',
-                attrs: { type: 'angle-right' },
-              }),
-              n(
-                'span',
-                { staticClass: 'k-block-type-accordion-question' },
-                [
-                  t._v(
-                    ' ' + t._s(t.questionValue || t.questionField.placeholder || 'Add a question…') + ' '
-                  ),
-                ]
-              ),
-              n('k-writer', {
-                ref: 'question',
-                attrs: {
-                  inline: !0,
-                  marks: 'false',
-                  placeholder: t.questionField.placeholder || 'Add a question…',
-                  value: t.questionValue,
-                },
+        n(
+          'div',
+          { staticClass: 'k-block-type-accordion-details', class: { 'is-open': t.isOpen } },
+          [
+            n(
+              'div',
+              {
+                staticClass: 'k-block-type-accordion-summary',
                 on: {
-                  input: function (r) {
-                    return t.update({ question: r });
+                  click: function (r) {
+                    t.isOpen = !t.isOpen;
                   },
                 },
-              }),
-            ],
-            1
-          ),
-          n('k-writer', {
-            ref: 'answer',
-            staticClass: 'k-block-type-accordion-answer',
-            attrs: {
-              inline: t.answerField.inline || !1,
-              marks: t.answerField.marks,
-              value: t.content.answer || t.content.details,
-              placeholder: t.answerField.placeholder || 'Add an answer',
-            },
-            on: {
-              input: function (r) {
-                return t.update({ answer: r });
               },
-            },
-          }),
-        ]),
+              [
+                n('k-icon', {
+                  staticClass: 'k-block-type-accordion-arrow',
+                  attrs: { type: 'angle-right' },
+                }),
+                n('span', { staticClass: 'k-block-type-accordion-question' }, [
+                  t._v(
+                    ' ' +
+                      t._s(t.questionValue || t.questionField.placeholder || 'Add a question…') +
+                      ' '
+                  ),
+                ]),
+                n('k-writer', {
+                  ref: 'question',
+                  attrs: {
+                    inline: !0,
+                    marks: 'false',
+                    placeholder: t.questionField.placeholder || 'Add a question…',
+                    value: t.questionValue,
+                  },
+                  on: {
+                    input: function (r) {
+                      return t.update({ question: r });
+                    },
+                  },
+                }),
+              ],
+              1
+            ),
+            n('k-writer', {
+              ref: 'answer',
+              staticClass: 'k-block-type-accordion-answer',
+              attrs: {
+                inline: t.answerField.inline || !1,
+                marks: t.answerField.marks,
+                value: t.content.answer || t.content.details,
+                placeholder: t.answerField.placeholder || 'Add an answer',
+              },
+              on: {
+                input: function (r) {
+                  return t.update({ answer: r });
+                },
+              },
+            }),
+          ]
+        ),
       ]);
     },
     p = [],
@@ -175,20 +179,87 @@
   const w = $.exports,
     C = {
       data() {
-        return { text: 'No text value' };
+        return {
+          text: 'No text value',
+          pagePreviewText: '',
+          pagePreviewHeadline: '',
+          imagePreviewUrl: '',
+        };
       },
       computed: {
         cardType() {
           return this.content.cardtype;
         },
         headline() {
-          return this.cardType === 'manual' ? this.content.headline : this.page.text;
+          if (this.cardType === 'manual') {
+            return this.content.headline;
+          }
+          return this.pagePreviewHeadline || this.page.text || this.page.title || '';
+        },
+        headline_html() {
+          const e = this.headline || '';
+          return String(e).trim();
+        },
+        subheadline_html() {
+          const e = this.content.subheadline || '';
+          return String(e).trim();
         },
         image() {
           return this.cardType === 'manual' ? this.content.image[0] || {} : this.page.image || {};
         },
         description_content() {
-          return (console.log(this.content.description_content), this.content.description_content);
+          const e = this.content.description_content,
+            t = this.parseBlocks(e);
+          return t || e;
+        },
+        description_blocks() {
+          const e = this.parseBlocks(this.content.description_content);
+          return Array.isArray(e) ? e : [];
+        },
+        description_text() {
+          if (this.cardType === 'page') return this.pagePreviewText || '';
+          if (this.description_blocks.length) {
+            const e = [];
+            return (
+              this.description_blocks.forEach(t => {
+                const n = t && t.content ? t.content : {};
+                ['text', 'heading', 'summary', 'question', 'title', 'caption'].forEach(r => {
+                  typeof n[r] == 'string' && e.push(this.stripHtml(n[r]));
+                });
+              }),
+              e.join(' ').trim()
+            );
+          }
+          const e = this.content.description_content;
+          if (typeof e != 'string') return '';
+          return this.stripHtml(e);
+        },
+        manual_content_html() {
+          if (this.cardType !== 'manual' || !this.description_blocks.length) return '';
+          const e = [];
+          return (
+            this.description_blocks.forEach(t => {
+              if (!t || !t.type) return;
+              const n = t.content || {};
+              if (t.type === 'heading') {
+                const r = n.level || 'h3',
+                  a = n.text || '';
+                e.push(`<${r}>${a}</${r}>`);
+                return;
+              }
+              if (t.type === 'button') {
+                const r = n.linktext || n.text || 'Button';
+                e.push(`<span class="k-block-type-card-button">${r}</span>`);
+                return;
+              }
+              if (n.text) {
+                e.push(n.text);
+                return;
+              }
+              n.quote && e.push(`<blockquote>${n.quote}</blockquote>`);
+            }),
+            e.join('')
+          );
         },
         pageId() {
           return this.page ? this.page.id : '';
@@ -198,48 +269,91 @@
         },
       },
       watch: {
-        description_content: {
-          handler(e) {
-            e === 'page' && this.pageId
-              ? this.$api.get('pages/' + this.pageId.replaceAll('/', '+')).then(t => {
-                  this.description_content =
-                    t.content.text.replace(/(<([^>]+)>)/gi, '') || this.text;
-                })
-              : e === 'manual' &&
-                (this.description_content =
-                  this.content.description_content || this.description_content);
-          },
-          immediate: !0,
-        },
         cardType: {
           handler(e) {
-            e === 'page' && this.pageId
-              ? this.$api.get('pages/' + this.pageId.replaceAll('/', '+')).then(t => {
-                  this.description_content =
-                    t.content.text.replace(/(<([^>]+)>)/gi, '') || this.description_content;
-                })
-              : e === 'manual' &&
-                (this.description_content =
-                  this.content.description_content || this.description_content);
+            e === 'page' && this.loadPagePreview();
           },
           immediate: !0,
         },
         page: {
-          handler(e) {
-            this.cardType === 'page' && this.pageId
-              ? this.$api.get('pages/' + this.pageId.replaceAll('/', '+')).then(t => {
-                  this.description_content =
-                    t.content.text.replace(/(<([^>]+)>)/gi, '') || this.description_content;
-                })
-              : e === 'manual' && (this.text = this.content.description_content || this.text);
+          handler() {
+            this.cardType === 'page' && this.loadPagePreview();
+          },
+          immediate: !0,
+        },
+        image: {
+          handler() {
+            this.loadImagePreview();
           },
           immediate: !0,
         },
       },
       methods: {
+        loadPagePreview() {
+          if (!this.pageId) {
+            this.pagePreviewText = '';
+            this.pagePreviewHeadline = '';
+            return;
+          }
+          this.$api.get('pages/' + this.pageId.replaceAll('/', '+')).then(e => {
+            const t = e && e.content ? e.content : {},
+              n = e && e.title ? e.title : '',
+              r = t.headline || n || '',
+              a = t.text || '';
+            this.pagePreviewHeadline = this.stripHtml(r);
+            this.pagePreviewText = this.stripHtml(a);
+          });
+        },
+        loadImagePreview() {
+          if (this.cardType !== 'manual') {
+            this.imagePreviewUrl = this.image && this.image.url ? this.image.url : '';
+            return;
+          }
+          if (this.image && this.image.url) {
+            this.imagePreviewUrl = this.image.url;
+            return;
+          }
+          const e = this.image && (this.image.id || this.image.uuid);
+          if (!e) {
+            this.imagePreviewUrl = '';
+            return;
+          }
+          this.$api
+            .get('files/' + String(e).replaceAll('/', '+'))
+            .then(t => {
+              this.imagePreviewUrl = (t && t.url) || '';
+            })
+            .catch(() => {
+              this.imagePreviewUrl = '';
+            });
+        },
+        parseBlocks(e) {
+          if (Array.isArray(e)) return e;
+          if (typeof e != 'string') return null;
+          try {
+            const t = JSON.parse(e);
+            return Array.isArray(t) ? t : null;
+          } catch (t) {
+            return null;
+          }
+        },
+        stripHtml(e) {
+          return String(e)
+            .replace(/<[^>]*>/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        },
         updateItem(e, t, n, r) {
           ((e.description_content[t].content[n] = r),
             this.$emit('update', { ...this.content, ...e }));
+        },
+        updateBlock(e, t) {
+          const n = this.parseBlocks(this.content.description_content) || [];
+          (n[e] && (n[e] = t),
+            this.$emit('update', {
+              ...this.content,
+              description_content: JSON.stringify(n),
+            }));
         },
       },
     };
@@ -251,90 +365,35 @@
           'div',
           { staticClass: 'k-block-type-card k-card' },
           [
-            t.image.url
+            t.imagePreviewUrl
               ? n('k-frame', { staticClass: 'hero', attrs: { cover: 'true', ratio: '1/1' } }, [
-                  n('img', { attrs: { src: t.image.url, alt: '' } }),
+                  n('img', { attrs: { src: t.imagePreviewUrl, alt: '' } }),
                 ])
               : t._e(),
             n(
               'div',
               { staticClass: 'content' },
               [
-                n('k-writer', {
-                  staticClass: 'k-block-type-card-headline font-headline',
-                  attrs: { value: t.headline, marks: !1, nodes: !1, inline: !0 },
-                  on: {
-                    input: function (r) {
-                      return t.update({ headline: r });
-                    },
-                  },
-                }),
-                t.content.subheadline
-                  ? n('k-writer', {
-                      staticClass: 'k-block-type-card-subheadline font-subheadline',
-                      attrs: { nodes: !1, inline: !0, value: t.content.subheadline, marks: !1 },
-                      on: {
-                        input: function (r) {
-                          return t.update({ subheadline: r });
-                        },
-                      },
+                t.headline_html
+                  ? n('div', {
+                      staticClass: 'k-block-type-card-headline font-headline',
+                      domProps: { innerHTML: t.headline_html },
                     })
                   : t._e(),
-                typeof t.description_content == 'string'
-                  ? n('div', { staticClass: 'k-block-type-card-text' }, [
-                      t._v(' ' + t._s(t.text) + ' '),
-                    ])
-                  : n(
-                      'div',
-                      t._l(t.description_content, function (r, a) {
-                        return n(
-                          'div',
-                          [
-                            r.type != 'button'
-                              ? n('k-block', {
-                                  attrs: { type: r.type, content: r.content },
-                                  on: {
-                                    update: function (o) {
-                                      return t.updateItem(t.content, a, o);
-                                    },
-                                  },
-                                })
-                              : n('div', [
-                                  n(
-                                    'button',
-                                    {
-                                      class: ['k-panel-button'],
-                                      attrs: {
-                                        'data-style': r.content.buttontype.style || 'pill',
-                                        'data-type': r.content.buttontype.color || 'primary',
-                                      },
-                                    },
-                                    [
-                                      n('k-writer', {
-                                        ref: 'link_text',
-                                        refInFor: !0,
-                                        attrs: {
-                                          inline: !0,
-                                          marks: !1,
-                                          value: r.content.linktext,
-                                          placeholder: 'Call to Action Text',
-                                        },
-                                        on: {
-                                          input: function (o) {
-                                            return t.updateItem(t.content, a, 'linktext', o);
-                                          },
-                                        },
-                                      }),
-                                    ],
-                                    1
-                                  ),
-                                ]),
-                          ],
-                          1
-                        );
-                      }),
-                      0
-                    ),
+                t.subheadline_html
+                  ? n('div', {
+                      staticClass: 'k-block-type-card-subheadline font-subheadline',
+                      domProps: { innerHTML: t.subheadline_html },
+                    })
+                  : t._e(),
+                t.manual_content_html
+                  ? n('div', {
+                      staticClass: 'k-block-type-card-text',
+                      domProps: { innerHTML: t.manual_content_html },
+                    })
+                  : n('div', { staticClass: 'k-block-type-card-text' }, [
+                      t._v(' ' + t._s(t.description_text || t.text) + ' '),
+                    ]),
               ],
               1
             ),
@@ -480,7 +539,9 @@
         },
         headingText() {
           const e = this.content.heading || '';
-          return String(e).replace(/<[^>]*>/g, '').trim();
+          return String(e)
+            .replace(/<[^>]*>/g, '')
+            .trim();
         },
         headingTitle() {
           return this.headingText || this.headingField.placeholder || 'FAQ';

@@ -1622,6 +1622,71 @@
       button: w,
       card: B,
       cta: q,
+      download: {
+        computed: {
+          germanDateTime() {
+            return new Intl.DateTimeFormat("de-DE", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          },
+          publishDisplay() {
+            return this.formatDateTime(this.content.publish_date || "");
+          },
+          endDisplay() {
+            return this.formatDateTime(this.content.end_date || "");
+          },
+          scheduleLabel() {
+            const e = this.publishDisplay,
+              t = this.endDisplay;
+            return e && t
+              ? `🕒 ${e} → ${t}`
+              : e
+                ? `🕒 ab ${e}`
+                : t
+                  ? `🕒 bis ${t}`
+                  : null;
+          },
+          fileName() {
+            const e = Array.isArray(this.content.file) ? this.content.file[0] : null;
+            return e ? e.filename || e.name || e.id || "" : "";
+          },
+        },
+        methods: {
+          formatDateTime(e) {
+            if (!e) {
+              return "";
+            }
+            const t = String(e).replace(" ", "T"),
+              n = new Date(t);
+            return Number.isNaN(n.getTime()) ? String(e) : this.germanDateTime.format(n);
+          },
+          open() {
+            this.$emit('open');
+          },
+        },
+        template: `
+        <div class="k-block-type-download" @dblclick="open" style="position:relative; padding-bottom:2rem;">
+          <div class="k-block-type-download-body" style="display:flex; flex-direction:column; gap:0.25rem;">
+            <div class="k-block-type-download-title" style="font-weight:600;">
+              {{ content.title || 'Datei Download' }}
+            </div>
+            <div v-if="content.text" class="k-block-type-download-text" style="font-size:0.875rem; opacity:0.8;">
+              {{ content.text }}
+            </div>
+            <div v-if="fileName" class="k-block-type-download-file" style="font-size:0.875rem; opacity:0.8;">
+              {{ fileName }}
+            </div>
+            <div v-if="scheduleLabel" class="k-block-type-download-schedule" style="position:absolute; right:0.5rem; bottom:0.2rem; font-size:0.75rem; padding:0.2rem 0.5rem; border-radius:999px; background:#1d4ed8; color:#ffffff;">
+              {{ scheduleLabel }}
+            </div>
+          </div>
+        </div>
+      `,
+      },
       faq: X,
       testimonial: P,
       timeline: J,

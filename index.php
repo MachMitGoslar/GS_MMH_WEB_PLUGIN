@@ -60,6 +60,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/testimonial' => __DIR__ . '/blueprints/blocks/testimonial.yml',
       'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
       'blocks/button' => __DIR__ . '/blueprints/blocks/button.yml',
+      'blocks/download' => __DIR__ . '/blueprints/blocks/download.yml',
       'blocks/faq' => __DIR__ . '/blueprints/blocks/faq2.yml',
       'fields/buttonType' => __DIR__ . '/blueprints/fields/buttonType.yml',
       'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
@@ -73,11 +74,36 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
       'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
+      'blocks/download' => __DIR__ . '/snippets/blocks/download.php',
       'blocks/faq' => __DIR__ . '/snippets/blocks/faq2.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
 
+    ],
+    'blockMethods' => [
+      'scheduleLabel' => function ($block) {
+          $publish = $block->publish_date()->isNotEmpty()
+              ? $block->publish_date()->toDate('d.m.Y H:i')
+              : null;
+          $end = $block->end_date()->isNotEmpty()
+              ? $block->end_date()->toDate('d.m.Y H:i')
+              : null;
+
+          if ($publish && $end) {
+              return "🕒 {$publish} → {$end}";
+          }
+
+          if ($publish) {
+              return "🕒 ab {$publish}";
+          }
+
+          if ($end) {
+              return "🕒 bis {$end}";
+          }
+
+          return null;
+      },
     ],
     'translations' => [
       'en' => [

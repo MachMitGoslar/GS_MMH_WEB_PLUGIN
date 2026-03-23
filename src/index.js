@@ -8,6 +8,7 @@ import Download from './panel_components/blocks/download.vue';
 import Faq from './panel_components/blocks/faq.vue';
 import Testimonial from './panel_components/blocks/testimonial.vue';
 import Timeline from './panel_components/blocks/timeline.vue';
+import Form from './panel_components/blocks/form.vue';
 
 // Node imports
 import Blockquote from './panel_components/nodes/blockquote.vue';
@@ -36,6 +37,7 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     cta: Cta,
     download: Download,
     faq: Faq,
+    form:Form,
     testimonial: Testimonial,
     timeline: Timeline,
   },

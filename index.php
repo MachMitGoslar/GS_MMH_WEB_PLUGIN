@@ -79,7 +79,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
-
     ],
     'blockMethods' => [
       'scheduleLabel' => function ($block) {

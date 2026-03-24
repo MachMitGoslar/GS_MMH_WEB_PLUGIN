@@ -37,7 +37,7 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     cta: Cta,
     download: Download,
     faq: Faq,
-    form:Form,
+    form: Form,
     testimonial: Testimonial,
     timeline: Timeline,
   },

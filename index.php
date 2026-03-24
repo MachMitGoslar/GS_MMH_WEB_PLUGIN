@@ -89,17 +89,17 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
               ? $block->end_date()->toDate('d.m.Y H:i')
               : null;
 
-          if ($publish && $end) {
-              return "🕒 {$publish} → {$end}";
-          }
+        if ($publish && $end) {
+            return "🕒 {$publish} → {$end}";
+        }
 
-          if ($publish) {
-              return "🕒 ab {$publish}";
-          }
+        if ($publish) {
+            return "🕒 ab {$publish}";
+        }
 
-          if ($end) {
-              return "🕒 bis {$end}";
-          }
+        if ($end) {
+            return "🕒 bis {$end}";
+        }
 
           return null;
       },

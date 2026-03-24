@@ -48,6 +48,39 @@ function cleanupProjectGhostDelayed(string $root): void
         cleanupProjectGhost($root);
     });
 }
+
+function resolveProjectArchiveStatus(Page $page): string
+{
+    $status = $page->project_status()->value();
+    $stepsField = $page->content()->get('project_steps');
+
+    if ($stepsField->isEmpty()) {
+        return $status;
+    }
+
+    $latestStatus = null;
+    $latestTimestamp = null;
+
+    foreach ($stepsField->toStructure() as $step) {
+        $stepStatus = trim((string) $step->project_status_to()->value());
+
+        if ($stepStatus === '') {
+            continue;
+        }
+
+        $timestamp = $step->project_start_date()->isNotEmpty()
+            ? $step->project_start_date()->toDate()
+            : null;
+
+        if ($latestStatus === null || $timestamp === null || $latestTimestamp === null || $timestamp >= $latestTimestamp) {
+            $latestStatus = $stepStatus;
+            $latestTimestamp = $timestamp;
+        }
+    }
+
+    return $latestStatus ?? $status;
+}
+
 use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
@@ -207,7 +240,22 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
             $oldRoot = $oldPage->root();
 
             if ($projectsRoot && $archiveRoot) {
-                $shouldArchive = $newPage->project_status()->value() === 'abgeschlossen';
+                $effectiveStatus = resolveProjectArchiveStatus($newPage);
+
+                if ($effectiveStatus !== '' && $effectiveStatus !== $newPage->project_status()->value()) {
+                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $effectiveStatus) {
+                        $newPage->update([
+                            'project_status' => $effectiveStatus,
+                        ]);
+                    });
+                    $newPage = $newPage->clone([
+                        'content' => array_replace($newPage->content()->toArray(), [
+                            'project_status' => $effectiveStatus,
+                        ]),
+                    ]);
+                }
+
+                $shouldArchive = $effectiveStatus === 'abgeschlossen';
                 $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
                 $isInProjects = $newPage->parent()->id() === $projectsRoot->id();
 

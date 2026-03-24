@@ -1806,7 +1806,101 @@
     },
     At = [],
     Bt = a(Tt, Dt, At, !1, null, null);
-  const Mt = Bt.exports;
+  const Mt = Bt.exports,
+    jt = {
+      extends: 'k-layout',
+      computed: {
+        scheduleLabel() {
+          const e = new Intl.DateTimeFormat('de-DE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            t = this.attrs != null && this.attrs.publish_date
+              ? e.format(new Date(String(this.attrs.publish_date).replace(' ', 'T')))
+              : null,
+            n = this.attrs != null && this.attrs.end_date
+              ? e.format(new Date(String(this.attrs.end_date).replace(' ', 'T')))
+              : null;
+          return t && n ? `🕒 ${t} → ${n}` : t ? `🕒 ab ${t}` : n ? `🕒 bis ${n}` : null;
+        },
+      },
+    };
+  var qt = function () {
+      var t = this,
+        n = t._self._c;
+      return n(
+        'section',
+        {
+          staticClass: 'k-layout k-layout-with-schedule',
+          attrs: { 'data-selected': t.isSelected, tabindex: '0' },
+          on: {
+            click: function (r) {
+              return t.$emit('select');
+            },
+          },
+        },
+        [
+          n(
+            'k-grid',
+            { staticClass: 'k-layout-columns' },
+            t._l(t.columns, function (r, o) {
+              return n(
+                'k-layout-column',
+                t._b(
+                  {
+                    key: r.id,
+                    on: {
+                      input: function (c) {
+                        return t.$emit('updateColumn', { column: r, columnIndex: o, blocks: c });
+                      },
+                    },
+                  },
+                  'k-layout-column',
+                  { ...r, endpoints: t.endpoints, fieldsetGroups: t.fieldsetGroups, fieldsets: t.fieldsets },
+                  !1
+                )
+              );
+            }),
+            1
+          ),
+          t.disabled !== !0
+            ? n('nav', { staticClass: 'k-layout-toolbar' }, [
+                t.scheduleLabel
+                  ? n('div', { staticClass: 'k-layout-schedule' }, [t._v(t._s(t.scheduleLabel))])
+                  : t._e(),
+                t.settings
+                  ? n('k-button', {
+                      staticClass: 'k-layout-toolbar-button',
+                      attrs: { title: t.$t('settings'), icon: 'settings' },
+                      on: { click: t.openSettings },
+                    })
+                  : t._e(),
+                n('k-button', {
+                  staticClass: 'k-layout-toolbar-button',
+                  attrs: { icon: 'angle-down' },
+                  on: {
+                    click: function (r) {
+                      return t.$refs.options.toggle();
+                    },
+                  },
+                }),
+                n('k-dropdown-content', {
+                  ref: 'options',
+                  attrs: { options: t.options, 'align-x': 'end' },
+                }),
+                n('k-sort-handle'),
+              ])
+            : t._e(),
+        ],
+        1
+      );
+    },
+    Ut = [],
+    Vt = a(jt, qt, Ut, !1, null, null);
+  const Gt = Vt.exports;
   panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     blocks: {
       accordion: h,
@@ -1829,6 +1923,10 @@
       titleXXL: _t,
     },
     writerMarks: { badge: bt, button: vt, footnote: kt, highlight: yt },
-    components: { 'k-dreamform-db-overview': Ft, 'k-dreamform-db-form': Mt },
+    components: {
+      'k-layout': Gt,
+      'k-dreamform-db-overview': Ft,
+      'k-dreamform-db-form': Mt,
+    },
   });
 })();

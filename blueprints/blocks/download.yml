@@ -14,13 +14,3 @@ fields:
     type: files
     required: true
     help: "Stelle eine Datei bereit"
-  publish_date:
-    label: Anzeigen ab
-    type: date
-    time: true
-    width: 1/2
-  end_date:
-    label: Anzeigen bis
-    type: date
-    time: true
-    width: 1/2

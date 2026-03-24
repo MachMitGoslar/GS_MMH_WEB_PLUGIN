@@ -7,13 +7,3 @@ fields:
   form:
     label: Hinterlege hier dein Formular
     extends: dreamform/fields/form
-  publish_date:
-    label: Anzeigen ab
-    type: date
-    time: true
-    width: 1/2
-  end_date:
-    label: Anzeigen bis
-    type: date
-    time: true
-    width: 1/2

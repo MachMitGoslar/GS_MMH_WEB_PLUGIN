@@ -355,3 +355,19 @@
   font-size: var(--text-sm);
   color: var(--color-text-dimmed);
 }
+
+.k-layout-with-schedule {
+  position: relative;
+  padding-bottom: 2.5rem;
+}
+
+.k-layout-with-schedule .k-layout-schedule {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.2rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #1d4ed8;
+  color: #ffffff;
+}

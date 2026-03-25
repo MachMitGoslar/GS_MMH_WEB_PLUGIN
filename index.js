@@ -808,30 +808,27 @@
   const tt = Y.exports,
     et = {
       props: { content: Object, endpoints: Object, fieldset: Object },
+      data() {
+        return { text: 'Kein Formular ausgewählt', forms: [], formsLoaded: !1 };
+      },
       computed: {
-        formFieldComponent() {
-          var t, n;
-          const e = (n = (t = this.fieldset) == null ? void 0 : t.fields) == null ? void 0 : n.form;
-          return !e || !e.type ? null : 'k-' + e.type + '-field';
-        },
         formValue() {
           var e;
-          return ((e = this.content) == null ? void 0 : e.form) || null;
+          return ((e = this.content) == null ? void 0 : e.form) || [];
         },
-        formLabel() {
-          var t;
-          const e = this.formValue;
-          return e
-            ? Array.isArray(e) && (t = e[0]) != null && t.text
-              ? e[0].text
-              : e != null && e.text
-                ? e.text
-                : e != null && e.title
-                  ? e.title
-                  : typeof e == 'string'
-                    ? e
-                    : 'Formular'
-            : 'Kein Formular ausgewählt';
+        fieldConfig() {
+          var t, n;
+          return ((n = (t = this.fieldset) == null ? void 0 : t.fields) == null ? void 0 : n.form) || null;
+        },
+        selectedForm() {
+          return Array.isArray(this.formValue) ? this.formValue[0] || null : null;
+        },
+        hasSelection() {
+          return !!this.selectedForm;
+        },
+        selectedFormLabel() {
+          var e;
+          return ((e = this.selectedForm) == null ? void 0 : e.text) || 'Kein Formular ausgewählt';
         },
         scheduleLabel() {
           const e = new Intl.DateTimeFormat('de-DE', {
@@ -851,12 +848,63 @@
         },
       },
       methods: {
+        loadForms() {
+          this.formsLoaded ||
+            this.$api
+              .get('gs-mmh-web-plugin/forms')
+              .then(e => {
+                this.forms = Array.isArray(e == null ? void 0 : e.forms) ? e.forms : [];
+                this.formsLoaded = !0;
+              })
+              .catch(() => {
+                this.forms = [];
+              });
+        },
         updateForm(e) {
           this.$emit('update', { ...this.content, form: e });
+        },
+        openPicker() {
+          var e, t;
+          ((e = this.$panel) != null && e.dialog) &&
+            this.$panel.dialog.open({
+              component: 'k-form-dialog',
+              props: {
+                fields: {
+                  form: {
+                    label: (this.fieldConfig && this.fieldConfig.label) || 'Formulare',
+                    type: 'select',
+                    options: this.forms,
+                    value: (this.selectedForm && this.selectedForm.id) || '',
+                    placeholder: 'Bitte Formular auswählen',
+                    required: !1,
+                  },
+                },
+                submitButton: 'OK',
+              },
+              on: {
+                submit: n => {
+                  var r, i;
+                  const s = n.form || '',
+                    o = this.forms.find(e => e.value === s);
+                  this.updateForm(o ? [{ id: o.value, text: o.text }] : []);
+                  (i = (r = this.$panel) == null ? void 0 : r.dialog) == null || i.close();
+                },
+                cancel: () => {
+                  var n, r;
+                  (r = (n = this.$panel) == null ? void 0 : n.dialog) == null || r.close();
+                },
+              },
+            });
+        },
+        clearSelection() {
+          this.updateForm([]);
         },
         open() {
           this.$emit('open');
         },
+      },
+      mounted() {
+        this.loadForms();
       },
     };
   var nt = function () {
@@ -864,61 +912,64 @@
         n = t._self._c;
       return n('div', { staticClass: 'k-block-type-form', on: { dblclick: t.open } }, [
         n('div', { staticClass: 'k-block-type-form-body' }, [
-          n('div', { staticClass: 'k-block-type-form-title' }, [
-            n('span', { staticStyle: { display: 'inline-flex', 'align-items': 'center' } }, [
+          n('div', { staticClass: 'k-block-type-form-field' }, [
+            n('div', { staticClass: 'k-block-type-form-toolbar' }, [
+              n('div', { staticClass: 'k-block-type-form-label' }, [
+                t._v(' ' + t._s((t.fieldConfig && t.fieldConfig.label) || 'Hinterlege hier dein Formular') + ' '),
+              ]),
               n(
-                'svg',
+                'button',
                 {
-                  staticStyle: { 'margin-right': '4px', opacity: '0.7' },
-                  attrs: { width: '18', height: '18', viewBox: '0 0 24 24' },
+                  staticClass: 'k-block-type-form-action',
+                  attrs: { type: 'button' },
+                  on: {
+                    click: function (r) {
+                      return (r.stopPropagation(), t.openPicker());
+                    },
+                  },
                 },
                 [
-                  n('path', {
-                    attrs: {
-                      fill: 'currentColor',
-                      d: 'M17 2a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2H7v16h10zm-2 3v2H9V7zm0 4v2H9v-2zm0 4v2H9v-2z',
-                    },
-                  }),
+                  n('span', { staticClass: 'k-block-type-form-action-icon' }, [t._v('☷')]),
+                  n('span', [t._v('Auswählen')]),
                 ]
               ),
-              t._v(' ' + t._s(t.formLabel) + ' '),
             ]),
             n(
-              'button',
+              'div',
               {
-                staticClass: 'k-block-type-form-select',
-                attrs: { type: 'button' },
+                staticClass: 'k-block-type-form-display',
+                class: { 'is-empty': !t.hasSelection },
                 on: {
                   click: function (r) {
-                    return (r.stopPropagation(), t.open.apply(null, arguments));
+                    return (r.stopPropagation(), t.openPicker());
                   },
                 },
               },
-              [t._v(' Auswählen ')]
+              [
+                n('div', { staticClass: 'k-block-type-form-display-main' }, [
+                  n('span', { staticClass: 'k-block-type-form-file-icon' }, [t._v('📄')]),
+                  n('span', { staticClass: 'k-block-type-form-display-text' }, [
+                    t._v(t._s(t.selectedFormLabel)),
+                  ]),
+                ]),
+                t.hasSelection
+                  ? n(
+                      'button',
+                      {
+                        staticClass: 'k-block-type-form-clear',
+                        attrs: { type: 'button' },
+                        on: {
+                          click: function (r) {
+                            return (r.stopPropagation(), t.clearSelection());
+                          },
+                        },
+                      },
+                      [t._v('⊖')]
+                    )
+                  : t._e(),
+              ]
             ),
           ]),
-          t.formFieldComponent
-            ? n(
-                'div',
-                { staticClass: 'k-block-type-form-field' },
-                [
-                  n(
-                    t.formFieldComponent,
-                    t._b(
-                      {
-                        tag: 'component',
-                        attrs: { value: t.formValue, endpoints: t.endpoints },
-                        on: { input: t.updateForm },
-                      },
-                      'component',
-                      t.fieldset.fields.form,
-                      !1
-                    )
-                  ),
-                ],
-                1
-              )
-            : t._e(),
           t.scheduleLabel
             ? n('div', { staticClass: 'k-block-type-form-schedule' }, [
                 t._v(' ' + t._s(t.scheduleLabel) + ' '),

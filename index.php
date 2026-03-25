@@ -309,6 +309,43 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
       'rooms-booking' => require __DIR__ . '/areas/rooms-booking.php',
     ],
+    'api' => [
+      'routes' => function () {
+          return [
+            [
+              'pattern' => 'gs-mmh-web-plugin/forms',
+              'method' => 'GET',
+              'auth' => true,
+              'action' => function () {
+                  $formsPage = DreamForm::findPageOrDraftRecursive(
+                      DreamForm::option('page', 'page://forms')
+                  );
+
+                  if (!$formsPage) {
+                      return [
+                        'forms' => [],
+                      ];
+                  }
+
+                  $forms = $formsPage
+                      ->children()
+                      ->listed()
+                      ->filterBy('intendedTemplate', 'form')
+                      ->sortBy('title', 'asc')
+                      ->map(fn (Page $form) => [
+                        'value' => $form->id(),
+                        'text' => $form->title()->value(),
+                      ])
+                      ->values();
+
+                  return [
+                    'forms' => $forms,
+                  ];
+              },
+            ],
+          ];
+      },
+    ],
     'assets' => [
       'design-system' => __DIR__ . '/src/design-system.css',
     ],

@@ -6,25 +6,33 @@ export default {
     fieldset: Object,
   },
 
+  data() {
+    return {
+      text: "Kein Formular ausgewählt",
+      forms: [],
+      formsLoaded: false,
+    };
+  },
+
   computed: {
-    formFieldComponent() {
-      const field = this.fieldset?.fields?.form;
-      if (!field || !field.type) return null;
-      return "k-" + field.type + "-field";
-    },
-
     formValue() {
-      return this.content?.form || null;
+      return this.content?.form || [];
     },
 
-    formLabel() {
-      const value = this.formValue;
-      if (!value) return "Kein Formular ausgewählt";
-      if (Array.isArray(value) && value[0]?.text) return value[0].text;
-      if (value?.text) return value.text;
-      if (value?.title) return value.title;
-      if (typeof value === "string") return value;
-      return "Formular";
+    fieldConfig() {
+      return this.fieldset?.fields?.form || null;
+    },
+
+    selectedForm() {
+      return Array.isArray(this.formValue) ? this.formValue[0] || null : null;
+    },
+
+    hasSelection() {
+      return !!this.selectedForm;
+    },
+
+    selectedFormLabel() {
+      return this.selectedForm?.text || "Kein Formular ausgewählt";
     },
 
     scheduleLabel() {
@@ -56,6 +64,18 @@ export default {
   },
 
   methods: {
+    async loadForms() {
+      if (this.formsLoaded) return;
+
+      try {
+        const response = await this.$api.get("gs-mmh-web-plugin/forms");
+        this.forms = Array.isArray(response?.forms) ? response.forms : [];
+        this.formsLoaded = true;
+      } catch (error) {
+        this.forms = [];
+      }
+    },
+
     updateForm(value) {
       this.$emit("update", {
         ...this.content,
@@ -63,9 +83,59 @@ export default {
       });
     },
 
+    openPicker() {
+      if (!this.$panel?.dialog) return;
+
+      this.$panel.dialog.open({
+        component: "k-form-dialog",
+        props: {
+          fields: {
+            form: {
+              label: this.fieldConfig?.label || "Formulare",
+              type: "select",
+              options: this.forms,
+              value: this.selectedForm?.id || "",
+              placeholder: "Bitte Formular auswählen",
+              required: false,
+            },
+          },
+          submitButton: "OK",
+        },
+        on: {
+          submit: (value) => {
+            const selectedId = value.form || "";
+            const selectedForm = this.forms.find((form) => form.value === selectedId);
+
+            this.updateForm(
+              selectedForm
+                ? [
+                    {
+                      id: selectedForm.value,
+                      text: selectedForm.text,
+                    },
+                  ]
+                : []
+            );
+            this.$panel?.dialog?.close();
+          },
+          cancel: () => {
+            this.$panel?.dialog?.close();
+          },
+        },
+      });
+    },
+
+    clearSelection() {
+      this.updateForm([]);
+    },
+
     open() {
       this.$emit("open");
     },
+  },
+
+  mounted() {
+    this.loadForms();
   },
 };
 </script>
@@ -73,38 +143,38 @@ export default {
 <template>
   <div class="k-block-type-form" @dblclick="open">
     <div class="k-block-type-form-body">
+      <div class="k-block-type-form-field">
+        <div class="k-block-type-form-toolbar">
+          <div class="k-block-type-form-label">
+            {{ fieldConfig?.label || "Hinterlege hier dein Formular" }}
+          </div>
+          <button class="k-block-type-form-action" type="button" @click.stop="openPicker">
+            <span class="k-block-type-form-action-icon">☷</span>
+            <span>Auswählen</span>
+          </button>
+        </div>
 
-      <!-- Titel -->
-      <div class="k-block-type-form-title">
-        <span style="display:inline-flex;align-items:center;">
-          <svg width="18" height="18" style="margin-right:4px;opacity:0.7;" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M17 2a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2H7v16h10zm-2 3v2H9V7zm0 4v2H9v-2zm0 4v2H9v-2z"/>
-          </svg>
-          {{ formLabel }}
-        </span>
-
-        <!-- Fallback Button -->
-        <button
-            class="k-block-type-form-select"
-            @click.stop="open"
-            type="button"
+        <div
+          class="k-block-type-form-display"
+          :class="{ 'is-empty': !hasSelection }"
+          @click.stop="openPicker"
         >
-          Auswählen
-        </button>
+          <div class="k-block-type-form-display-main">
+            <span class="k-block-type-form-file-icon">📄</span>
+            <span class="k-block-type-form-display-text">{{ selectedFormLabel }}</span>
+          </div>
+
+          <button
+            v-if="hasSelection"
+            class="k-block-type-form-clear"
+            type="button"
+            @click.stop="clearSelection"
+          >
+            ⊖
+          </button>
+        </div>
       </div>
 
-      <!-- ✅ INLINE FIELD -->
-      <div v-if="formFieldComponent" class="k-block-type-form-field">
-        <component
-            :is="formFieldComponent"
-            v-bind="fieldset.fields.form"
-            :value="formValue"
-            :endpoints="endpoints"
-            @input="updateForm"
-        />
-      </div>
-
-      <!-- Schedule -->
       <div v-if="scheduleLabel" class="k-block-type-form-schedule">
         {{ scheduleLabel }}
       </div>
@@ -124,30 +194,84 @@ export default {
   gap: 0.5rem;
 }
 
-.k-block-type-form-title {
-  font-weight: 600;
+.k-block-type-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.k-block-type-form-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
 
-.k-block-type-form-select {
-  background: #18181b;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.2rem 0.7rem;
-  font-size: 0.9em;
+.k-block-type-form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.k-block-type-form-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: var(--color-gray-200);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.k-block-type-form-select:hover {
-  background: #27272a;
+.k-block-type-form-action-icon {
+  opacity: 0.7;
 }
 
-.k-block-type-form-field {
-  margin-top: 0.25rem;
+.k-block-type-form-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  background: var(--color-background);
+  cursor: pointer;
+}
+
+.k-block-type-form-display.is-empty {
+  color: var(--color-text-light);
+  border-style: dashed;
+}
+
+.k-block-type-form-display-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.k-block-type-form-file-icon {
+  opacity: 0.55;
+}
+
+.k-block-type-form-display-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-block-type-form-clear {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-light);
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 .k-block-type-form-schedule {

@@ -594,51 +594,168 @@
     R = a(P, L, E, !1, null, 'e5b4baf2');
   const z = R.exports,
     H = {
+      data() {
+        return { openItems: [] };
+      },
       computed: {
         items() {
-          return this.content.faq || {};
+          return Array.isArray(this.content.faq) ? this.content.faq : [];
         },
         headingField() {
-          return this.field('heading') || '';
+          return this.field('heading') || {};
         },
         headingText() {
           const e = this.content.heading || '';
-          return String(e)
-            .replace(/<[^>]*>/g, '')
-            .trim();
+          return this.stripHtml(e);
         },
         headingTitle() {
           return this.headingText || this.headingField.placeholder || 'FAQ';
         },
       },
+      created() {
+        this.syncOpenItems();
+      },
+      watch: {
+        items: {
+          handler() {
+            this.syncOpenItems();
+          },
+          deep: !0,
+        },
+      },
       methods: {
-        updateItem(e, t, n, r) {
-          (console.log(r),
-            (e.faq[t].content[n] = r),
-            this.$emit('update', { ...this.content, ...e }));
+        stripHtml(e) {
+          return String(e || '')
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        },
+        questionValue(e) {
+          return !e || !e.content ? '' : this.stripHtml(e.content.question || e.content.summary || '');
+        },
+        answerValue(e) {
+          return !e || !e.content ? '' : e.content.answer || e.content.details || '';
+        },
+        answerPreview(e) {
+          const t = this.stripHtml(this.answerValue(e));
+          return t.length <= 140 ? t : t.slice(0, 140).trim() + '…';
+        },
+        syncOpenItems() {
+          this.openItems.length || 1 !== this.items.length || (this.openItems = [0]);
+        },
+        isOpen(e) {
+          return this.openItems.includes(e);
+        },
+        toggleItem(e) {
+          this.isOpen(e)
+            ? (this.openItems = this.openItems.filter(t => t !== e))
+            : (this.openItems = [...this.openItems, e]);
+        },
+        updateHeading(e) {
+          this.update({ heading: e });
+        },
+        updateItem(e, t, n) {
+          const r = this.items.map(i => ({ ...i, content: { ...(i.content || {}) } }));
+          r[e] && ((r[e].content[t] = n), this.$emit('update', { ...this.content, faq: r }));
         },
       },
     };
   var N = function () {
       var t = this,
         n = t._self._c;
-      return n('div', { on: { dblclick: t.open } }, [
+      return n('div', { staticClass: 'k-block-type-faq', on: { dblclick: t.open } }, [
         n('header', { staticClass: 'k-block-header' }, [
           n(
             'h3',
-            {
-              staticClass: 'k-block-title',
-              staticStyle: {
-                'white-space': 'nowrap',
-                overflow: 'hidden',
-                'text-overflow': 'ellipsis',
-              },
-            },
+            { staticClass: 'k-block-title k-block-type-faq-title' },
             [n('k-icon', { attrs: { type: 'question' } }), t._v(' ' + t._s(t.headingTitle) + ' ')],
             1
           ),
         ]),
-        t.content.faq.length ? t._e() : n('div', [t._v('No items yet')]),
+        n('k-writer', {
+          staticClass: 'k-block-type-faq-heading',
+          attrs: {
+            inline: !1 !== t.headingField.inline,
+            marks: t.headingField.marks,
+            placeholder: t.headingField.placeholder || 'FAQ heading',
+            value: t.content.heading,
+          },
+          on: { input: t.updateHeading },
+        }),
+        t.items.length
+          ? n(
+              'div',
+              { staticClass: 'k-block-type-faq-list' },
+              t._l(t.items, function (e, r) {
+                return n(
+                  'article',
+                  {
+                    key: e.id || r,
+                    staticClass: 'k-block-type-faq-item',
+                    class: { 'is-open': t.isOpen(r) },
+                  },
+                  [
+                    n(
+                      'button',
+                      {
+                        staticClass: 'k-block-type-faq-toggle',
+                        attrs: { type: 'button' },
+                        on: {
+                          click: function (i) {
+                            i.stopPropagation(), t.toggleItem(r);
+                          },
+                        },
+                      },
+                      [
+                        n('span', { staticClass: 'k-block-type-faq-index' }, [t._v(t._s(r + 1))]),
+                        n('span', { staticClass: 'k-block-type-faq-preview' }, [
+                          n('span', { staticClass: 'k-block-type-faq-question-preview' }, [
+                            t._v(t._s(t.questionValue(e) || 'Frage eingeben…')),
+                          ]),
+                        ]),
+                        n('k-icon', {
+                          staticClass: 'k-block-type-faq-arrow',
+                          attrs: { type: 'angle-right' },
+                        }),
+                      ],
+                      1
+                    ),
+                    t.isOpen(r)
+                      ? n('div', { staticClass: 'k-block-type-faq-fields' }, [
+                          t.answerValue(e)
+                            ? n('div', {
+                                staticClass: 'k-block-type-faq-answer-preview',
+                                domProps: { innerHTML: t._s(t.answerValue(e)) },
+                              })
+                            : t._e(),
+                          n('k-writer', {
+                            staticClass: 'k-block-type-faq-answer',
+                            attrs: {
+                              inline: !1,
+                              marks: !0,
+                              placeholder: 'Antwort eingeben…',
+                              value: t.answerValue(e),
+                            },
+                            on: {
+                              input: function (i) {
+                                return t.updateItem(
+                                  r,
+                                  void 0 !== e.content.answer ? 'answer' : 'details',
+                                  i
+                                );
+                              },
+                            },
+                          }),
+                        ])
+                      : t._e(),
+                  ]
+                );
+              }),
+              0
+            )
+          : n('div', { staticClass: 'k-block-type-faq-empty' }, [
+              t._v('Noch keine FAQ-Einträge. Per Block-Editor Einträge hinzufügen.'),
+            ]),
       ]);
     },
     X = [],

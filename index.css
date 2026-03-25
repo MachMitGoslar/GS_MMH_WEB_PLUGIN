@@ -289,6 +289,114 @@
   background: #1d4ed8;
   color: #fff;
 }
+.k-block-type-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.k-block-type-faq-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.k-block-type-faq-heading {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+}
+.k-block-type-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.k-block-type-faq-item {
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-background);
+  overflow: hidden;
+}
+.k-block-type-faq-item.is-open {
+  border-color: var(--color-focus);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-focus) 25%, transparent);
+}
+.k-block-type-faq-toggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  border: 0;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.k-block-type-faq-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  background: var(--color-gray-200);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.k-block-type-faq-preview {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.k-block-type-faq-question-preview {
+  min-width: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+.k-block-type-faq-answer-preview {
+  min-width: 0;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  white-space: normal;
+}
+.k-block-type-faq-arrow {
+  transition: transform 0.2s ease;
+}
+.k-block-type-faq-item.is-open .k-block-type-faq-arrow {
+  transform: rotate(90deg);
+}
+.k-block-type-faq-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0 1rem 1rem 3.35rem;
+}
+.k-block-type-faq-fields > .k-block-type-faq-answer-preview {
+  color: var(--color-text-light);
+  line-height: 1.5;
+}
+.k-block-type-faq-fields > .k-block-type-faq-answer-preview p + p {
+  margin-top: 0.5rem;
+}
+.k-block-type-faq-answer {
+  min-height: 5rem;
+}
+.k-block-type-faq-answer .k-writer {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.k-block-type-faq-empty {
+  padding: 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-text-light);
+  text-align: center;
+}
 .dfdb-empty {
   display: flex;
   flex-direction: column;

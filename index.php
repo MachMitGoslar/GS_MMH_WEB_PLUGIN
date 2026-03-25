@@ -51,34 +51,7 @@ function cleanupProjectGhostDelayed(string $root): void
 
 function resolveProjectArchiveStatus(Page $page): string
 {
-    $status = $page->project_status()->value();
-    $stepsField = $page->content()->get('project_steps');
-
-    if ($stepsField->isEmpty()) {
-        return $status;
-    }
-
-    $latestStatus = null;
-    $latestTimestamp = null;
-
-    foreach ($stepsField->toStructure() as $step) {
-        $stepStatus = trim((string) $step->project_status_to()->value());
-
-        if ($stepStatus === '') {
-            continue;
-        }
-
-        $timestamp = $step->project_start_date()->isNotEmpty()
-            ? $step->project_start_date()->toDate()
-            : null;
-
-        if ($latestStatus === null || $timestamp === null || $latestTimestamp === null || $timestamp >= $latestTimestamp) {
-            $latestStatus = $stepStatus;
-            $latestTimestamp = $timestamp;
-        }
-    }
-
-    return $latestStatus ?? $status;
+    return trim((string) $page->project_status()->value());
 }
 
 use tobimori\DreamForm\DreamForm;

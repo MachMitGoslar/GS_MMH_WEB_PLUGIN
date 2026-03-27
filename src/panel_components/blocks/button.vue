@@ -15,13 +15,6 @@ export default {
 
 <template>
   <div @dblclick="open">
-    <header class="k-block-header">
-      <h3 class="k-block-title">
-        <k-icon type="button" />
-        Button
-      </h3>
-    </header>
-
     <div
       class="gs-c-btn"
       :data-style="(content.buttontype && content.buttontype.style) || 'pill'"

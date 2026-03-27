@@ -106,64 +106,160 @@ export default {
 </script>
 
 <template>
-  <div class="k-block-type-faq" @dblclick="open">
-    <header class="k-block-header">
-      <h3 class="k-block-title k-block-type-faq-title">
+  <div class="k-block-type k-block-type-faq" @dblclick="open">
+
+    <div class="k-block-body">
+
+      <!-- HEADER -->
+      <div class="k-block-faq-title">
         <k-icon type="question" />
-        {{ headingTitle }}
-      </h3>
-    </header>
+        <strong>{{ headingTitle }}</strong>
+      </div>
 
-    <k-writer
-      class="k-block-type-faq-heading"
-      :inline="headingField.inline !== false"
-      :marks="headingField.marks"
-      :placeholder="headingField.placeholder || 'FAQ heading'"
-      :value="content.heading"
-      @input="updateHeading"
-    />
+      <!-- HEADING EDITOR -->
+      <k-writer
+        class="k-block-faq-heading"
+        :inline="headingField.inline !== false"
+        :marks="headingField.marks"
+        :placeholder="headingField.placeholder || 'FAQ heading'"
+        :value="content.heading"
+        @input="updateHeading"
+      />
 
-    <div v-if="items.length" class="k-block-type-faq-list">
-      <article
-        v-for="(item, index) in items"
-        :key="item.id || index"
-        class="k-block-type-faq-item"
-        :class="{ 'is-open': isOpen(index) }"
-      >
-        <button
-          type="button"
-          class="k-block-type-faq-toggle"
-          @click.stop="toggleItem(index)"
+      <!-- LIST -->
+      <div v-if="items.length" class="k-block-faq-list">
+
+        <article
+          v-for="(item, index) in items"
+          :key="item.id || index"
+          class="k-block-faq-item"
+          :class="{ 'is-open': isOpen(index) }"
         >
-          <span class="k-block-type-faq-index">{{ index + 1 }}</span>
-          <span class="k-block-type-faq-preview">
-            <span class="k-block-type-faq-question-preview">
+
+          <!-- TOGGLE ROW -->
+          <button
+            type="button"
+            class="k-block-faq-toggle"
+            @click.stop="toggleItem(index)"
+          >
+
+            <div class="k-block-faq-index">
+              {{ index + 1 }}
+            </div>
+
+            <div class="k-block-faq-preview">
               {{ questionValue(item) || 'Frage eingeben…' }}
-            </span>
-          </span>
-          <k-icon class="k-block-type-faq-arrow" type="angle-right" />
-        </button>
+            </div>
 
-        <div v-if="isOpen(index)" class="k-block-type-faq-fields">
-          <div
-            v-if="answerValue(item)"
-            class="k-block-type-faq-answer-preview"
-            v-html="answerValue(item)"
-          ></div>
-          <k-writer
-            class="k-block-type-faq-answer"
-            :inline="false"
-            marks="true"
-            :placeholder="'Antwort eingeben…'"
-            :value="answerValue(item)"
-            @input="updateItem(index, item.content.answer !== undefined ? 'answer' : 'details', $event)"
-          />
-        </div>
-      </article>
+            <k-icon type="angle-right" class="k-block-faq-icon" />
+
+          </button>
+
+          <!-- EXPANDED -->
+          <div v-if="isOpen(index)" class="k-block-faq-body">
+
+            <div
+              v-if="answerValue(item)"
+              class="k-block-faq-answer-preview"
+              v-html="answerValue(item)"
+            ></div>
+
+            <k-writer
+              class="k-block-faq-answer"
+              :inline="false"
+              marks="true"
+              placeholder="Antwort eingeben…"
+              :value="answerValue(item)"
+              @input="updateItem(index, item.content.answer !== undefined ? 'answer' : 'details', $event)"
+            />
+
+          </div>
+
+        </article>
+
+      </div>
+
+      <!-- EMPTY -->
+      <div v-else class="k-block-empty">
+        Noch keine FAQ-Einträge
+      </div>
+
     </div>
 
-    <div v-else class="k-block-type-faq-empty">
-      Noch keine FAQ-Einträge. Per Block-Editor Einträge hinzufügen.
-    </div>
   </div>
 </template>
+<style>
+.k-block-faq-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.k-block-faq-heading {
+  margin-bottom: 0.75rem;
+}
+
+.k-block-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ITEM CARD */
+.k-block-faq-item {
+  background: var(--color-gray-100);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+/* TOGGLE */
+.k-block-faq-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.k-block-faq-index {
+  min-width: 1.5rem;
+  font-weight: 600;
+  color: var(--color-focus);
+}
+
+.k-block-faq-preview {
+  flex: 1;
+  text-align: left;
+  color: var(--color-text);
+}
+
+/* ICON */
+.k-block-faq-icon {
+  transition: transform 0.2s ease;
+  opacity: 0.6;
+}
+
+.k-block-faq-item.is-open .k-block-faq-icon {
+  transform: rotate(90deg);
+}
+
+/* EXPANDED AREA */
+.k-block-faq-body {
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.k-block-faq-answer-preview {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+</style>

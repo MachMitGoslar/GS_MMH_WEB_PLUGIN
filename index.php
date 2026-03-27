@@ -294,11 +294,11 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
                       DreamForm::option('page', 'page://forms')
                   );
 
-                  if (!$formsPage) {
-                      return [
-                        'forms' => [],
-                      ];
-                  }
+                if (!$formsPage) {
+                    return [
+                      'forms' => [],
+                    ];
+                }
 
                   $forms = $formsPage
                       ->children()

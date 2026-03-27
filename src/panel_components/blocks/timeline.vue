@@ -1,12 +1,5 @@
 <template>
   <div @dblclick="open" class="k-block-type k-block-type-timeline">
-    <header class="k-block-header">
-      <h3 class="k-block-title">
-        <k-icon type="list" />
-        Timeline
-      </h3>
-    </header>
-
     <div class="k-block-body">
       <div v-if="content.title" class="k-block-timeline-title">
         <strong>{{ content.title }}</strong>
@@ -16,7 +9,9 @@
         <div v-for="(entry, index) in displayEntries" :key="index" class="k-block-timeline-item">
           <div class="k-block-timeline-date">{{ entry.year || 'No year' }}</div>
           <div class="k-block-timeline-text">{{ entry.summary || 'No summary' }}</div>
-          <div v-if="entry.image" class="k-block-timeline-image">📷</div>
+          <div v-if="entry.image?.length" class="k-block-timeline-image">
+            <img :src="entry.image[0].url" alt="" />
+          </div>
         </div>
         <div v-if="totalEntries > 3" class="k-block-timeline-more">
           ... und {{ totalEntries - 3 }} weitere Einträge
@@ -130,6 +125,12 @@ export default {
 
 .k-block-timeline-image {
   font-size: 1rem;
+}
+.k-block-timeline-image img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 0.25rem;
 }
 
 .k-block-timeline-more {

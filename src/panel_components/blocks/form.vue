@@ -144,23 +144,15 @@ export default {
   <div class="k-block-type-form" @dblclick="open">
     <div class="k-block-type-form-body">
       <div class="k-block-type-form-field">
-        <div class="k-block-type-form-toolbar">
-          <div class="k-block-type-form-label">
-            {{ fieldConfig?.label || "Hinterlege hier dein Formular" }}
-          </div>
-          <button class="k-block-type-form-action" type="button" @click.stop="openPicker">
-            <span class="k-block-type-form-action-icon">☷</span>
-            <span>Auswählen</span>
-          </button>
-        </div>
-
         <div
           class="k-block-type-form-display"
           :class="{ 'is-empty': !hasSelection }"
           @click.stop="openPicker"
         >
           <div class="k-block-type-form-display-main">
-            <span class="k-block-type-form-file-icon">📄</span>
+            <div class="k-block-type-form-file-icon">
+              <k-icon type="survey" />
+            </div>
             <span class="k-block-type-form-display-text">{{ selectedFormLabel }}</span>
           </div>
 
@@ -185,7 +177,6 @@ export default {
 <style scoped>
 .k-block-type-form {
   position: relative;
-  padding-bottom: 2.5rem;
 }
 
 .k-block-type-form-body {
@@ -234,7 +225,7 @@ export default {
 .k-block-type-form-display {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.75rem;
   min-height: 2.75rem;
   padding: 0.75rem 0.9rem;

@@ -1,4 +1,5 @@
 name: download
+icon: download
 label: Datei Download
 fields:
   title:

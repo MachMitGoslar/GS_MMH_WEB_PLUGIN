@@ -69,41 +69,97 @@ export default {
 </script>
 
 <template>
-  <div class="k-block-type-download" @dblclick="open">
-    <div class="k-block-type-download-body">
-      <div class="k-block-type-download-title">{{ titleText }}</div>
-      <div v-if="descriptionText" class="k-block-type-download-text">{{ descriptionText }}</div>
-      <div v-if="fileName" class="k-block-type-download-file">{{ fileName }}</div>
-      <div v-if="scheduleLabel" class="k-block-type-download-schedule">
+  <div @dblclick="open" class="k-block-type k-block-type-download">
+    <div class="k-block-body">
+
+      <!-- Title -->
+      <div v-if="titleText" class="k-block-download-title">
+        <strong>{{ titleText }}</strong>
+      </div>
+
+      <!-- Preview -->
+      <div v-if="fileName" class="k-block-download-preview">
+        <div class="k-block-download-item">
+
+          <!-- Icon -->
+          <div class="k-block-download-icon">
+            <k-icon type="download" />
+          </div>
+
+          <!-- Content -->
+          <div class="k-block-download-content">
+            <div class="k-block-download-file">
+              {{ fileName }}
+            </div>
+
+            <div v-if="descriptionText" class="k-block-download-text">
+              {{ descriptionText }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div v-else class="k-block-empty">
+        Keine Datei ausgewählt
+      </div>
+
+      <!-- Schedule -->
+      <div v-if="scheduleLabel" class="k-block-download-schedule">
         {{ scheduleLabel }}
       </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-.k-block-type-download {
-  position: relative;
-  padding-bottom: 2rem;
+.k-block-download-title {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
 }
 
-.k-block-type-download-body {
+.k-block-download-preview {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
-.k-block-type-download-title {
-  font-weight: 600;
-}
-
-.k-block-type-download-text,
-.k-block-type-download-file {
+.k-block-download-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: var(--color-gray-100);
+  border-radius: 0.25rem;
   font-size: 0.875rem;
-  opacity: 0.8;
 }
 
-.k-block-type-download-schedule {
+.k-block-download-icon {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.k-block-download-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.k-block-download-file {
+  font-weight: 600;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.k-block-download-text {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.k-block-download-schedule {
   position: absolute;
   right: 0.5rem;
   bottom: 0.2rem;

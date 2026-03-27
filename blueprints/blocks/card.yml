@@ -1,5 +1,5 @@
 name: Card
-icon: image
+icon: info-card
 fields:
   cardType:
     label: Card Type

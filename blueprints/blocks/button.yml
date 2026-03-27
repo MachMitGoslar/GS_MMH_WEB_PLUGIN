@@ -1,5 +1,5 @@
 name: Button
-icon: button
+icon: circle
 default:
   link: https://machmit.goslar.de
   linktext: Jetzt anmelden!

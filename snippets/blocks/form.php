@@ -1,4 +1,4 @@
-<h2><?php echo $block->form()->toPage()->title(); ?></h2>
+<?= ($form = $block->form()->toPage())?->title() ?>
 <?php snippet('dreamform/form', [
     'form' => $block->form()->toPage(),
     'attr' => [

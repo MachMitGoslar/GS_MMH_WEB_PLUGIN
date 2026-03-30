@@ -153,7 +153,7 @@ export default {
             <div class="k-block-type-form-file-icon">
               <k-icon type="survey" />
             </div>
-            <span class="k-block-type-form-display-text">{{ selectedFormLabel }}</span>
+            <span class="k-block-type-form-display-text">{{ selectedFormLabel  }}</span>
           </div>
 
           <button
@@ -225,7 +225,7 @@ export default {
 .k-block-type-form-display {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.75rem;
   min-height: 2.75rem;
   padding: 0.75rem 0.9rem;

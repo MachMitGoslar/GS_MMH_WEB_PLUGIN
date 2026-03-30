@@ -3,12 +3,11 @@ $layout = $block->content()->get('layout')->or('standard')->value();
 $entries = $block->content()->get('entries')->toStructure();
 ?>
 
-<?php if ($layout === 'constrained'): ?>
-
+<?php if ($layout === 'constrained') : ?>
     <!-- CONSTRAINED VERSION -->
     <div class="timeline-block timeline-block--compact c-project-timeline">
 
-        <?php foreach ($entries as $entry): ?>
+        <?php foreach ($entries as $entry) : ?>
             <?php $image = $entry->image()->toFile(); ?>
 
             <div class="c-project-timeline-card">
@@ -25,7 +24,7 @@ $entries = $block->content()->get('entries')->toStructure();
                         <?= $entry->summary()->kt() ?>
                     </div>
 
-                    <?php if ($image): ?>
+                    <?php if ($image) : ?>
                         <div class="image">
                             <img src="<?= $image->url() ?>" alt="<?= $entry->year()->esc() ?>">
                         </div>
@@ -38,12 +37,11 @@ $entries = $block->content()->get('entries')->toStructure();
 
     </div>
 
-<?php else: ?>
-
+<?php else : ?>
     <!-- STANDARD VERSION (dein bestehendes CSS) -->
     <div class="timeline-block timeline-block--standard c-project-timeline">
 
-        <?php foreach ($entries as $entry): ?>
+        <?php foreach ($entries as $entry) : ?>
             <?php $image = $entry->image()->toFile(); ?>
 
             <div class="c-project-timeline-card">
@@ -60,7 +58,7 @@ $entries = $block->content()->get('entries')->toStructure();
                         <?= $entry->summary()->kt() ?>
                     </div>
 
-                    <?php if ($image): ?>
+                    <?php if ($image) : ?>
                         <div class="image">
                             <img src="<?= $image->url() ?>" alt="<?= $entry->year()->esc() ?>">
                         </div>

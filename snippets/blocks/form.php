@@ -67,4 +67,4 @@
         'success' => [], // Success message
         'inactive' => [], // Inactive message
     ],
-]); ?>
+]);

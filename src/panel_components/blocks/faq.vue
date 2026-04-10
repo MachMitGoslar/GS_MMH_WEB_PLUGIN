@@ -7,7 +7,7 @@ export default {
   },
   computed: {
     items() {
-      return Array.isArray(this.content.faq) ? this.content.faq : [];
+      return this.normalizeFaqItems(this.content.faq);
     },
     headingField() {
       return this.field('heading') || {};
@@ -23,6 +23,16 @@ export default {
   created() {
     this.syncOpenItems();
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.resizeAnswerInputs();
+    });
+  },
+  updated() {
+    this.$nextTick(() => {
+      this.resizeAnswerInputs();
+    });
+  },
   watch: {
     items: {
       handler() {
@@ -32,6 +42,32 @@ export default {
     },
   },
   methods: {
+    normalizeFaqItems(value) {
+      if (Array.isArray(value)) {
+        return value;
+      }
+
+      if (value && typeof value === 'object') {
+        if (Array.isArray(value.blocks)) {
+          return value.blocks;
+        }
+
+        if (Array.isArray(value.value)) {
+          return value.value;
+        }
+      }
+
+      if (typeof value === 'string' && value.trim() !== '') {
+        try {
+          const parsed = JSON.parse(value);
+          return this.normalizeFaqItems(parsed);
+        } catch (error) {
+          return [];
+        }
+      }
+
+      return [];
+    },
     stripHtml(value) {
       return String(value || '')
         .replace(/<[^>]*>/g, ' ')
@@ -44,6 +80,13 @@ export default {
       }
 
       return this.stripHtml(item.content.question || item.content.summary || '');
+    },
+    questionRawValue(item) {
+      if (!item || !item.content) {
+        return '';
+      }
+
+      return item.content.question || item.content.summary || '';
     },
     answerValue(item) {
       if (!item || !item.content) {
@@ -83,6 +126,18 @@ export default {
     },
     updateHeading(value) {
       this.update({ heading: value });
+    },
+    resizeTextarea(element) {
+      if (!element) {
+        return;
+      }
+
+      element.style.height = 'auto';
+      element.style.height = `${element.scrollHeight}px`;
+    },
+    resizeAnswerInputs() {
+      const elements = this.$el?.querySelectorAll('.k-block-faq-answer-input') || [];
+      elements.forEach((element) => this.resizeTextarea(element));
     },
     updateItem(index, name, value) {
       const faq = this.items.map(item => ({
@@ -151,27 +206,21 @@ export default {
               {{ questionValue(item) || 'Frage eingeben…' }}
             </div>
 
-            <k-icon type="angle-right" class="k-block-faq-icon" />
+            <k-icon type="angle-down" class="k-block-faq-icon" />
+            
 
           </button>
 
           <!-- EXPANDED -->
           <div v-if="isOpen(index)" class="k-block-faq-body">
 
-            <div
-              v-if="answerValue(item)"
-              class="k-block-faq-answer-preview"
-              v-html="answerValue(item)"
-            ></div>
-
-            <k-writer
-              class="k-block-faq-answer"
-              :inline="false"
-              marks="true"
+            <textarea
+              class="k-block-faq-answer-input"
+              rows="1"
               placeholder="Antwort eingeben…"
-              :value="answerValue(item)"
-              @input="updateItem(index, item.content.answer !== undefined ? 'answer' : 'details', $event)"
-            />
+              :value="stripHtml(answerValue(item))"
+              @input="updateItem(index, item.content.answer !== undefined ? 'answer' : 'details', $event.target.value); resizeTextarea($event.target)"
+            ></textarea>
 
           </div>
 
@@ -209,8 +258,9 @@ export default {
 
 /* ITEM CARD */
 .k-block-faq-item {
-  background: var(--color-gray-100);
-  border-radius: 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-white);
   overflow: hidden;
 }
 
@@ -219,10 +269,10 @@ export default {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
   border: 0;
-  background: transparent;
+  background: var(--color-gray-100);
   cursor: pointer;
   font-size: 0.875rem;
 }
@@ -241,25 +291,52 @@ export default {
 
 /* ICON */
 .k-block-faq-icon {
+  margin-left: auto;
+  align-self: center;
+  flex-shrink: 0;
   transition: transform 0.2s ease;
   opacity: 0.6;
 }
 
-.k-block-faq-item.is-open .k-block-faq-icon {
-  transform: rotate(90deg);
-}
 
 /* EXPANDED AREA */
 .k-block-faq-body {
-  padding: 0.5rem 0.75rem 0.75rem;
+  padding: 0.75rem;
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
-.k-block-faq-answer-preview {
-  font-size: 0.85rem;
-  color: var(--color-text-light);
+.k-block-faq-question-input,
+.k-block-faq-answer-input {
+  color: var(--color-text) !important;
+  -webkit-text-fill-color: var(--color-text);
+  background: var(--color-background);
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  font: inherit;
+}
+
+.k-block-faq-answer-input {
+  min-height: 2.5rem;
+  overflow: hidden;
+  resize: none;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+  line-height: 1.5;
+}
+
+.k-block-faq-question-input {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
 }
 </style>

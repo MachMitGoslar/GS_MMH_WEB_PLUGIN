@@ -1,5 +1,5 @@
 <?php $form = $block->form()->toPage(); ?>
-<?php if ($form): ?>
+<?php if ($form) : ?>
   <h2 class="dreamform-title"><?= $form->title()->html() ?></h2>
 <?php endif ?>
 <?php snippet('dreamform/form', [

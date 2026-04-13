@@ -16,7 +16,7 @@
         @click.prevent="$panel.open('formular-eingaenge/' + form.slug)"
       >
         <div class="dfdb-form-card-icon">
-          <k-icon type="form" />
+          <k-icon type="text" />
         </div>
         <div class="dfdb-form-card-content">
           <h3>{{ form.title }}</h3>
@@ -109,6 +109,12 @@ export default {
   justify-content: center;
   background: var(--color-gray-200);
   border-radius: var(--rounded);
+  color: var(--color-text);
+}
+
+.dfdb-form-card-icon .k-icon {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .dfdb-form-card-content {

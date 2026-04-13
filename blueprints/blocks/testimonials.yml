@@ -12,6 +12,8 @@ fields:
     type: files
     layout: list
     max: 1
+    query: page.images.template('image')
+    uploads: image
   name:
     type: writer
     inline: true

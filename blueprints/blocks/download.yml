@@ -13,5 +13,8 @@ fields:
   file:
     label: Datei auswählen
     type: files
+    max: 1
+    uploads: default
+    query: page.files.template("default")
     required: true
     help: "Stelle eine Datei bereit"

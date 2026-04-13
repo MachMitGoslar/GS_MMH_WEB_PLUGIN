@@ -14,10 +14,10 @@
 
 <?php if ($file = $block->file()->toFile()) : ?>
     <!-- Ganze Box klickbar -->
-    <a href="<?= $file->url() ?>" download class="c-downloadBlock flex items-start gap-4 p-4 border rounded-md bg-white shadow-sm no-underline">
+    <a href="<?= $file->url() ?>" download class="c-downloadBlock no-underline">
 
         <!-- Icon links -->
-        <div class="c-downloadBlock__icon flex-shrink-0 mt-1">
+        <div class="c-downloadBlock__icon">
             <div class="c-downloadBlock__meta">
                 <div class="c-downloadBlock__icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">

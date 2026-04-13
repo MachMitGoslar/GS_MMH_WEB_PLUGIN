@@ -87,6 +87,85 @@ const Layout = {
   `,
 };
 
+const PdfViewButton = {
+  props: {
+    disabled: Boolean,
+    icon: String,
+    link: String,
+    target: String,
+    text: [String, Array],
+    title: [String, Array],
+  },
+
+  computed: {
+    buttonText() {
+      if (Array.isArray(this.text)) {
+        return this.text[0] || 'PDF';
+      }
+
+      return this.text || 'PDF';
+    },
+    buttonTitle() {
+      if (Array.isArray(this.title)) {
+        return this.title[0] || this.buttonText;
+      }
+
+      return this.title || this.buttonText;
+    },
+    resolvedLink() {
+      return this.link || this.$attrs.link || this.derivePdfLinkFromPanel();
+    },
+  },
+
+  methods: {
+    derivePdfLinkFromPanel() {
+      const panelPath = window.panel?.view?.path || '';
+
+      const match = panelPath.match(/^pages\/(.+)$/);
+
+      if (!match) {
+        return null;
+      }
+
+      const pageId = match[1].replaceAll('+', '/');
+
+      if (!pageId.startsWith('newsletter/')) {
+        return null;
+      }
+
+      return `${window.location.origin}/${pageId}?pdf=1`;
+    },
+    handleClick(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (this.disabled === true) {
+        return;
+      }
+
+      if (!this.resolvedLink) {
+        return;
+      }
+
+      window.open(this.resolvedLink, this.target || '_blank');
+    },
+  },
+
+  template: `
+    <k-button
+      class="k-pdf-view-button"
+      :icon="icon || 'download'"
+      :text="buttonText"
+      :title="buttonTitle"
+      :disabled="disabled"
+      size="sm"
+      variant="filled"
+      :responsive="false"
+      @click="handleClick"
+    />
+  `,
+};
+
 panel.plugin('gs-mmh/gs-mmh-web-plugin', {
   blocks: {
     accordion: Accordion,
@@ -119,6 +198,7 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
 
   components: {
     'k-layout': Layout,
+    'k-pdf-view-button': PdfViewButton,
     'k-dreamform-db-overview': DreamformDbOverview,
     'k-dreamform-db-form': DreamformDbForm,
   },

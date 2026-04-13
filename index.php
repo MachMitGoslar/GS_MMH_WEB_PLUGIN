@@ -60,6 +60,24 @@ use tobimori\DreamForm\DreamForm;
 DreamForm::register(DatabaseAction::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
+    'options' => [
+      'panel.viewButtons.page' => [
+        'pdf' => function (Page $page) {
+            if ($page->intendedTemplate()->name() !== 'newsletter') {
+                return null;
+            }
+
+            return [
+              'icon' => 'download',
+              'text' => 'PDF',
+              'title' => 'PDF herunterladen',
+              'link' => $page->url() . '?pdf=1',
+              'responsive' => false,
+              'target' => '_blank',
+            ];
+        },
+      ],
+    ],
     'blueprints' => [
       'blocks/accordion' => __DIR__ . '/blueprints/blocks/accordion.yml',
       'blocks/card' => __DIR__ . '/blueprints/blocks/card.yml',

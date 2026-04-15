@@ -10,7 +10,7 @@ $entries = $block->content()->get('entries')->toStructure();
         <?php foreach ($entries as $entry) : ?>
             <?php $image = $entry->image()->toFile(); ?>
 
-            <div class="c-project-timeline-card">
+            <div class="c-project-timeline-card<?= $image ? ' c-project-timeline-card--has-image' : '' ?>">
 
                 <div class="info">
 
@@ -44,7 +44,7 @@ $entries = $block->content()->get('entries')->toStructure();
         <?php foreach ($entries as $entry) : ?>
             <?php $image = $entry->image()->toFile(); ?>
 
-            <div class="c-project-timeline-card">
+            <div class="c-project-timeline-card<?= $image ? ' c-project-timeline-card--has-image' : '' ?>">
 
                 <div class="info">
 

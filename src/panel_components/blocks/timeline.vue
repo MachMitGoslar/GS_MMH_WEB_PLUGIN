@@ -99,38 +99,50 @@ export default {
 .k-block-timeline-preview {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .k-block-timeline-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
-  padding: 0.5rem;
-  background: var(--color-gray-100);
-  border-radius: 0.25rem;
+  position: relative;
+  min-height: 4.5rem;
+  padding: 0.75rem 4.5rem 0.75rem 0.875rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
   font-size: 0.875rem;
 }
 
 .k-block-timeline-date {
+  display: block;
+  margin-bottom: 0.25rem;
   font-weight: 600;
-  color: var(--color-focus);
-  min-width: 5rem;
+  color: var(--color-text);
 }
 
 .k-block-timeline-text {
   flex: 1;
   color: var(--color-text);
+  line-height: 1.45;
 }
 
 .k-block-timeline-image {
-  font-size: 1rem;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 3rem;
+  height: 3rem;
 }
 .k-block-timeline-image img {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 0.25rem;
+  border-radius: 999px;
+  border: 2px solid var(--color-white);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
 }
 
 .k-block-timeline-more {

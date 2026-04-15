@@ -1,7 +1,7 @@
 export default {
   get button() {
     return {
-      icon: 'bolt',
+      icon: 'circle',
       label: 'Button',
     };
   },

@@ -2,7 +2,7 @@
 export default {
   data() {
     return {
-      text: 'No text value',
+      text: '',
       pagePreviewText: '',
       pagePreviewHeadline: '',
       imagePreviewUrl: '',
@@ -210,29 +210,89 @@ export default {
 </script>
 
 <template>
-  <div @dblclick="open">
-    <div class="k-block-type-card k-card">
-      <k-frame v-if="imagePreviewUrl" class="hero" cover="true" ratio="1/1">
-        <img :src="imagePreviewUrl" alt="" />
-      </k-frame>
-      <div class="content">
+  <div @dblclick="open" class="k-block-type k-block-type-card">
+    <div class="k-block-body">
+
+      <!-- IMAGE -->
+      <div v-if="imagePreviewUrl" class="k-block-card-image">
+        <k-frame cover ratio="1/1">
+          <img :src="imagePreviewUrl" alt="" />
+        </k-frame>
+      </div>
+
+      <!-- ICON fallback -->
+      <div v-else class="k-block-card-image-placeholder">
+        <k-icon type="info-card" />
+      </div>
+
+      <!-- CONTENT -->
+      <div class="k-block-card-content">
+
+        <!-- HEADLINE -->
         <div
           v-if="headline_html"
-          class="k-block-type-card-headline font-headline"
+          class="k-block-card-headline"
           v-html="headline_html"
         ></div>
 
+        <!-- SUBHEADLINE -->
         <div
           v-if="subheadline_html"
-          class="k-block-type-card-subheadline font-subheadline"
+          class="k-block-card-subheadline"
           v-html="subheadline_html"
         ></div>
 
-        <div v-if="manual_content_html" class="k-block-type-card-text" v-html="manual_content_html"></div>
-        <div v-else class="k-block-type-card-text">
+        <!-- TEXT -->
+        <div v-if="manual_content_html" class="k-block-card-text" v-html="manual_content_html"></div>
+
+        <div v-else class="k-block-card-text">
           {{ description_text || text }}
         </div>
+
       </div>
+
     </div>
   </div>
 </template>
+<style>
+.k-block-card-image {
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.k-block-card-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+  background: var(--color-gray-100);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-light);
+}
+
+.k-block-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.k-block-card-headline {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.k-block-card-subheadline {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.k-block-card-text {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  opacity: 0.85;
+}
+
+</style>

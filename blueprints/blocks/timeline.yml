@@ -1,5 +1,6 @@
 name: Timeline
-icon: list
+icon: clock
+
 fields:
   title:
     label: Titel

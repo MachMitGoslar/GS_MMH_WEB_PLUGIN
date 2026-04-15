@@ -1,7 +1,7 @@
 export default {
   get button() {
     return {
-      icon: 'highlight',
+      icon: 'sparkling',
       label: 'Highlight',
     };
   },

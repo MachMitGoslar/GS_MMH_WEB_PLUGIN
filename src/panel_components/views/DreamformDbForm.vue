@@ -67,7 +67,7 @@ export default {
   props: {
     formSlug: String,
     formTitle: String,
-    tableName: String,
+    resourceKey: String,
     submissions: Array,
     columns: Array,
     pagination: Object,
@@ -98,10 +98,10 @@ export default {
       return str.length > 60 ? str.substring(0, 60) + '…' : str;
     },
     showDetail(id) {
-      this.$panel.dialog.open('dreamform-db/' + this.tableName + '/' + id);
+      this.$panel.dialog.open('dreamform-db/' + this.resourceKey + '/' + id);
     },
     confirmDelete(id) {
-      this.$panel.dialog.open('dreamform-db/' + this.tableName + '/' + id + '/delete');
+      this.$panel.dialog.open('dreamform-db/' + this.resourceKey + '/' + id + '/delete');
     },
     goToPage(page) {
       this.$panel.open('formular-eingaenge/' + this.formSlug + '?page=' + page);

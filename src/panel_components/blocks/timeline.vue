@@ -1,12 +1,5 @@
 <template>
   <div @dblclick="open" class="k-block-type k-block-type-timeline">
-    <header class="k-block-header">
-      <h3 class="k-block-title">
-        <k-icon type="list" />
-        Timeline
-      </h3>
-    </header>
-
     <div class="k-block-body">
       <div v-if="content.title" class="k-block-timeline-title">
         <strong>{{ content.title }}</strong>
@@ -16,7 +9,9 @@
         <div v-for="(entry, index) in displayEntries" :key="index" class="k-block-timeline-item">
           <div class="k-block-timeline-date">{{ entry.year || 'No year' }}</div>
           <div class="k-block-timeline-text">{{ entry.summary || 'No summary' }}</div>
-          <div v-if="entry.image" class="k-block-timeline-image">📷</div>
+          <div v-if="entry.image?.length" class="k-block-timeline-image">
+            <img :src="entry.image[0].url" alt="" />
+          </div>
         </div>
         <div v-if="totalEntries > 3" class="k-block-timeline-more">
           ... und {{ totalEntries - 3 }} weitere Einträge
@@ -104,32 +99,50 @@ export default {
 .k-block-timeline-preview {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .k-block-timeline-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
-  padding: 0.5rem;
-  background: var(--color-gray-100);
-  border-radius: 0.25rem;
+  position: relative;
+  min-height: 4.5rem;
+  padding: 0.75rem 4.5rem 0.75rem 0.875rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
   font-size: 0.875rem;
 }
 
 .k-block-timeline-date {
+  display: block;
+  margin-bottom: 0.25rem;
   font-weight: 600;
-  color: var(--color-focus);
-  min-width: 5rem;
+  color: var(--color-text);
 }
 
 .k-block-timeline-text {
   flex: 1;
   color: var(--color-text);
+  line-height: 1.45;
 }
 
 .k-block-timeline-image {
-  font-size: 1rem;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 3rem;
+  height: 3rem;
+}
+.k-block-timeline-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 2px solid var(--color-white);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
 }
 
 .k-block-timeline-more {

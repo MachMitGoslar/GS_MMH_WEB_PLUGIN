@@ -7,10 +7,6 @@ use Kirby\Toolkit\V;
 use GsMmh\WebPlugin\NewsletterRecipients;
 
 return function (App $kirby) {
-    $compileNewsletter = function (Page $page): string {
-        return mmhNewsletterHtml($page);
-    };
-
     $newsletterPage = function (string $panelId): Page {
         $page = page(str_replace('+', '/', $panelId));
 
@@ -238,7 +234,6 @@ return function (App $kirby) {
                 },
                 'submit' => function (string $panelId) use (
                     $kirby,
-                    $compileNewsletter,
                     $newsletterPage,
                     $newsletterText,
                     $mailMeta
@@ -250,12 +245,16 @@ return function (App $kirby) {
                         throw new Exception('Es sind noch keine Empfänger eingetragen.');
                     }
 
-                    $html = $compileNewsletter($page);
                     $text = $newsletterText($page);
                     $meta = $mailMeta();
                     $sent = 0;
 
                     foreach ($recipients as $recipient) {
+                        $unsubscribeUrl = NewsletterRecipients::unsubscribeUrl($recipient);
+                        $html = mmhNewsletterHtml($page, [
+                            'unsubscribeUrl' => $unsubscribeUrl,
+                        ]);
+
                         $kirby->email([
                             'from' => $meta['from'],
                             'fromName' => 'MachMit!Haus',
@@ -264,7 +263,7 @@ return function (App $kirby) {
                             'subject' => 'Newsletter: ' . $page->title()->value(),
                             'body' => [
                                 'html' => $html,
-                                'text' => $text,
+                                'text' => $text . "\n\nAbmelden: " . $unsubscribeUrl,
                             ],
                         ]);
 
@@ -309,7 +308,6 @@ return function (App $kirby) {
                 },
                 'submit' => function (string $panelId) use (
                     $kirby,
-                    $compileNewsletter,
                     $newsletterPage,
                     $newsletterText,
                     $mailMeta
@@ -330,8 +328,11 @@ return function (App $kirby) {
                         'to' => $email,
                         'subject' => 'Newsletter: ' . $page->title()->value(),
                         'body' => [
-                            'html' => $compileNewsletter($page),
-                            'text' => $newsletterText($page),
+                            'html' => mmhNewsletterHtml($page, [
+                                'unsubscribeUrl' => mmhAbsoluteUrl('newsletter-abmelden'),
+                            ]),
+                            'text' => $newsletterText($page) . "\n\nAbmelden: "
+                                . mmhAbsoluteUrl('newsletter-abmelden'),
                         ],
                     ]);
 

@@ -51,7 +51,52 @@ function cleanupProjectGhostDelayed(string $root): void
 
 function resolveProjectArchiveStatus(Page $page): string
 {
+    if (method_exists($page, 'effectiveProjectStatus')) {
+        return $page->effectiveProjectStatus();
+    }
+
     return trim((string) $page->project_status()->value());
+}
+
+function projectStepTimestamp(Page $step): int
+{
+    $date = $step->project_start_date()->value();
+    if ($date === '') {
+        return 0;
+    }
+
+    $time = $step->project_start_time()->or('00:00')->value();
+    $timestamp = strtotime($date . ' ' . $time);
+
+    return $timestamp === false ? 0 : $timestamp;
+}
+
+function latestPublishedProjectStepStatus(Page $project): string
+{
+    $latestStep = $project
+        ->children()
+        ->listed()
+        ->filterBy('intendedTemplate', 'project_step')
+        ->filter(fn (Page $step) => $step->project_status_to()->isNotEmpty())
+        ->sortBy(fn (Page $step) => projectStepTimestamp($step), 'desc')
+        ->first();
+
+    return $latestStep ? trim((string) $latestStep->project_status_to()->value()) : '';
+}
+
+function syncProjectStatusFromLatestStep(Page $project): void
+{
+    $latestStatus = latestPublishedProjectStepStatus($project);
+
+    if ($latestStatus === '' || $latestStatus === trim((string) $project->project_status()->value())) {
+        return;
+    }
+
+    Kirby::instance()->impersonate('kirby', function () use ($project, $latestStatus) {
+        $project->update([
+            'project_status' => $latestStatus,
+        ]);
+    });
 }
 
 use tobimori\DreamForm\DreamForm;
@@ -195,11 +240,11 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'hooks' => [
       'page.update:after' => function (Page $newPage, Page $oldPage) {
         static $isMovingProject = false;
-        if ($oldPage->intendedTemplate()->name() == 'project_step') {
-            if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
-                $newPage->parent()->update([
-                    'project_status' => $newPage->project_status_to(),
-                ]);
+        if ($newPage->intendedTemplate()->name() === 'project_step') {
+            $parent = $newPage->parent();
+
+            if ($parent && $parent->intendedTemplate()->name() === 'project') {
+                syncProjectStatusFromLatestStep($parent);
             }
         }
 
@@ -214,19 +259,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
 
             if ($projectsRoot && $archiveRoot) {
                 $effectiveStatus = resolveProjectArchiveStatus($newPage);
-
-                if ($effectiveStatus !== '' && $effectiveStatus !== $newPage->project_status()->value()) {
-                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $effectiveStatus) {
-                        $newPage->update([
-                            'project_status' => $effectiveStatus,
-                        ]);
-                    });
-                    $newPage = $newPage->clone([
-                        'content' => array_replace($newPage->content()->toArray(), [
-                            'project_status' => $effectiveStatus,
-                        ]),
-                    ]);
-                }
 
                 $shouldArchive = $effectiveStatus === 'abgeschlossen';
                 $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
@@ -251,6 +283,14 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
         }
       },
       'page.changeStatus:after' => function (Page $newPage, Page $oldPage) {
+        if ($newPage->intendedTemplate()->name() === 'project_step') {
+            $parent = $newPage->parent();
+
+            if ($parent && $parent->intendedTemplate()->name() === 'project') {
+                syncProjectStatusFromLatestStep($parent);
+            }
+        }
+
           // Auto-set publish date for newsletters when published for the first time
         if ($newPage->intendedTemplate()->name() === 'newsletter') {
             // Check if page is being published (listed) and doesn't have a publish date yet

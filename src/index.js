@@ -27,6 +27,7 @@ import HighlightMark from './panel_components/writer_marks/Highlight.js';
 // View imports
 import DreamformDbOverview from './panel_components/views/DreamformDbOverview.vue';
 import DreamformDbForm from './panel_components/views/DreamformDbForm.vue';
+import NewsletterRecipients from './panel_components/sections/NewsletterRecipients.vue';
 
 const Layout = {
   extends: 'k-layout',
@@ -121,5 +122,9 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     'k-layout': Layout,
     'k-dreamform-db-overview': DreamformDbOverview,
     'k-dreamform-db-form': DreamformDbForm,
+  },
+
+  sections: {
+    'newsletter-recipients': NewsletterRecipients,
   },
 });

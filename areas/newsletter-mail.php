@@ -251,7 +251,7 @@ return function (App $kirby) {
 
                     foreach ($recipients as $recipient) {
                         $unsubscribeUrl = NewsletterRecipients::unsubscribeUrl($recipient);
-                        $html = mmhNewsletterHtml($page, [
+                        $html = mmhNewsletterMobileHtml($page, [
                             'unsubscribeUrl' => $unsubscribeUrl,
                         ]);
 
@@ -328,7 +328,7 @@ return function (App $kirby) {
                         'to' => $email,
                         'subject' => 'Newsletter: ' . $page->title()->value(),
                         'body' => [
-                            'html' => mmhNewsletterHtml($page, [
+                            'html' => mmhNewsletterMobileHtml($page, [
                                 'unsubscribeUrl' => mmhAbsoluteUrl('newsletter-abmelden'),
                             ]),
                             'text' => $newsletterText($page) . "\n\nAbmelden: "

@@ -1,6 +1,7 @@
 <?php
 
 use GsMmh\WebPlugin\DatabaseAction;
+use GsMmh\WebPlugin\NewsletterRecipients;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
@@ -57,6 +58,7 @@ function resolveProjectArchiveStatus(Page $page): string
 use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
+@include_once __DIR__ . '/NewsletterRecipients.php';
 DreamForm::register(DatabaseAction::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
@@ -85,6 +87,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
+    ],
+    'sections' => [
+      'newsletter-recipients' => require __DIR__ . '/sections/newsletter-recipients.php',
     ],
     'blockMethods' => [
       'scheduleLabel' => function ($block) {
@@ -280,6 +285,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
+      'newsletter-mail' => require __DIR__ . '/areas/newsletter-mail.php',
       'rooms-booking' => require __DIR__ . '/areas/rooms-booking.php',
     ],
     'api' => [
@@ -313,6 +319,17 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
 
                   return [
                     'forms' => $forms,
+                  ];
+              },
+            ],
+            [
+              'pattern' => 'gs-mmh-web-plugin/newsletter-recipients',
+              'method' => 'GET',
+              'auth' => true,
+              'action' => function () {
+                  return [
+                    'recipients' => NewsletterRecipients::all(),
+                    'total' => count(NewsletterRecipients::all()),
                   ];
               },
             ],

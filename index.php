@@ -307,7 +307,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
                 }
 
                   $forms = $formsPage
-                      ->childrenAndDrafts()
+                      ->children()
+                      ->listed()
                       ->filterBy('intendedTemplate', 'form')
                       ->sortBy('title', 'asc')
                       ->map(fn (Page $form) => [

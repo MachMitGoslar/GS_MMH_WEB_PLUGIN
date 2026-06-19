@@ -23,6 +23,7 @@ import BadgeMark from './panel_components/writer_marks/Badge.js';
 import ButtonMark from './panel_components/writer_marks/Button.js';
 import FootnoteMark from './panel_components/writer_marks/Footnote.js';
 import HighlightMark from './panel_components/writer_marks/Highlight.js';
+import LinkMark from './panel_components/writer_marks/Link.js';
 
 // View imports
 import DreamformDbOverview from './panel_components/views/DreamformDbOverview.vue';
@@ -116,6 +117,7 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     button: ButtonMark,
     footnote: FootnoteMark,
     highlight: HighlightMark,
+    link: LinkMark,
   },
 
   components: {

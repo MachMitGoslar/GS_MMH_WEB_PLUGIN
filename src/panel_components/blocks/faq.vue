@@ -137,7 +137,7 @@ export default {
     },
     resizeAnswerInputs() {
       const elements = this.$el?.querySelectorAll('.k-block-faq-answer-input') || [];
-      elements.forEach((element) => this.resizeTextarea(element));
+      elements.forEach(element => this.resizeTextarea(element));
     },
     updateItem(index, name, value) {
       const faq = this.items.map(item => ({
@@ -162,9 +162,7 @@ export default {
 
 <template>
   <div class="k-block-type k-block-type-faq" @dblclick="open">
-
     <div class="k-block-body">
-
       <!-- HEADER -->
       <div class="k-block-faq-title">
         <k-icon type="question" />
@@ -183,21 +181,14 @@ export default {
 
       <!-- LIST -->
       <div v-if="items.length" class="k-block-faq-list">
-
         <article
           v-for="(item, index) in items"
           :key="item.id || index"
           class="k-block-faq-item"
           :class="{ 'is-open': isOpen(index) }"
         >
-
           <!-- TOGGLE ROW -->
-          <button
-            type="button"
-            class="k-block-faq-toggle"
-            @click.stop="toggleItem(index)"
-          >
-
+          <button type="button" class="k-block-faq-toggle" @click.stop="toggleItem(index)">
             <div class="k-block-faq-index">
               {{ index + 1 }}
             </div>
@@ -207,34 +198,31 @@ export default {
             </div>
 
             <k-icon type="angle-down" class="k-block-faq-icon" />
-            
-
           </button>
 
           <!-- EXPANDED -->
           <div v-if="isOpen(index)" class="k-block-faq-body">
-
             <textarea
               class="k-block-faq-answer-input"
               rows="1"
               placeholder="Antwort eingeben…"
               :value="stripHtml(answerValue(item))"
-              @input="updateItem(index, item.content.answer !== undefined ? 'answer' : 'details', $event.target.value); resizeTextarea($event.target)"
+              @input="
+                updateItem(
+                  index,
+                  item.content.answer !== undefined ? 'answer' : 'details',
+                  $event.target.value
+                );
+                resizeTextarea($event.target);
+              "
             ></textarea>
-
           </div>
-
         </article>
-
       </div>
 
       <!-- EMPTY -->
-      <div v-else class="k-block-empty">
-        Noch keine FAQ-Einträge
-      </div>
-
+      <div v-else class="k-block-empty">Noch keine FAQ-Einträge</div>
     </div>
-
   </div>
 </template>
 <style>
@@ -297,7 +285,6 @@ export default {
   transition: transform 0.2s ease;
   opacity: 0.6;
 }
-
 
 /* EXPANDED AREA */
 .k-block-faq-body {

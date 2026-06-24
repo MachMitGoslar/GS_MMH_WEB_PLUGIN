@@ -1,4 +1,5 @@
-const modalIdFromFormId = formId => `form-modal-${String(formId || '').replace(/[^a-zA-Z0-9_-]+/g, '-')}`;
+const modalIdFromFormId = formId =>
+  `form-modal-${String(formId || '').replace(/[^a-zA-Z0-9_-]+/g, '-')}`;
 
 const linkTypeFromHref = href => {
   const value = String(href || '');
@@ -13,14 +14,16 @@ const linkTypeFromHref = href => {
 };
 
 const fieldNameForLinkType = type => {
-  return {
-    anchor: 'anchor',
-    email: 'email',
-    file: 'file',
-    page: 'page',
-    tel: 'tel',
-    url: 'url',
-  }[type] || 'url';
+  return (
+    {
+      anchor: 'anchor',
+      email: 'email',
+      file: 'file',
+      page: 'page',
+      tel: 'tel',
+      url: 'url',
+    }[type] || 'url'
+  );
 };
 
 const pageUuidFromValue = value => {
@@ -235,7 +238,7 @@ export default {
           transaction.addMark(
             range.from,
             range.from + title.length,
-            schema.marks.link.create(markAttrs),
+            schema.marks.link.create(markAttrs)
           );
           this.editor.view.dispatch(transaction);
           return;

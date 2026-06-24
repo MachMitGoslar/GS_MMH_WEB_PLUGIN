@@ -64,7 +64,7 @@ export default {
         return;
       }
 
-      const siblings = Array.from(container.parentElement.children).filter((element) =>
+      const siblings = Array.from(container.parentElement.children).filter(element =>
         element.classList.contains('k-block-container-type-accordion')
       );
 
@@ -86,16 +86,13 @@ export default {
 </script>
 <template>
   <div class="k-block-type-accordion" @dblclick="open">
-
     <div class="k-block-type-accordion-item k-block-faq-item" :class="{ 'is-open': isOpen }">
-
       <!-- HEADER -->
       <button
         type="button"
         class="k-block-type-accordion-header k-block-faq-toggle"
         @click="isOpen = !isOpen"
       >
-
         <div class="k-block-faq-index">
           {{ displayIndex }}
         </div>
@@ -104,11 +101,7 @@ export default {
           <div>{{ stripHtml(questionValue) || 'Frage eingeben…' }}</div>
         </div>
 
-        <k-icon
-          class="k-icon k-block-faq-icon"
-          type="angle-down"
-        />
-
+        <k-icon class="k-icon k-block-faq-icon" type="angle-down" />
       </button>
 
       <!-- ANSWER -->
@@ -118,13 +111,13 @@ export default {
           rows="1"
           :placeholder="answerField.placeholder || 'Antwort eingeben…'"
           :value="stripHtml(answerValue)"
-          @input="updateAnswer($event.target.value); resizeAnswerInput()"
+          @input="
+            updateAnswer($event.target.value);
+            resizeAnswerInput();
+          "
         ></textarea>
-
       </div>
-
     </div>
-
   </div>
 </template>
 <style>
@@ -207,5 +200,4 @@ export default {
   background: transparent;
   padding: 0;
 }
-
 </style>

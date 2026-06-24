@@ -71,7 +71,6 @@ export default {
 <template>
   <div @dblclick="open" class="k-block-type k-block-type-download">
     <div class="k-block-body">
-
       <!-- Title -->
       <div v-if="titleText" class="k-block-download-title">
         <strong>{{ titleText }}</strong>
@@ -80,7 +79,6 @@ export default {
       <!-- Preview -->
       <div v-if="fileName" class="k-block-download-preview">
         <div class="k-block-download-item">
-
           <!-- Icon -->
           <div class="k-block-download-icon">
             <k-icon type="download" />
@@ -96,20 +94,16 @@ export default {
               {{ descriptionText }}
             </div>
           </div>
-
         </div>
       </div>
 
       <!-- Empty -->
-      <div v-else class="k-block-empty">
-        Keine Datei ausgewählt
-      </div>
+      <div v-else class="k-block-empty">Keine Datei ausgewählt</div>
 
       <!-- Schedule -->
       <div v-if="scheduleLabel" class="k-block-download-schedule">
         {{ scheduleLabel }}
       </div>
-
     </div>
   </div>
 </template>

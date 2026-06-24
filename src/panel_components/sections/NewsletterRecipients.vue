@@ -85,9 +85,7 @@ export default {
         const response = await this.$api.get('gs-mmh-web-plugin/newsletter-recipients');
         this.loadedRecipients = Array.isArray(response?.recipients) ? response.recipients : [];
       } catch (error) {
-        this.$panel.notification.error(
-          error?.message || 'Empfänger konnten nicht geladen werden.'
-        );
+        this.$panel.notification.error(error?.message || 'Empfänger konnten nicht geladen werden.');
       } finally {
         this.isLoading = false;
       }

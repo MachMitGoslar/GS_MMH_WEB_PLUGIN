@@ -4,6 +4,7 @@ import Box from './panel_components/blocks/box.vue';
 import Button from './panel_components/blocks/button.vue';
 import Card from './panel_components/blocks/card.vue';
 import Cta from './panel_components/blocks/cta.vue';
+import Divider from './panel_components/blocks/divider.vue';
 import Download from './panel_components/blocks/download.vue';
 import Faq from './panel_components/blocks/faq.vue';
 import Testimonial from './panel_components/blocks/testimonial.vue';
@@ -96,6 +97,7 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
     button: Button,
     card: Card,
     cta: Cta,
+    divider: Divider,
     download: Download,
     faq: Faq,
     form: Form,

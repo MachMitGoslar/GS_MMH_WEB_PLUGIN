@@ -6,23 +6,23 @@ body:
   - type: markdown
     attributes:
       value: |
-        Danke fuer deinen Vorschlag! Jede Idee hilft, das Plugin besser zu machen.
+        Danke für deinen Vorschlag! Jede Idee hilft, das Plugin besser zu machen.
 
   - type: textarea
     id: problem
     attributes:
       label: Problem / Motivation
-      description: Welches Problem soll geloest werden oder was fehlt aktuell?
-      placeholder: Beschreibe, warum dieses Feature hilfreich waere.
+      description: Welches Problem soll gelöst werden oder was fehlt aktuell?
+      placeholder: Beschreibe, warum dieses Feature hilfreich wäre.
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Gewuenschte Loesung
+      label: Gewünschte Lösung
       description: Wie stellst du dir die Funktion vor?
-      placeholder: Beschreibe, wie es funktionieren koennte.
+      placeholder: Beschreibe, wie es funktionieren könnte.
     validations:
       required: true
 
@@ -30,7 +30,7 @@ body:
     id: alternatives
     attributes:
       label: Alternativen
-      description: Hast du andere Loesungswege in Betracht gezogen?
+      description: Hast du andere Lösungswege in Betracht gezogen?
     validations:
       required: false
 
@@ -38,7 +38,7 @@ body:
     id: area
     attributes:
       label: Bereich
-      description: Welcher Teil des Plugins waere betroffen?
+      description: Welcher Teil des Plugins wäre betroffen?
       options:
         - Neuer Block
         - Bestehender Block
@@ -59,8 +59,8 @@ body:
       description: Wie wichtig ist dieses Feature?
       options:
         - Nice to have
-        - Wuerde den Alltag erleichtern
-        - Wird dringend benoetigt
+        - Würde den Alltag erleichtern
+        - Wird dringend benötigt
     validations:
       required: false
 
@@ -68,14 +68,14 @@ body:
     id: screenshots
     attributes:
       label: Skizzen / Screenshots
-      description: Falls vorhanden, fuege Mockups, Skizzen oder Referenzbeispiele hinzu.
+      description: Falls vorhanden, füge Mockups, Skizzen oder Referenzbeispiele hinzu.
     validations:
       required: false
 
   - type: textarea
     id: context
     attributes:
-      label: Zusaetzlicher Kontext
+      label: Zusätzlicher Kontext
       description: Gibt es weitere Informationen zu diesem Vorschlag?
     validations:
       required: false

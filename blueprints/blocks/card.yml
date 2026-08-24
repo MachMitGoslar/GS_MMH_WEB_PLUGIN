@@ -56,3 +56,36 @@ fields:
     options:
       primary: Hell
       secondary: Dunkel
+
+  linkMode:
+    label: Verlinkung
+    type: select
+    default: none
+    empty: false
+    help: Legt fest, wie die Karte verlinkt wird.
+    options:
+      none: Keine Verlinkung
+      header: Header verlinken
+      button: Button im Footer
+  link:
+    label: Linkziel
+    type: link
+    help: Nur nötig, wenn die Karte nicht aus einer Seite erstellt wird.
+    when:
+      cardType: manual
+  linktext:
+    label: Linktext
+    type: text
+    default: Mehr erfahren
+    placeholder: Mehr erfahren
+    when:
+      linkMode: button
+  buttontype:
+    extends: fields/buttonType
+    label: Button-Stil
+    default:
+      color: primary
+      size: regular
+      style: pill
+    when:
+      linkMode: button

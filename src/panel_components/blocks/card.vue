@@ -97,6 +97,12 @@ export default {
       });
       return parts.join('');
     },
+    linkMode() {
+      return this.content.linkmode || 'none';
+    },
+    linkLabel() {
+      return this.content.linktext || 'Mehr erfahren';
+    },
     pageId() {
       return this.page ? this.page.id : '';
     },
@@ -232,6 +238,8 @@ export default {
         <div
           v-if="headline_html"
           class="k-block-card-headline"
+          :data-linked="linkMode === 'header'"
+          :style="linkMode === 'header' ? { color: 'var(--color-blue-700, #1e40af)', textDecoration: 'underline' } : null"
           v-html="headline_html"
         ></div>
 
@@ -247,6 +255,22 @@ export default {
 
         <div v-else class="k-block-card-text">
           {{ description_text || text }}
+        </div>
+
+        <!-- FOOTER BUTTON -->
+        <div v-if="linkMode === 'button'" class="k-block-card-footer" style="margin-top: 0.5rem">
+          <span
+            class="k-block-type-card-button"
+            style="
+              display: inline-block;
+              padding: 0.125rem 0.5rem;
+              border-radius: 999px;
+              background: var(--color-gray-200, #ececec);
+              font-size: 0.75rem;
+              font-weight: 600;
+            "
+            >{{ linkLabel }}</span
+          >
         </div>
 
       </div>

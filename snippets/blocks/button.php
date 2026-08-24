@@ -3,7 +3,7 @@
 /** @var \Kirby\Cms\Block $block */
 
 // Felder aus button.yml
-$link = $block->link()->toUrl();
+$link = $block->link()->toUrl() ?? '';
 $text = $block->linktext()->or('Button');
 $target = $block->target()->toBool();
 

@@ -65,12 +65,15 @@ The website handles **page-specific implementation** that only applies to mmh.go
 
 Registered as `gs-mmh/gs-mmh-web-plugin` in `index.php`. Provides:
 
-| Extension      | Count | Description                                         |
-|----------------|-------|-----------------------------------------------------|
-| Blueprints     | 9     | Block and field definitions                          |
-| Snippets       | 7     | Frontend PHP templates                               |
+| Extension      | Count | Description                                          |
+|----------------|-------|------------------------------------------------------|
+| Blueprints     | 13    | Block and field definitions, shared `tabs/seo` tab   |
+| Snippets       | 13    | Frontend PHP templates, SEO meta and JSON-LD         |
+| Sections       | 2     | Newsletter recipients, SEO link preview              |
+| Page methods   | 1     | `$page->seo()`                                       |
+| Site methods   | 1     | `$site->seo()`                                       |
 | Translations   | 2     | English and German                                   |
-| Routes         | 4     | Newsletter RSS, app analytics, Ferienpass            |
+| Routes         | 6     | Sitemap, robots.txt, newsletter RSS, app, Ferienpass |
 | Hooks          | 2     | Project status sync, auto-publish dates              |
 | Areas          | 1     | "Formular-Eingaenge" panel area                      |
 | Assets         | 1     | Design system CSS for the panel                      |
@@ -167,6 +170,24 @@ Content card, either linked to an existing page or manually filled.
 | subheadline         | writer | Subtitle                                             |
 | description_content | blocks | Rich content (quote, text, list, button)             |
 | color               | select | `primary`, `secondary`                               |
+| linkMode            | select | `none`, `header` (title links), `button` (footer)    |
+| link                | link   | Link target (when cardType = manual)                 |
+| linktext            | text   | Footer button label (when linkMode = button)         |
+| buttontype          | object | Button style (when linkMode = button)                |
+
+### Divider
+
+Horizontal rule with configurable appearance. Available in both block and layout fields.
+
+| Field     | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| lineStyle | select | `solid`, `dashed`, `dotted`                  |
+| thickness | select | `thin`, `regular`, `thick`                   |
+| color     | select | `light`, `dark`, `brand`                     |
+| spacing   | select | `small`, `regular`, `large`                  |
+
+Renders as `<hr class="c-divider" data-*>`; the website styles it via
+`public/assets/css/design-system/components/divider.css`.
 
 ### CTA (Call to Action)
 
@@ -250,10 +271,74 @@ Custom heading levels mapped to the design system's typographic scale.
 | subheadline   | font-subheadline   | Secondary headings   |
 | blockquote    | -                  | Block quotes         |
 
+## SEO & Social Embedding
+
+Everything a page needs for search engines and link previews is resolved in one
+place, so the head snippet, the sitemap, the structured data and the panel
+preview can never drift apart.
+
+### `$page->seo()` / `$site->seo()`
+
+Returns a `GsMmh\WebPlugin\SeoMetadata` instance. Its resolution order:
+
+| Value       | Order of preference                                                              |
+|-------------|----------------------------------------------------------------------------------|
+| Title       | `seo_title` → `headline` → page title, always suffixed with the site title        |
+| Description | `seo_description` → `description` → `subheadline` → `wellcometext` → `intro` → `text` → site default, trimmed to 160 characters |
+| Image       | `social_image` → page cover → site-wide `social_image` → first image on the page → branded fallback |
+| Type        | `article` for `note` and `project_step`, `website` otherwise                      |
+| Robots      | `robots` field → drafts are excluded → `NOINDEX_TEMPLATES` → inherited from parents |
+
+The image is always cropped to 1200 × 630 through Kirby's thumb API and honours
+the file's focus point. Non-raster sources (SVG) fall back to the branded
+default, because the networks do not render them.
+
+The `robots` decision inherits downwards: a page below a non-indexable parent
+stays out of the index regardless of its own template. That is what keeps
+signage screens, form pages and DreamForm submissions out of the sitemap.
+
+Note that `metadata()` was deliberately **not** used as the method name — it
+collides with DreamForm's `SubmissionMetadata::metadata()` on submission pages.
+
+### Snippets
+
+| Snippet       | Output                                                              |
+|---------------|---------------------------------------------------------------------|
+| `seo/meta`    | `<title>`, description, canonical, robots, Open Graph, Twitter cards |
+| `seo/jsonld`  | schema.org `@graph`: NGO, WebSite, WebPage/Article, ImageObject      |
+
+`seo/meta` includes `seo/jsonld`, so the website only calls `snippet('seo/meta')`
+from its head.
+
+### Panel
+
+`blueprints/tabs/seo.yml` is a ready-made tab. Page blueprints pull it in with a
+single line:
+
+```yaml
+tabs:
+  content:
+    # ...
+  seo: tabs/seo
+```
+
+It provides the `seo_title`, `seo_description`, `social_image` and `robots`
+fields plus the `seo-preview` section, which renders the link card as the
+networks would show it.
+
+### Website requirements
+
+- A branded fallback image at `public/assets/pngs/og-default.png` (1200 × 630).
+  Override the path with the `gs-mmh.seo.defaultImage` option.
+- `site.yml` may provide `seo_description`, `social_image` and `twitter_handle`
+  as site-wide defaults.
+
 ## Routes
 
 | Pattern                    | Method | Description                                      |
 |----------------------------|--------|--------------------------------------------------|
+| `sitemap.xml`              | GET    | Sitemap of all indexable pages (XML)             |
+| `robots.txt`               | GET    | Crawler rules, references the sitemap            |
 | `newsletter.xml`           | GET    | Newsletter RSS feed (XML)                        |
 | `/app/(:any)`              | GET    | App request analytics tracker (DB insert/update) |
 | `/app/ferienpass.json`     | GET    | Random Ferienpass event (JSON)                   |
@@ -296,6 +381,7 @@ gs-mmh-web-plugin/
 │   │   ├── button.yml
 │   │   ├── card.yml
 │   │   ├── cta.yml
+│   │   ├── divider.yml
 │   │   ├── faq2.yml
 │   │   ├── form.yml
 │   │   ├── testimonials.yml
@@ -303,21 +389,30 @@ gs-mmh-web-plugin/
 │   │   └── timeline.yml
 │   ├── fields/
 │   │   └── buttonType.yml
+│   ├── tabs/
+│   │   └── seo.yml              # Shared "SEO & Teilen" page tab
 │   ├── writer-buttons/
 │   │   └── button.yml
 │   └── writer-marks/
 │       └── button.yml
 ├── controllers/
 │   └── app_performance.php
+├── sections/
+│   ├── newsletter-recipients.php
+│   └── seo-preview.php          # Panel section: link preview
 ├── snippets/
 │   ├── blocks/                  # Frontend PHP templates
 │   │   ├── accordion.php
 │   │   ├── box.php
 │   │   ├── card.php
 │   │   ├── cta.php
+│   │   ├── divider.php
 │   │   ├── faq2.php
 │   │   ├── form.php
 │   │   └── testimonial.php
+│   ├── seo/
+│   │   ├── meta.php             # <title>, Open Graph, Twitter cards
+│   │   └── jsonld.php           # schema.org structured data
 │   └── writer-marks/
 │       └── button.php
 ├── src/
@@ -330,7 +425,12 @@ gs-mmh-web-plugin/
 │   │   └── fonts.css
 │   └── panel_components/
 │       ├── blocks/              # Vue panel previews
+│       ├── components/          # Core component overrides
+│       │   └── Layout.vue       # k-layout with schedule badge
 │       ├── nodes/               # Writer node Vue components
+│       ├── sections/            # Panel section Vue components
+│       │   ├── NewsletterRecipients.vue
+│       │   └── SeoPreview.vue
 │       ├── views/               # Panel area Vue components
 │       │   ├── DreamformDbOverview.vue
 │       │   └── DreamformDbForm.vue
@@ -341,6 +441,8 @@ gs-mmh-web-plugin/
 │   ├── colors.css
 │   └── fonts.css
 ├── DatabaseAction.php           # DreamForm custom action
+├── NewsletterRecipients.php     # Newsletter recipient store
+├── SeoMetadata.php              # SEO / social value resolution
 ├── index.php                    # Plugin registration
 ├── index.js                     # Compiled panel JS (build output)
 ├── index.css                    # Compiled panel CSS (build output)
@@ -364,7 +466,18 @@ gs-mmh-web-plugin/
 
 ### Build System
 
-Uses [kirbyup](https://github.com/johannschopplich/kirbyup) to compile Vue panel components and CSS into `index.js` + `index.css`. The `kirbyup.config.js` aliases `@/` to the Kirby panel source for extending core components.
+Uses [kirbyup](https://github.com/johannschopplich/kirbyup) to compile Vue panel components into `index.js`. The `kirbyup.config.js` aliases `@/` to the Kirby panel source for extending core components.
+
+> **`<style>` blocks are dropped.** `kirbyup.config.js` marks `.vue?vue&type=style`
+> as external, so no stylesheet is emitted at all and the committed `index.css`
+> is a stale artefact from before that setting. Panel components in this plugin
+> style themselves with inline `:style` bindings — see `blocks/divider.vue` or
+> `sections/SeoPreview.vue`.
+
+All components must compile to render functions, because the panel runs with
+`panel.vue.compiler: false` (the runtime-only Vue build). A component defined as
+a plain object with a `template:` string will silently render nothing; always use
+a `.vue` single-file component.
 
 ### Code Style
 

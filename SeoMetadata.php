@@ -242,7 +242,7 @@ class SeoMetadata
     {
         $path = App::instance()->option(
             'gs-mmh.seo.defaultImage',
-            'assets/pngs/og-default.png'
+            'assets/pngs/og-default.png',
         );
 
         return $this->site->url() . '/' . ltrim($path, '/');

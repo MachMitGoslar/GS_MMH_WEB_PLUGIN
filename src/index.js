@@ -30,6 +30,7 @@ import LinkMark from './panel_components/writer_marks/Link.js';
 import DreamformDbOverview from './panel_components/views/DreamformDbOverview.vue';
 import DreamformDbForm from './panel_components/views/DreamformDbForm.vue';
 import NewsletterRecipients from './panel_components/sections/NewsletterRecipients.vue';
+import SeoPreview from './panel_components/sections/SeoPreview.vue';
 
 const Layout = {
   extends: 'k-layout',
@@ -130,5 +131,6 @@ panel.plugin('gs-mmh/gs-mmh-web-plugin', {
 
   sections: {
     'newsletter-recipients': NewsletterRecipients,
+    'seo-preview': SeoPreview,
   },
 });

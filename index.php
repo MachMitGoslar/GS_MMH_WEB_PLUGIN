@@ -2,10 +2,12 @@
 
 use GsMmh\WebPlugin\DatabaseAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
+use GsMmh\WebPlugin\SeoMetadata;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
 use Kirby\Database\Db as Db;
+use Kirby\Toolkit\Escape;
 
 function cleanupProjectGhost(string $root): void
 {
@@ -59,6 +61,7 @@ use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
 @include_once __DIR__ . '/NewsletterRecipients.php';
+@include_once __DIR__ . '/SeoMetadata.php';
 DreamForm::register(DatabaseAction::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
@@ -75,6 +78,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
       'blocks/timeline' => __DIR__ . '/blueprints/blocks/timeline.yml',
       'blocks/form' => __DIR__ . '/blueprints/blocks/form.yml',
+      'tabs/seo' => __DIR__ . '/blueprints/tabs/seo.yml',
 
     ],
     'snippets' => [
@@ -89,9 +93,28 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
+      'seo/meta' => __DIR__ . '/snippets/seo/meta.php',
+      'seo/jsonld' => __DIR__ . '/snippets/seo/jsonld.php',
     ],
     'sections' => [
       'newsletter-recipients' => require __DIR__ . '/sections/newsletter-recipients.php',
+      'seo-preview' => require __DIR__ . '/sections/seo-preview.php',
+    ],
+    'pageMethods' => [
+      /**
+       * Resolved SEO and social sharing values for this page.
+       */
+      'seo' => function (): SeoMetadata {
+          return new SeoMetadata($this);
+      },
+    ],
+    'siteMethods' => [
+      /**
+       * Site-wide defaults, used where no page context exists.
+       */
+      'seo' => function (): SeoMetadata {
+          return new SeoMetadata(null);
+      },
     ],
     'blockMethods' => [
       'scheduleLabel' => function ($block) {
@@ -150,6 +173,46 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'routes' => [
+      [
+        'pattern' => 'sitemap.xml',
+        'action' => function () {
+            $pages = site()->index()->filter(
+                fn (Page $page) => $page->seo()->isIndexable(),
+            );
+
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+
+            foreach ($pages as $page) {
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . Escape::html($page->url()) . '</loc>' . PHP_EOL;
+
+                if ($modified = $page->modified('c')) {
+                    $xml .= '    <lastmod>' . $modified . '</lastmod>' . PHP_EOL;
+                }
+
+                $xml .= '  </url>' . PHP_EOL;
+            }
+
+            $xml .= '</urlset>';
+
+            return new Response($xml, 'application/xml');
+        },
+      ],
+      [
+        'pattern' => 'robots.txt',
+        'action' => function () {
+            $lines = [
+                'User-agent: *',
+                'Disallow: /panel',
+                'Disallow: /signage',
+                '',
+                'Sitemap: ' . site()->url() . '/sitemap.xml',
+            ];
+
+            return new Response(implode(PHP_EOL, $lines) . PHP_EOL, 'text/plain');
+        },
+      ],
       [
         'pattern' => 'newsletter.xml',
         'action' => function () {

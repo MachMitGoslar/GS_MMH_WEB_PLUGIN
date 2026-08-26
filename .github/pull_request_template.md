@@ -1,12 +1,12 @@
 ## Beschreibung
 
-<!-- Was wurde geaendert und warum? -->
+<!-- Was wurde geändert und warum? -->
 
-## Art der Aenderung
+## Art der Änderung
 
 - [ ] Bug Fix
 - [ ] Neuer Block / Neues Feature
-- [ ] Refactoring (keine funktionale Aenderung)
+- [ ] Refactoring (keine funktionale Änderung)
 - [ ] Style / Design
 - [ ] Dokumentation
 - [ ] Sonstiges
@@ -15,7 +15,7 @@
 
 - [ ] Blocks (Blueprints, Snippets, Panel-Previews)
 - [ ] Writer Marks / Nodes
-- [ ] DreamForm (DatabaseAction, Formular-Eingaenge)
+- [ ] DreamForm (DatabaseAction, Formular-Eingänge)
 - [ ] Routes / API
 - [ ] Hooks
 - [ ] Panel (Verwaltung)
@@ -27,13 +27,13 @@
 - [ ] Code ist formatiert (`npm run format`)
 - [ ] Lint-Checks bestehen (`npm run lint`)
 - [ ] Plugin baut fehlerfrei (`npm run build`)
-- [ ] Aenderungen sind lokal getestet
-- [ ] Panel-Funktionen sind nicht beeintraechtigt
+- [ ] Änderungen sind lokal getestet
+- [ ] Panel-Funktionen sind nicht beeinträchtigt
 - [ ] Keine Konsolenfehler im Browser
 
 ## Screenshots
 
-<!-- Falls visuelle Aenderungen: Vorher/Nachher Screenshots einfuegen -->
+<!-- Falls visuelle Aenderungen: Vorher/Nachher Screenshots einfügen -->
 
 ## Verwandtes Issue
 

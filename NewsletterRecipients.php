@@ -168,13 +168,8 @@ class NewsletterRecipients
         $lastName = trim((string) ($data['last_name'] ?? ''));
         $email = strtolower(trim((string) ($data['email'] ?? '')));
 
-        if ($firstName === '') {
-            throw new Exception('Bitte gib einen Vornamen ein.');
-        }
-
-        if ($lastName === '') {
-            throw new Exception('Bitte gib einen Nachnamen ein.');
-        }
+        self::validateName($firstName, 'Vornamen');
+        self::validateName($lastName, 'Nachnamen');
 
         if (V::email($email) !== true) {
             throw new Exception('Bitte gib eine gültige E-Mail-Adresse ein.');
@@ -185,6 +180,21 @@ class NewsletterRecipients
             'last_name' => $lastName,
             'email' => $email,
         ];
+    }
+
+    private static function validateName(string $name, string $label): void
+    {
+        if ($name === '') {
+            throw new Exception('Bitte gib einen ' . $label . ' ein.');
+        }
+
+        if (mb_strlen($name) > 80) {
+            throw new Exception('Der ' . $label . ' darf maximal 80 Zeichen lang sein.');
+        }
+
+        if (preg_match('/^[\p{L}\p{M}][\p{L}\p{M}\s\'\-.]{0,79}$/u', $name) !== 1) {
+            throw new Exception('Der ' . $label . ' enthält nicht erlaubte Zeichen.');
+        }
     }
 
     private static function rowToArray(object $row): array

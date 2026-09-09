@@ -188,12 +188,8 @@ class NewsletterRecipients
             throw new Exception('Bitte gib einen ' . $label . ' ein.');
         }
 
-        if (mb_strlen($name) > 80) {
-            throw new Exception('Der ' . $label . ' darf maximal 80 Zeichen lang sein.');
-        }
-
-        if (preg_match('/^[\p{L}\p{M}][\p{L}\p{M}\s\'\-.]{0,79}$/u', $name) !== 1) {
-            throw new Exception('Der ' . $label . ' enthält nicht erlaubte Zeichen.');
+        if (mb_strlen($name) > 190) {
+            throw new Exception('Der ' . $label . ' darf maximal 190 Zeichen lang sein.');
         }
     }
 

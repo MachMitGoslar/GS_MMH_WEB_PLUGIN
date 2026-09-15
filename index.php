@@ -344,7 +344,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
                 ]);
             }
         }
-        if ($newPage->intendedTemplate()->name() === 'notes') {
+        if ($newPage->intendedTemplate()->name() === 'note') {
             // Check if page is being published (listed) and doesn't have a publish date yet
             if (
                 $newPage->status() === 'listed' &&

@@ -1,6 +1,7 @@
 <?php
 
 use GsMmh\WebPlugin\DatabaseAction;
+use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
 use GsMmh\WebPlugin\SeoMetadata;
 use GsMmh\WebPlugin\TextField;
@@ -61,10 +62,11 @@ function resolveProjectArchiveStatus(Page $page): string
 use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
+@include_once __DIR__ . '/NewsletterRecipientAction.php';
 @include_once __DIR__ . '/NewsletterRecipients.php';
 @include_once __DIR__ . '/SeoMetadata.php';
 @include_once __DIR__ . '/TextField.php';
-DreamForm::register(DatabaseAction::class, TextField::class);
+DreamForm::register(DatabaseAction::class, NewsletterRecipientAction::class, TextField::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -277,7 +279,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'hooks' => [
       'system.loadPlugins:after' => function () {
-          DreamForm::register(TextField::class);
+          DreamForm::register(NewsletterRecipientAction::class, TextField::class);
       },
       'page.update:after' => function (Page $newPage, Page $oldPage) {
         static $isMovingProject = false;

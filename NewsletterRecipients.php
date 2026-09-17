@@ -83,6 +83,21 @@ class NewsletterRecipients
         return $row ? self::rowToArray($row) : null;
     }
 
+    public static function findByEmail(string $email): ?array
+    {
+        self::ensureTable();
+
+        $email = strtolower(trim($email));
+
+        if (V::email($email) !== true) {
+            throw new Exception('Bitte gib eine gültige E-Mail-Adresse ein.');
+        }
+
+        $row = Db::first(self::TABLE, '*', ['email' => $email]);
+
+        return $row ? self::rowToArray($row) : null;
+    }
+
     public static function create(array $data): int
     {
         self::ensureTable();
@@ -160,6 +175,11 @@ class NewsletterRecipients
         }
 
         return mmhAbsoluteUrl('newsletter-abmelden?token=' . rawurlencode($token));
+    }
+
+    public static function formPage(): ?\Kirby\Cms\Page
+    {
+        return site()->find('forms/newsletter-anmeldung');
     }
 
     private static function validate(array $data): array

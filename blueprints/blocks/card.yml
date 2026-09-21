@@ -62,7 +62,7 @@ fields:
     type: select
     default: none
     empty: false
-    help: Legt fest, wie die Karte verlinkt wird.
+    help: Bei einem Button ist nur der Button klickbar. Header-Verlinkung nur verwenden, wenn kein Button angezeigt wird.
     options:
       none: Keine Verlinkung
       header: Header verlinken

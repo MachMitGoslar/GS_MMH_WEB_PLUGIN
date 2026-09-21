@@ -13,7 +13,7 @@
         :key="form.slug"
         :href="'/panel/formular-eingaenge/' + form.slug"
         class="dfdb-form-card"
-        @click.prevent="$panel.open('formular-eingaenge/' + form.slug)"
+        @click.prevent="$panel.open('formular-eingaenge/' + form.slug)"/>
       >
         <div class="dfdb-form-card-icon">
           <k-icon type="form" />

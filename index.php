@@ -1,8 +1,10 @@
 <?php
 
 use GsMmh\WebPlugin\DatabaseAction;
+use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
 use GsMmh\WebPlugin\SeoMetadata;
+use GsMmh\WebPlugin\TextField;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
@@ -60,9 +62,11 @@ function resolveProjectArchiveStatus(Page $page): string
 use tobimori\DreamForm\DreamForm;
 
 @include_once __DIR__ . '/DatabaseAction.php';
+@include_once __DIR__ . '/NewsletterRecipientAction.php';
 @include_once __DIR__ . '/NewsletterRecipients.php';
 @include_once __DIR__ . '/SeoMetadata.php';
-DreamForm::register(DatabaseAction::class);
+@include_once __DIR__ . '/TextField.php';
+DreamForm::register(DatabaseAction::class, NewsletterRecipientAction::class, TextField::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -93,6 +97,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
+      'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
       'seo/meta' => __DIR__ . '/snippets/seo/meta.php',
       'seo/jsonld' => __DIR__ . '/snippets/seo/jsonld.php',
     ],
@@ -273,6 +278,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'hooks' => [
+      'system.loadPlugins:after' => function () {
+          DreamForm::register(NewsletterRecipientAction::class, TextField::class);
+      },
       'page.update:after' => function (Page $newPage, Page $oldPage) {
         static $isMovingProject = false;
         if ($oldPage->intendedTemplate()->name() == 'project_step') {

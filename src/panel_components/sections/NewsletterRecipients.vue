@@ -23,6 +23,7 @@
             <th>Vorname</th>
             <th>Nachname</th>
             <th>E-Mail-Adresse</th>
+            <th>Unsubscribe ID</th>
             <th class="newsletter-recipients-actions"></th>
           </tr>
         </thead>
@@ -32,6 +33,9 @@
             <td>{{ recipient.last_name }}</td>
             <td>
               <a :href="'mailto:' + recipient.email">{{ recipient.email }}</a>
+            </td>
+            <td>
+              {{ recipient.unsubscribe_token }}
             </td>
             <td class="newsletter-recipients-actions">
               <k-button-group>
@@ -85,9 +89,7 @@ export default {
         const response = await this.$api.get('gs-mmh-web-plugin/newsletter-recipients');
         this.loadedRecipients = Array.isArray(response?.recipients) ? response.recipients : [];
       } catch (error) {
-        this.$panel.notification.error(
-          error?.message || 'Empfänger konnten nicht geladen werden.'
-        );
+        this.$panel.notification.error(error?.message || 'Empfänger konnten nicht geladen werden.');
       } finally {
         this.isLoading = false;
       }

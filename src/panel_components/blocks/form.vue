@@ -8,7 +8,7 @@ export default {
 
   data() {
     return {
-      text: "Kein Formular ausgewählt",
+      text: 'Kein Formular ausgewählt',
       forms: [],
       formsLoaded: false,
     };
@@ -32,29 +32,25 @@ export default {
     },
 
     selectedFormLabel() {
-      return this.selectedForm?.text || "Kein Formular ausgewählt";
+      return this.selectedForm?.text || 'Kein Formular ausgewählt';
     },
 
     scheduleLabel() {
-      const format = new Intl.DateTimeFormat("de-DE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      const format = new Intl.DateTimeFormat('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       });
 
       const publish = this.content.publish_date
-          ? format.format(
-              new Date(String(this.content.publish_date).replace(" ", "T"))
-          )
-          : null;
+        ? format.format(new Date(String(this.content.publish_date).replace(' ', 'T')))
+        : null;
 
       const end = this.content.end_date
-          ? format.format(
-              new Date(String(this.content.end_date).replace(" ", "T"))
-          )
-          : null;
+        ? format.format(new Date(String(this.content.end_date).replace(' ', 'T')))
+        : null;
 
       if (publish && end) return `🕒 ${publish} → ${end}`;
       if (publish) return `🕒 ab ${publish}`;
@@ -68,7 +64,7 @@ export default {
       if (this.formsLoaded) return;
 
       try {
-        const response = await this.$api.get("gs-mmh-web-plugin/forms");
+        const response = await this.$api.get('gs-mmh-web-plugin/forms');
         this.forms = Array.isArray(response?.forms) ? response.forms : [];
         this.formsLoaded = true;
       } catch (error) {
@@ -77,7 +73,7 @@ export default {
     },
 
     updateForm(value) {
-      this.$emit("update", {
+      this.$emit('update', {
         ...this.content,
         form: value,
       });
@@ -87,24 +83,24 @@ export default {
       if (!this.$panel?.dialog) return;
 
       this.$panel.dialog.open({
-        component: "k-form-dialog",
+        component: 'k-form-dialog',
         props: {
           fields: {
             form: {
-              label: this.fieldConfig?.label || "Formulare",
-              type: "select",
+              label: this.fieldConfig?.label || 'Formulare',
+              type: 'select',
               options: this.forms,
-              value: this.selectedForm?.id || "",
-              placeholder: "Bitte Formular auswählen",
+              value: this.selectedForm?.id || '',
+              placeholder: 'Bitte Formular auswählen',
               required: false,
             },
           },
-          submitButton: "OK",
+          submitButton: 'OK',
         },
         on: {
-          submit: (value) => {
-            const selectedId = value.form || "";
-            const selectedForm = this.forms.find((form) => form.value === selectedId);
+          submit: value => {
+            const selectedId = value.form || '';
+            const selectedForm = this.forms.find(form => form.value === selectedId);
 
             this.updateForm(
               selectedForm
@@ -130,7 +126,7 @@ export default {
     },
 
     open() {
-      this.$emit("open");
+      this.$emit('open');
     },
   },
 
@@ -153,7 +149,7 @@ export default {
             <div class="k-block-type-form-file-icon">
               <k-icon type="survey" />
             </div>
-            <span class="k-block-type-form-display-text">{{ selectedFormLabel  }}</span>
+            <span class="k-block-type-form-display-text">{{ selectedFormLabel }}</span>
           </div>
 
           <button

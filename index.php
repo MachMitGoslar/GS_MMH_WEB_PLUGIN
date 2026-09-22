@@ -100,6 +100,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
       'seo/meta' => __DIR__ . '/snippets/seo/meta.php',
       'seo/jsonld' => __DIR__ . '/snippets/seo/jsonld.php',
+      'content-elements/form' => __DIR__ . '/snippets/content-elements/form.php',
     ],
     'sections' => [
       'newsletter-recipients' => require __DIR__ . '/sections/newsletter-recipients.php',

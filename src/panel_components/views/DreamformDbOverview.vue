@@ -13,16 +13,16 @@
         :key="form.slug"
         :href="'/panel/formular-eingaenge/' + form.slug"
         class="dfdb-form-card"
-        @click.prevent="$panel.open('formular-eingaenge/' + form.slug)"/>
+        @click.prevent="$panel.open('formular-eingaenge/' + form.slug)"
       >
         <div class="dfdb-form-card-icon">
           <k-icon type="form" />
         </div>
-        <div class="dfdb-form-card-content">
-          <h3>{{ form.title }}</h3>
+        <div class="dfdb-form-card-content" onclick="showForms()">
+          <h3>{{ form?.title }}</h3>
           <p class="dfdb-meta">
-            {{ form.count }} {{ form.count === 1 ? 'Eintrag' : 'Einträge' }}
-            <span v-if="form.last"> · Letzter: {{ formatDate(form.last) }}</span>
+            {{ form?.count }} {{ form?.count === 1 ? 'Eintrag' : 'Einträge' }}
+            <span v-if="form?.last"> · Letzter: {{ formatDate(form?.last) }}</span>
           </p>
         </div>
         <div class="dfdb-form-card-arrow">
@@ -38,7 +38,11 @@ export default {
   props: {
     forms: Array,
   },
+
   methods: {
+    displayForms() {
+      console.log(forms);
+    },
     formatDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);

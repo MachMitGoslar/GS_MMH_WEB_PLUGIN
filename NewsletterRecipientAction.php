@@ -12,7 +12,7 @@ class NewsletterRecipientAction extends Action
         return [
             'name' => 'Newsletter-Empfänger speichern',
             'preview' => 'fields',
-            'wysiwyg' => true,
+            'wysiwyg' => false,
             'icon' => 'email',
         ];
     }
@@ -26,9 +26,10 @@ class NewsletterRecipientAction extends Action
     {
         $values = $this->submission()->values();
         $data = [
-            'first_name' => $values->get('first_name')->value(),
-            'last_name' => $values->get('last_name')->value(),
+            'first_name' => $values->get('firstname')->value(),
+            'last_name' => $values->get('lastname')->value(),
             'email' => $values->get('email')->value(),
+
         ];
 
         try {
@@ -36,10 +37,11 @@ class NewsletterRecipientAction extends Action
                 $this->log([
                     'text' => 'E-Mail-Adresse ist bereits als Newsletter-Empfänger eingetragen.',
                 ], type: 'info', icon: 'email', title: 'Newsletter-Empfänger');
-
+                $this->cancel("E-Mail-Adresse ist bereits als Newsletter-Empfänger eingetragen.", true);
                 return;
             }
 
+            $data['unsubscribe_token'] = bin2hex(random_bytes(16));
             NewsletterRecipients::create($data);
             $this->log([
                 'text' => 'Newsletter-Empfänger wurde gespeichert.',

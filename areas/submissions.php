@@ -173,6 +173,7 @@ return function ($kirby) {
                                     'first_name' => $recipient['first_name'],
                                     'last_name' => $recipient['last_name'],
                                     'email' => $recipient['email'],
+                                    'unsubscribe_token' => $recipient['unsubscribe_token']
                                 ],
                                 'submittedAt' => $recipient['created_at'],
                                 'referer' => '',
@@ -186,7 +187,7 @@ return function ($kirby) {
                                 'formTitle' => $form->title()->value(),
                                 'resourceKey' => $formSlug,
                                 'submissions' => $submissions,
-                                'columns' => ['first_name', 'last_name', 'email'],
+                                'columns' => ['first_name', 'last_name', 'email', 'unsubscribe_token'],
                                 'pagination' => [
                                     'page' => $page,
                                     'total' => $total,

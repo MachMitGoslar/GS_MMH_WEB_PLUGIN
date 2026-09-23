@@ -1,7 +1,10 @@
 <?php
 
+use GsMmh\WebPlugin\NewsletterRecipients;
 use Kirby\Cms\Page;
 use tobimori\DreamForm\DreamForm;
+
+const DFDB_NEWSLETTER_FORM_SLUG = 'newsletter-anmeldung';
 
 function dfdbFormsPage(): ?Page
 {
@@ -27,12 +30,21 @@ function dfdbDiscoverForms(): array
     foreach ($forms as $form) {
         $submissions = dfdbSubmissionPages($form);
         $lastSubmission = $submissions->first();
+        $count = $submissions->count();
+        $last = $lastSubmission ? dfdbSubmissionDate($lastSubmission) : null;
+
+        if ($form->slug() === DFDB_NEWSLETTER_FORM_SLUG) {
+            $recipients = NewsletterRecipients::all();
+            $recipientLast = dfdbNewsletterLastDate($recipients);
+            $count = max($count, count($recipients));
+            $last = max($last ?? '', $recipientLast ?? '') ?: null;
+        }
 
         $result[] = [
             'slug' => $form->slug(),
             'title' => $form->title()->value(),
-            'count' => $submissions->count(),
-            'last' => $lastSubmission ? dfdbSubmissionDate($lastSubmission) : null,
+            'count' => $count,
+            'last' => $last,
         ];
     }
 
@@ -81,6 +93,18 @@ function dfdbSubmissionPayload(Page $submission): array
     }
 
     return $data;
+}
+
+function dfdbNewsletterLastDate(array $recipients): ?string
+{
+    $dates = array_filter(array_map(
+        fn (array $recipient) => $recipient['created_at'] ?? null,
+        $recipients
+    ));
+
+    rsort($dates);
+
+    return $dates[0] ?? null;
 }
 
 return function ($kirby) {
@@ -135,6 +159,45 @@ return function ($kirby) {
                     $page = max(1, (int) $kirby->request()->get('page', 1));
                     $limit = 25;
                     $offset = ($page - 1) * $limit;
+
+                    if ($form->slug() === DFDB_NEWSLETTER_FORM_SLUG) {
+                        $recipients = NewsletterRecipients::all();
+                        $total = count($recipients);
+                        $rows = array_slice($recipients, $offset, $limit);
+                        $submissions = [];
+
+                        foreach ($rows as $recipient) {
+                            $submissions[] = [
+                                'id' => 'newsletter-recipient-' . $recipient['id'],
+                                'data' => [
+                                    'first_name' => $recipient['first_name'],
+                                    'last_name' => $recipient['last_name'],
+                                    'email' => $recipient['email'],
+                                    'unsubscribe_token' => $recipient['unsubscribe_token']
+                                ],
+                                'submittedAt' => $recipient['created_at'],
+                                'referer' => '',
+                            ];
+                        }
+
+                        return [
+                            'component' => 'k-dreamform-db-form',
+                            'props' => [
+                                'formSlug' => $formSlug,
+                                'formTitle' => $form->title()->value(),
+                                'resourceKey' => $formSlug,
+                                'submissions' => $submissions,
+                                'columns' => ['first_name', 'last_name', 'email', 'unsubscribe_token'],
+                                'pagination' => [
+                                    'page' => $page,
+                                    'total' => $total,
+                                    'limit' => $limit,
+                                    'pages' => max(1, (int) ceil($total / $limit)),
+                                ],
+                            ],
+                        ];
+                    }
+
                     $allSubmissions = dfdbSubmissionPages($form);
                     $total = $allSubmissions->count();
                     $rows = $allSubmissions->slice($offset, $limit);
@@ -186,6 +249,46 @@ return function ($kirby) {
              */
             'dreamform-db/(:any)/(:all)' => [
                 'load' => function (string $formSlug, string $submissionId) {
+                    $isNewsletterRecipient = $formSlug === DFDB_NEWSLETTER_FORM_SLUG
+                        && preg_match('/^newsletter-recipient-(\d+)$/', $submissionId, $match);
+
+                    if ($isNewsletterRecipient) {
+                        $recipient = NewsletterRecipients::find((int) $match[1]);
+
+                        if (!$recipient) {
+                            throw new Exception('Eintrag nicht gefunden');
+                        }
+
+                        return [
+                            'component' => 'k-form-dialog',
+                            'props' => [
+                                'fields' => [
+                                    'first_name' => [
+                                        'label' => 'Vorname',
+                                        'type' => 'info',
+                                        'text' => $recipient['first_name'],
+                                    ],
+                                    'last_name' => [
+                                        'label' => 'Nachname',
+                                        'type' => 'info',
+                                        'text' => $recipient['last_name'],
+                                    ],
+                                    'email' => [
+                                        'label' => 'E-Mail',
+                                        'type' => 'info',
+                                        'text' => $recipient['email'],
+                                    ],
+                                    'created_at' => [
+                                        'label' => 'Eingegangen am',
+                                        'type' => 'info',
+                                        'text' => $recipient['created_at'],
+                                    ],
+                                ],
+                                'submitButton' => false,
+                            ],
+                        ];
+                    }
+
                     $submission = page($submissionId);
 
                     if (!$submission || $submission->intendedTemplate()->name() !== 'submission') {
@@ -243,7 +346,8 @@ return function ($kirby) {
                     return [
                         'component' => 'k-text-dialog',
                         'props' => [
-                            'text' => 'Soll dieser Eintrag wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.',
+                            'text' => 'Soll dieser Eintrag wirklich gelöscht werden?'
+                                . ' Diese Aktion kann nicht rückgängig gemacht werden.',
                             'submitButton' => [
                                 'text' => 'Löschen',
                                 'icon' => 'trash',
@@ -253,6 +357,17 @@ return function ($kirby) {
                     ];
                 },
                 'submit' => function (string $formSlug, string $submissionId) {
+                    $isNewsletterRecipient = $formSlug === DFDB_NEWSLETTER_FORM_SLUG
+                        && preg_match('/^newsletter-recipient-(\d+)$/', $submissionId, $match);
+
+                    if ($isNewsletterRecipient) {
+                        NewsletterRecipients::delete((int) $match[1]);
+
+                        return [
+                            'message' => 'Eintrag gelöscht',
+                        ];
+                    }
+
                     $submission = page($submissionId);
 
                     if (!$submission || $submission->intendedTemplate()->name() !== 'submission') {

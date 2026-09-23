@@ -218,7 +218,6 @@ export default {
 <template>
   <div @dblclick="open" class="k-block-type k-block-type-card">
     <div class="k-block-body">
-
       <!-- IMAGE -->
       <div v-if="imagePreviewUrl" class="k-block-card-image">
         <k-frame cover ratio="1/1">
@@ -233,13 +232,16 @@ export default {
 
       <!-- CONTENT -->
       <div class="k-block-card-content">
-
         <!-- HEADLINE -->
         <div
           v-if="headline_html"
           class="k-block-card-headline"
           :data-linked="linkMode === 'header'"
-          :style="linkMode === 'header' ? { color: 'var(--color-blue-700, #1e40af)', textDecoration: 'underline' } : null"
+          :style="
+            linkMode === 'header'
+              ? { color: 'var(--color-blue-700, #1e40af)', textDecoration: 'underline' }
+              : null
+          "
           v-html="headline_html"
         ></div>
 
@@ -251,7 +253,11 @@ export default {
         ></div>
 
         <!-- TEXT -->
-        <div v-if="manual_content_html" class="k-block-card-text" v-html="manual_content_html"></div>
+        <div
+          v-if="manual_content_html"
+          class="k-block-card-text"
+          v-html="manual_content_html"
+        ></div>
 
         <div v-else class="k-block-card-text">
           {{ description_text || text }}
@@ -272,9 +278,7 @@ export default {
             >{{ linkLabel }}</span
           >
         </div>
-
       </div>
-
     </div>
   </div>
 </template>
@@ -318,5 +322,4 @@ export default {
   color: var(--color-text);
   opacity: 0.85;
 }
-
 </style>

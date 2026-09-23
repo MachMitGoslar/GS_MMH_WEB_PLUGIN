@@ -15,6 +15,9 @@ if (empty($link)) {
     $linkMode = 'none';
 }
 
+$hasButtonLink = $linkMode === 'button';
+$hasHeaderLink = $linkMode === 'header' && $hasButtonLink === false;
+
 // Cover image: page models may return a File, a Field or nothing at all
 if ($page) {
     $cover = $page->cover();
@@ -42,13 +45,19 @@ $buttonType = $block->buttontype()->toObject();
 <?php if ($block->isNotEmpty()) : ?>
     <?php if ($image) : ?>
       <figure>
-        <img class="hero" src="<?= $image->crop(1500, 1500)->url() ?>" alt="<?= $image->alt() ?>" />
+        <?php if ($hasHeaderLink) : ?>
+          <a href="<?= esc($link) ?>" class="card-image-link" aria-label="<?= esc($headline->value() ?: $image->alt()->value()) ?>">
+            <img class="hero" src="<?= $image->crop(1500, 1500)->url() ?>" alt="<?= $image->alt() ?>" />
+          </a>
+        <?php else : ?>
+          <img class="hero" src="<?= $image->crop(1500, 1500)->url() ?>" alt="<?= $image->alt() ?>" />
+        <?php endif ?>
       </figure>
     <?php endif ?>
     <div class="content">
       <div class="heading">
         <h3 class="font-headline font-line-height-narrow mb-2">
-            <?php if ($linkMode === 'header') : ?>
+            <?php if ($hasHeaderLink) : ?>
               <a href="<?= esc($link) ?>"><?= $headline ?></a>
             <?php else : ?>
                 <?= $headline ?>
@@ -65,7 +74,7 @@ $buttonType = $block->buttontype()->toObject();
             <?php endforeach ?>
         <?php endif ?>
       </div>
-        <?php if ($linkMode === 'button') : ?>
+        <?php if ($hasButtonLink) : ?>
         <footer class="card-footer">
           <a
             href="<?= esc($link) ?>"

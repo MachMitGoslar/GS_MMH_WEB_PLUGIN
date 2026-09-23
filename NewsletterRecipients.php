@@ -83,6 +83,21 @@ class NewsletterRecipients
         return $row ? self::rowToArray($row) : null;
     }
 
+    public static function findByEmail(string $email): ?array
+    {
+        self::ensureTable();
+
+        $email = strtolower(trim($email));
+
+        if (V::email($email) !== true) {
+            throw new Exception('Bitte gib eine gültige E-Mail-Adresse ein.');
+        }
+
+        $row = Db::first(self::TABLE, '*', ['email' => $email]);
+
+        return $row ? self::rowToArray($row) : null;
+    }
+
     public static function create(array $data): int
     {
         self::ensureTable();
@@ -162,19 +177,19 @@ class NewsletterRecipients
         return mmhAbsoluteUrl('newsletter-abmelden?token=' . rawurlencode($token));
     }
 
+    public static function formPage(): ?\Kirby\Cms\Page
+    {
+        return site()->find('forms/newsletter-anmeldung');
+    }
+
     private static function validate(array $data): array
     {
         $firstName = trim((string) ($data['first_name'] ?? ''));
         $lastName = trim((string) ($data['last_name'] ?? ''));
         $email = strtolower(trim((string) ($data['email'] ?? '')));
 
-        if ($firstName === '') {
-            throw new Exception('Bitte gib einen Vornamen ein.');
-        }
-
-        if ($lastName === '') {
-            throw new Exception('Bitte gib einen Nachnamen ein.');
-        }
+        self::validateName($firstName, 'Vornamen');
+        self::validateName($lastName, 'Nachnamen');
 
         if (V::email($email) !== true) {
             throw new Exception('Bitte gib eine gültige E-Mail-Adresse ein.');
@@ -185,6 +200,17 @@ class NewsletterRecipients
             'last_name' => $lastName,
             'email' => $email,
         ];
+    }
+
+    private static function validateName(string $name, string $label): void
+    {
+        if ($name === '') {
+            throw new Exception('Bitte gib einen ' . $label . ' ein.');
+        }
+
+        if (mb_strlen($name) > 190) {
+            throw new Exception('Der ' . $label . ' darf maximal 190 Zeichen lang sein.');
+        }
     }
 
     private static function rowToArray(object $row): array

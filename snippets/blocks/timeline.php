@@ -26,7 +26,12 @@ $entries = $block->content()->get('entries')->toStructure();
 
                     <?php if ($image) : ?>
                         <div class="image">
-                            <img src="<?= $image->url() ?>" alt="<?= $entry->year()->esc() ?>">
+                            <?php snippet('utilities/image', [
+                                'file' => $image,
+                                'role' => 'card',
+                                'sizes' => '(min-width: 768px) 480px, 100vw',
+                                'alt' => $entry->year()->value(),
+                            ]) ?>
                         </div>
                     <?php endif ?>
 
@@ -60,7 +65,12 @@ $entries = $block->content()->get('entries')->toStructure();
 
                     <?php if ($image) : ?>
                         <div class="image">
-                            <img src="<?= $image->url() ?>" alt="<?= $entry->year()->esc() ?>">
+                            <?php snippet('utilities/image', [
+                                'file' => $image,
+                                'role' => 'card',
+                                'sizes' => '(min-width: 768px) 480px, 100vw',
+                                'alt' => $entry->year()->value(),
+                            ]) ?>
                         </div>
                     <?php endif ?>
 

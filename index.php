@@ -219,64 +219,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
             return new Response(implode(PHP_EOL, $lines) . PHP_EOL, 'text/plain');
         },
       ],
-      [
-        'pattern' => 'newsletter.xml',
-        'action' => function () {
-            $pages = site()->page('newsletter')->children()->listed();
-            $parent = site()->page(path: 'newsletter');
-
-            $content = snippet('components/newsletter/rss_feed', compact('pages', 'parent'), true);
-
-            // Return response with correct header type
-            return new Response($content, 'application/xml');
-        },
-      ],
-      [
-        'pattern' => '/app/(:any)',
-        'action' => function ($any) {
-
-            Db::execute('CREATE TABLE IF NOT EXISTS `app_requests` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `url` varchar(255) NOT NULL,
-                    `day` date NOT NULL,
-                    `requests` int(11) NOT NULL,
-                    PRIMARY KEY (`id`)
-                    ) 
-                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
-
-            $data['url'] = $any;
-            $data['day'] = date('Y-m-d');
-
-            if ($app_request = Db::first('app_requests', '*', ['url' => $data['url'], 'day' => $data['day']])) {
-                $data['requests'] = $app_request->requests();
-
-                Db::update('app_requests', $data, ['url' => $data['url'], 'day' => $data['day']]);
-                $this->next();
-            } else {
-                $data['requests'] = 1;
-                Db::insert('app_requests', $data);
-                $this->next();
-            }
-        },
-      ],
-      [
-        'pattern' => '/app/ferienpass.json',
-        'action' => function () {
-
-            $content = snippet('content-types/ferienpass/event_random', ['id' => 74], true);
-
-            return new Response($content, 'application/json');
-        },
-      ],
-      [
-        'pattern' => '/app/ferienpass_index.json',
-        'action' => function () {
-
-            $content = snippet('content-types/ferienpass/events', [], true);
-
-            return new Response($content, 'application/json');
-        },
-      ],
     ],
     'hooks' => [
       'system.loadPlugins:after' => function () {

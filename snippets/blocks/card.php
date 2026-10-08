@@ -50,7 +50,7 @@ $buttonType = $block->buttontype()->toObject();
             <?php snippet('utilities/image', ['file' => $image, 'role' => 'card', 'ratio' => '1:1', 'sizes' => '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', 'class' => 'hero']) ?>
           </a>
         <?php else : ?>
-          <?php snippet('utilities/image', ['file' => $image, 'role' => 'card', 'ratio' => '1:1', 'sizes' => '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', 'class' => 'hero']) ?>
+            <?php snippet('utilities/image', ['file' => $image, 'role' => 'card', 'ratio' => '1:1', 'sizes' => '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', 'class' => 'hero']) ?>
         <?php endif ?>
       </figure>
     <?php endif ?>

@@ -66,7 +66,6 @@ use tobimori\DreamForm\DreamForm;
 @include_once __DIR__ . '/NewsletterRecipients.php';
 @include_once __DIR__ . '/SeoMetadata.php';
 @include_once __DIR__ . '/TextField.php';
-DreamForm::register(DatabaseAction::class, NewsletterRecipientAction::class, TextField::class);
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [

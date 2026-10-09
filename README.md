@@ -132,15 +132,6 @@ Collapsible content section with summary/details pattern.
 | summary   | writer | Visible header text        |
 | details   | writer | Expandable content         |
 
-### Box (Textbox)
-
-Styled text container with type variants.
-
-| Field   | Type   | Options                          |
-|---------|--------|----------------------------------|
-| boxType | radio  | `text`, `bolt`, `alert`, `neutral` |
-| text    | writer | Content text                     |
-
 ### Button
 
 Call-to-action link with design system styling.
@@ -377,7 +368,6 @@ gs-mmh-web-plugin/
 ├── blueprints/
 │   ├── blocks/                  # Block field definitions
 │   │   ├── accordion.yml
-│   │   ├── box.yml
 │   │   ├── button.yml
 │   │   ├── card.yml
 │   │   ├── cta.yml
@@ -403,7 +393,6 @@ gs-mmh-web-plugin/
 ├── snippets/
 │   ├── blocks/                  # Frontend PHP templates
 │   │   ├── accordion.php
-│   │   ├── box.php
 │   │   ├── card.php
 │   │   ├── cta.php
 │   │   ├── divider.php

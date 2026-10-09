@@ -149,7 +149,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'translations' => [
       'en' => [
         'field.blocks.accordion.name' => 'Accordion block',
-        'field.blocks.box.name' => 'Textbox block',
         'field.blocks.card.name' => 'Card',
         'field.blocks.card.fields.cardType.options.page' => 'Create card from page',
         'field.blocks.card.fields.cardType.options.manual' => 'Create manual card',
@@ -163,7 +162,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
       'de' => [
         'field.blocks.accordion.name' => 'Akkordion Block',
-        'field.blocks.box.name' => 'Textbox',
         'field.blocks.card.name' => 'Karte',
         'field.blocks.faq.name' => 'FAQ Sektion',
         'field.blocks.card.fields.cardType.options.page' => 'Aus Seite erstellen',

@@ -70,7 +70,6 @@ use tobimori\DreamForm\DreamForm;
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
       'blocks/accordion' => __DIR__ . '/blueprints/blocks/accordion.yml',
-      'blocks/card' => __DIR__ . '/blueprints/blocks/card.yml',
       'blocks/divider' => __DIR__ . '/blueprints/blocks/divider.yml',
       'blocks/testimonial' => __DIR__ . '/blueprints/blocks/testimonial.yml',
       'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
@@ -86,7 +85,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'snippets' => [
       'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
-      'blocks/card' => __DIR__ . '/snippets/blocks/card.php',
       'blocks/divider' => __DIR__ . '/snippets/blocks/divider.php',
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
       'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
@@ -148,28 +146,13 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'translations' => [
       'en' => [
         'field.blocks.accordion.name' => 'Accordion block',
-        'field.blocks.card.name' => 'Card',
-        'field.blocks.card.fields.cardType.options.page' => 'Create card from page',
-        'field.blocks.card.fields.cardType.options.manual' => 'Create manual card',
-        'field.blocks.card.fields.linkMode.label' => 'Link',
-        'field.blocks.card.fields.linkMode.options.none' => 'No link',
-        'field.blocks.card.fields.linkMode.options.header' => 'Link the header',
-        'field.blocks.card.fields.linkMode.options.button' => 'Button in the footer',
         'field.blocks.divider.name' => 'Divider',
         'field.blocks.faq.name' => 'FAQ Section',
         'field.blocks.testimonial.name' => 'Testimonial',
       ],
       'de' => [
         'field.blocks.accordion.name' => 'Akkordion Block',
-        'field.blocks.card.name' => 'Karte',
         'field.blocks.faq.name' => 'FAQ Sektion',
-        'field.blocks.card.fields.cardType.options.page' => 'Aus Seite erstellen',
-        'field.blocks.card.fields.cardType.options.manual' => 'Direkt erstellen',
-        'field.blocks.card.fields.cardType.label' => 'Kartentyp',
-        'field.blocks.card.fields.linkMode.label' => 'Verlinkung',
-        'field.blocks.card.fields.linkMode.options.none' => 'Keine Verlinkung',
-        'field.blocks.card.fields.linkMode.options.header' => 'Header verlinken',
-        'field.blocks.card.fields.linkMode.options.button' => 'Button im Footer',
         'field.blocks.divider.name' => 'Trenner',
         'field.blocks.testimonial.name' => 'Testimonial',
 

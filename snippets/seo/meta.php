@@ -31,12 +31,12 @@ $meta = $page ? $page->seo() : $site->seo();
 <meta property="og:image:height" content="<?= $meta::IMAGE_HEIGHT ?>">
 <meta property="og:image:alt" content="<?= esc($meta->imageAlt()) ?>">
 <?php if ($meta->isArticle()) : ?>
-  <?php if ($published = $meta->publishedTime()) : ?>
+    <?php if ($published = $meta->publishedTime()) : ?>
 <meta property="article:published_time" content="<?= esc($published) ?>">
-  <?php endif; ?>
-  <?php if ($modified = $meta->modifiedTime()) : ?>
+    <?php endif; ?>
+    <?php if ($modified = $meta->modifiedTime()) : ?>
 <meta property="article:modified_time" content="<?= esc($modified) ?>">
-  <?php endif; ?>
+    <?php endif; ?>
 <?php endif; ?>
 
 <meta name="twitter:card" content="<?= esc($meta->twitterCard()) ?>">

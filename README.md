@@ -345,20 +345,6 @@ When a `project_step` page is updated and its `project_status_to` field has a va
 
 When a `newsletter` or `notes` page is published (status changes to `listed`) for the first time and has no `published` date, the current date is automatically set.
 
-## Helper Functions
-
-### `getColor(string $status): string`
-
-Maps German project status labels to CSS color keys:
-
-| Input             | Output       |
-|-------------------|--------------|
-| `in Planung`      | `planning`   |
-| `in Vorbereitung` | `preparing`  |
-| `aktiv`           | `active`     |
-| `in Auswertung`   | `review`     |
-| `abgeschlossen`   | `done`       |
-
 ## Directory Structure
 
 ```

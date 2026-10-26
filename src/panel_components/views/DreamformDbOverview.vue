@@ -40,9 +40,6 @@ export default {
   },
 
   methods: {
-    displayForms() {
-      console.log(forms);
-    },
     formatDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);

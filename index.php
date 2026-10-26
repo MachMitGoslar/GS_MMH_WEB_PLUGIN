@@ -117,30 +117,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           return new SeoMetadata(null);
       },
     ],
-    'blockMethods' => [
-      'scheduleLabel' => function ($block) {
-          $publish = $block->publish_date()->isNotEmpty()
-              ? $block->publish_date()->toDate('d.m.Y H:i')
-              : null;
-          $end = $block->end_date()->isNotEmpty()
-              ? $block->end_date()->toDate('d.m.Y H:i')
-              : null;
-
-          if ($publish && $end) {
-              return "🕒 {$publish} → {$end}";
-          }
-
-          if ($publish) {
-              return "🕒 ab {$publish}";
-          }
-
-          if ($end) {
-              return "🕒 bis {$end}";
-          }
-
-          return null;
-      },
-    ],
     'translations' => [
       'en' => [
         'field.blocks.accordion.name' => 'Accordion block',
@@ -344,20 +320,3 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'design-system' => __DIR__ . '/src/design-system.css',
     ],
   ]);
-function getColor($status): string
-{
-    switch ($status) {
-        case 'in Planung':
-            return 'planning';
-        case 'in Vorbereitung':
-            return 'preparing';
-        case 'aktiv':
-            return 'active';
-        case 'in Auswertung':
-            return 'review';
-        case 'abgeschlossen':
-            return 'done';
-        default:
-            return 'false';
-    }
-}

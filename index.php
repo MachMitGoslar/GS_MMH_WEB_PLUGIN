@@ -1,6 +1,5 @@
 <?php
 
-use GsMmh\WebPlugin\DatabaseAction;
 use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
 use GsMmh\WebPlugin\SeoMetadata;
@@ -8,7 +7,6 @@ use GsMmh\WebPlugin\TextField;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
 use Kirby\Cms\Response as Response;
-use Kirby\Database\Db as Db;
 use Kirby\Toolkit\Escape;
 
 function cleanupProjectGhost(string $root): void
@@ -128,17 +126,17 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
               ? $block->end_date()->toDate('d.m.Y H:i')
               : null;
 
-        if ($publish && $end) {
-            return "🕒 {$publish} → {$end}";
-        }
+          if ($publish && $end) {
+              return "🕒 {$publish} → {$end}";
+          }
 
-        if ($publish) {
-            return "🕒 ab {$publish}";
-        }
+          if ($publish) {
+              return "🕒 ab {$publish}";
+          }
 
-        if ($end) {
-            return "🕒 bis {$end}";
-        }
+          if ($end) {
+              return "🕒 bis {$end}";
+          }
 
           return null;
       },
@@ -205,88 +203,88 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           DreamForm::register(NewsletterRecipientAction::class, TextField::class);
       },
       'page.update:after' => function (Page $newPage, Page $oldPage) {
-        static $isMovingProject = false;
-        if ($oldPage->intendedTemplate()->name() == 'project_step') {
-            if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
-                $newPage->parent()->update([
-                    'project_status' => $newPage->project_status_to(),
-                ]);
-            }
-        }
+          static $isMovingProject = false;
+          if ($oldPage->intendedTemplate()->name() == 'project_step') {
+              if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
+                  $newPage->parent()->update([
+                      'project_status' => $newPage->project_status_to(),
+                  ]);
+              }
+          }
 
-        if ($newPage->intendedTemplate()->name() === 'project') {
-            if ($isMovingProject) {
-                return;
-            }
-            $site = $newPage->site();
-            $projectsRoot = $site->find('projects');
-            $archiveRoot = $site->find('project-archive');
-            $oldRoot = $oldPage->root();
+          if ($newPage->intendedTemplate()->name() === 'project') {
+              if ($isMovingProject) {
+                  return;
+              }
+              $site = $newPage->site();
+              $projectsRoot = $site->find('projects');
+              $archiveRoot = $site->find('project-archive');
+              $oldRoot = $oldPage->root();
 
-            if ($projectsRoot && $archiveRoot) {
-                $effectiveStatus = resolveProjectArchiveStatus($newPage);
+              if ($projectsRoot && $archiveRoot) {
+                  $effectiveStatus = resolveProjectArchiveStatus($newPage);
 
-                if ($effectiveStatus !== '' && $effectiveStatus !== $newPage->project_status()->value()) {
-                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $effectiveStatus) {
-                        $newPage->update([
-                            'project_status' => $effectiveStatus,
-                        ]);
-                    });
-                    $newPage = $newPage->clone([
-                        'content' => array_replace($newPage->content()->toArray(), [
-                            'project_status' => $effectiveStatus,
-                        ]),
-                    ]);
-                }
+                  if ($effectiveStatus !== '' && $effectiveStatus !== $newPage->project_status()->value()) {
+                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $effectiveStatus) {
+                          $newPage->update([
+                              'project_status' => $effectiveStatus,
+                          ]);
+                      });
+                      $newPage = $newPage->clone([
+                          'content' => array_replace($newPage->content()->toArray(), [
+                              'project_status' => $effectiveStatus,
+                          ]),
+                      ]);
+                  }
 
-                $shouldArchive = $effectiveStatus === 'abgeschlossen';
-                $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
-                $isInProjects = $newPage->parent()->id() === $projectsRoot->id();
+                  $shouldArchive = $effectiveStatus === 'abgeschlossen';
+                  $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
+                  $isInProjects = $newPage->parent()->id() === $projectsRoot->id();
 
-                if ($shouldArchive && $isInProjects) {
-                    $isMovingProject = true;
-                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $archiveRoot, $oldRoot) {
-                        $newPage->move($archiveRoot);
-                        cleanupProjectGhostDelayed($oldRoot);
-                    });
-                    $isMovingProject = false;
-                } elseif (!$shouldArchive && $isInArchive) {
-                    $isMovingProject = true;
-                    Kirby::instance()->impersonate('kirby', function () use ($newPage, $projectsRoot, $oldRoot) {
-                        $newPage->move($projectsRoot);
-                        cleanupProjectGhostDelayed($oldRoot);
-                    });
-                    $isMovingProject = false;
-                }
-            }
-        }
+                  if ($shouldArchive && $isInProjects) {
+                      $isMovingProject = true;
+                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $archiveRoot, $oldRoot) {
+                          $newPage->move($archiveRoot);
+                          cleanupProjectGhostDelayed($oldRoot);
+                      });
+                      $isMovingProject = false;
+                  } elseif (!$shouldArchive && $isInArchive) {
+                      $isMovingProject = true;
+                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $projectsRoot, $oldRoot) {
+                          $newPage->move($projectsRoot);
+                          cleanupProjectGhostDelayed($oldRoot);
+                      });
+                      $isMovingProject = false;
+                  }
+              }
+          }
       },
       'page.changeStatus:after' => function (Page $newPage, Page $oldPage) {
           // Auto-set publish date for newsletters when published for the first time
-        if ($newPage->intendedTemplate()->name() === 'newsletter') {
-            // Check if page is being published (listed) and doesn't have a publish date yet
-            if (
-                $newPage->status() === 'listed' &&
-                $oldPage->status() !== 'listed' &&
-                $newPage->published()->isEmpty()
-            ) {
-                $newPage->update([
-                    'published' => date('Y-m-d'),
-                ]);
-            }
-        }
-        if ($newPage->intendedTemplate()->name() === 'note') {
-            // Check if page is being published (listed) and doesn't have a publish date yet
-            if (
-                $newPage->status() === 'listed' &&
-                $oldPage->status() !== 'listed' &&
-                $newPage->published()->isEmpty()
-            ) {
-                $newPage->update([
-                    'published' => date('Y-m-d'),
-                ]);
-            }
-        }
+          if ($newPage->intendedTemplate()->name() === 'newsletter') {
+              // Check if page is being published (listed) and doesn't have a publish date yet
+              if (
+                  $newPage->status() === 'listed' &&
+                  $oldPage->status() !== 'listed' &&
+                  $newPage->published()->isEmpty()
+              ) {
+                  $newPage->update([
+                      'published' => date('Y-m-d'),
+                  ]);
+              }
+          }
+          if ($newPage->intendedTemplate()->name() === 'note') {
+              // Check if page is being published (listed) and doesn't have a publish date yet
+              if (
+                  $newPage->status() === 'listed' &&
+                  $oldPage->status() !== 'listed' &&
+                  $newPage->published()->isEmpty()
+              ) {
+                  $newPage->update([
+                      'published' => date('Y-m-d'),
+                  ]);
+              }
+          }
       },
     ],
     'areas' => [
@@ -303,14 +301,14 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
               'auth' => true,
               'action' => function () {
                   $formsPage = DreamForm::findPageOrDraftRecursive(
-                      DreamForm::option('page', 'page://forms')
+                      DreamForm::option('page', 'page://forms'),
                   );
 
-                if (!$formsPage) {
-                    return [
-                      'forms' => [],
-                    ];
-                }
+                  if (!$formsPage) {
+                      return [
+                        'forms' => [],
+                      ];
+                  }
 
                   $forms = $formsPage
                       ->children()

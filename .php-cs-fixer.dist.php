@@ -5,22 +5,17 @@ declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
+// Same rules as the main repo (GS_MMH_WEB/.php-cs-fixer.php).
 $finder = Finder::create()
-    ->in([
-        __DIR__ . '/areas',
-        __DIR__ . '/controllers',
-        __DIR__ . '/snippets',
-        __DIR__ . '/templates',
-    ])
-    ->append([
-        __DIR__ . '/index.php',
-        __DIR__ . '/DatabaseAction.php',
-    ])
-    ->name('*.php')
+    ->in(__DIR__)
     ->exclude([
         'vendor',
         'node_modules',
-    ]);
+        'tests/fixtures',
+    ])
+    ->name('*.php')
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true);
 
 return (new Config())
     ->setRiskyAllowed(true)

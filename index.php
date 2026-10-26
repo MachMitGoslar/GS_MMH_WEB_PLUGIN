@@ -284,6 +284,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'api' => [
       'routes' => function () {
           return [
+            // App API (covers, latest update, highlights)
+            ...require __DIR__ . '/routes/app-api.php',
             [
               'pattern' => 'gs-mmh-web-plugin/forms',
               'method' => 'GET',

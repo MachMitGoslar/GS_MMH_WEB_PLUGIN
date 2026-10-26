@@ -59,6 +59,19 @@ function resolveProjectArchiveStatus(Page $page): string
 
 use tobimori\DreamForm\DreamForm;
 
+// Classes under classes/ load on demand; the older ones in the plugin root are still included by hand.
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'GsMmh\\WebPlugin\\';
+
+    if (str_starts_with($class, $prefix)) {
+        $file = __DIR__ . '/classes/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+
+        if (is_file($file)) {
+            require_once $file;
+        }
+    }
+});
+
 @include_once __DIR__ . '/DatabaseAction.php';
 @include_once __DIR__ . '/NewsletterRecipientAction.php';
 @include_once __DIR__ . '/NewsletterRecipients.php';

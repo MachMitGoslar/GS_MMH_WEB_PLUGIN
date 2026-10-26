@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "kirbyup serve src/index.js",
     "build": "kirbyup src/index.js",
-    "format": "prettier --write \"src/**/*.{js,vue}\"",
+    "format": "prettier --write \"src/**/*.{js,vue}\" && ddev composer run format",
     "format:check": "prettier --check \"src/**/*.{js,vue}\"",
-    "lint": "npm run format:check",
+    "lint": "npm run format:check && ddev composer run lint",
     "pre-push": "npm run lint && npm run build",
     "prepare": "npm run build"
   },

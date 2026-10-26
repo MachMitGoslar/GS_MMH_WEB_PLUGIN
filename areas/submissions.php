@@ -99,7 +99,7 @@ function dfdbNewsletterLastDate(array $recipients): ?string
 {
     $dates = array_filter(array_map(
         fn (array $recipient) => $recipient['created_at'] ?? null,
-        $recipients
+        $recipients,
     ));
 
     rsort($dates);
@@ -173,7 +173,7 @@ return function ($kirby) {
                                     'first_name' => $recipient['first_name'],
                                     'last_name' => $recipient['last_name'],
                                     'email' => $recipient['email'],
-                                    'unsubscribe_token' => $recipient['unsubscribe_token']
+                                    'unsubscribe_token' => $recipient['unsubscribe_token'],
                                 ],
                                 'submittedAt' => $recipient['created_at'],
                                 'referer' => '',

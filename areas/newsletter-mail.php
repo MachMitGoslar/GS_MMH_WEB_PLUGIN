@@ -1,10 +1,10 @@
 <?php
 
+use GsMmh\WebPlugin\NewsletterRecipients;
 use Kirby\Cms\App;
 use Kirby\Cms\Page;
 use Kirby\Exception\Exception;
 use Kirby\Toolkit\V;
-use GsMmh\WebPlugin\NewsletterRecipients;
 
 return function (App $kirby) {
     $newsletterPage = function (string $panelId): Page {

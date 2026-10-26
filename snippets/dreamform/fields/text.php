@@ -25,7 +25,7 @@ snippet('dreamform/fields/partials/label', $arguments); ?>
         'type' => $type,
         'id' => $form->elementId($block->id()),
         'name' => $block->key(),
-        'placeholder' => $type !== 'file' ? $block->placeholder()->or(" ") : null,
+        'placeholder' => $type !== 'file' ? $block->placeholder()->or(' ') : null,
         'required' => $block->required()->toBool() ?? null,
         'maxlength' => $maxLength > 0 ? $maxLength : null,
         'value' => $type !== 'file' ? $form->valueFor($block->key()) : null,
@@ -33,7 +33,7 @@ snippet('dreamform/fields/partials/label', $arguments); ?>
         'aria-describedby' => $error ? $form->elementId("{$block->id()}/error") : null,
     ],
     $type !== 'file' ? $field->htmxAttr($form) : [],
-    $input ?? []
+    $input ?? [],
 )) ?>>
 
 <?php snippet('dreamform/fields/partials/error', $arguments);

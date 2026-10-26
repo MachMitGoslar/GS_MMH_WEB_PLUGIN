@@ -23,3 +23,11 @@ yarn-error.log*
 
 **/node_modules/
 node_modules/
+
+# PHP tooling
+vendor/
+composer.lock
+.phpunit.cache/
+.php-cs-fixer.cache
+
+.editorconfig

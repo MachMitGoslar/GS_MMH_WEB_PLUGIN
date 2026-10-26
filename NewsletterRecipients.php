@@ -23,12 +23,12 @@ class NewsletterRecipients
                 `updated_at` DATETIME NOT NULL,
                 UNIQUE KEY `newsletter_recipients_email_unique` (`email`),
                 UNIQUE KEY `newsletter_recipients_unsubscribe_token_unique` (`unsubscribe_token`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
         );
 
         try {
             Db::execute(
-                'ALTER TABLE `' . self::TABLE . '` ADD COLUMN `unsubscribe_token` VARCHAR(64) NULL AFTER `email`'
+                'ALTER TABLE `' . self::TABLE . '` ADD COLUMN `unsubscribe_token` VARCHAR(64) NULL AFTER `email`',
             );
         } catch (\Throwable $exception) {
             // Column already exists.
@@ -36,7 +36,7 @@ class NewsletterRecipients
 
         try {
             Db::execute(
-                'ALTER TABLE `' . self::TABLE . '` ADD UNIQUE KEY `newsletter_recipients_unsubscribe_token_unique` (`unsubscribe_token`)'
+                'ALTER TABLE `' . self::TABLE . '` ADD UNIQUE KEY `newsletter_recipients_unsubscribe_token_unique` (`unsubscribe_token`)',
             );
         } catch (\Throwable $exception) {
             // Index already exists.
@@ -232,7 +232,7 @@ class NewsletterRecipients
             $rows = Db::select(
                 self::TABLE,
                 ['id'],
-                '`unsubscribe_token` IS NULL OR `unsubscribe_token` = ""'
+                '`unsubscribe_token` IS NULL OR `unsubscribe_token` = ""',
             );
         } catch (\Throwable $exception) {
             return;
@@ -253,7 +253,7 @@ class NewsletterRecipients
                 'unsubscribe_token' => $token,
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
-            ['id' => $id]
+            ['id' => $id],
         );
 
         return $token;

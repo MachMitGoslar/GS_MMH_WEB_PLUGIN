@@ -37,7 +37,8 @@ class NewsletterRecipientAction extends Action
                 $this->log([
                     'text' => 'E-Mail-Adresse ist bereits als Newsletter-Empfänger eingetragen.',
                 ], type: 'info', icon: 'email', title: 'Newsletter-Empfänger');
-                $this->cancel("E-Mail-Adresse ist bereits als Newsletter-Empfänger eingetragen.", true);
+                $this->cancel('E-Mail-Adresse ist bereits als Newsletter-Empfänger eingetragen.', true);
+
                 return;
             }
 

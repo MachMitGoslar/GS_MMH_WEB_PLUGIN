@@ -487,7 +487,7 @@ The plugin serves the JSON endpoints of the Goslar app (`/api/…`): cover image
 
 ## Needs from the website
 
-Two global functions of the website are used by the newsletter mail area and the recipients list:
-`mmhNewsletterMobileHtml(Page $page, array $data)` (renders a newsletter page as mail HTML) and
-`mmhAbsoluteUrl(string $url)`. The horoscope pictures (`assets/pngs/hk_*.png`) and the logo for the
-cover images are taken from the website's public folder. Everything else is self-contained.
+No functions. The only things taken from the website's public folder are the horoscope pictures
+(`assets/pngs/hk_*.png`) and the logo for the cover images (`assets/svg/`). The newsletter mail area
+(sending, rendering the page as mail HTML) lives in the website (`mmh-site`) and uses the recipients
+of this plugin (`NewsletterRecipients`, `unsubscribeToken()`).

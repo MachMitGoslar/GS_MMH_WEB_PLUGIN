@@ -280,7 +280,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
-      'newsletter-mail' => require __DIR__ . '/areas/newsletter-mail.php',
     ],
     'api' => [
       'routes' => function () {

@@ -166,7 +166,11 @@ class NewsletterRecipients
         return true;
     }
 
-    public static function unsubscribeUrl(array $recipient): string
+    /**
+     * The token behind the unsubscribe link of a recipient (created when
+     * missing). The website builds the link, see Mmh\Site\Newsletter.
+     */
+    public static function unsubscribeToken(array $recipient): string
     {
         $token = (string) ($recipient['unsubscribe_token'] ?? '');
 
@@ -174,7 +178,7 @@ class NewsletterRecipients
             $token = self::refreshToken((int) $recipient['id']);
         }
 
-        return mmhAbsoluteUrl('newsletter-abmelden?token=' . rawurlencode($token));
+        return $token;
     }
 
     public static function formPage(): ?\Kirby\Cms\Page

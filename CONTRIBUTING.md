@@ -31,7 +31,7 @@ Die Website implementiert die **seitenspezifische Logik**:
 | Seiten-Blueprints | `pages/home.yml`, `pages/newsletter.yml`, ... |
 | Seiten-Snippets | Layout, Sections, Content-Type-spezifische Snippets |
 | Controllers | Template-Controller (`home.php`, `events.php`, ...) |
-| Seiten-spezifische Hooks | Raumbuchung (E-Mail, Nextcloud-Kalender) |
+| Raumbuchung (E-Mail, Kalender, API) | eigenes Plugin `gs-mmh-rooms-plugin` |
 | Seiten-spezifische Routes | Buchungsanfragen-API |
 | CSS | Design-System Tokens + Seitenstyles |
 

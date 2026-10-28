@@ -1,300 +1,63 @@
 <?php
 
+use GsMmh\WebPlugin\FormEntries;
 use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
-use GsMmh\WebPlugin\SeoMetadata;
 use GsMmh\WebPlugin\TextField;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
-use Kirby\Cms\Response as Response;
-use Kirby\Toolkit\Escape;
-
-function cleanupProjectGhost(string $root): void
-{
-    if (!$root || !is_dir($root)) {
-        return;
-    }
-
-    $entries = array_values(array_filter(scandir($root) ?: [], function ($entry) {
-        return $entry !== '.' && $entry !== '..';
-    }));
-
-    $nonChanges = array_values(array_filter($entries, function ($entry) {
-        return $entry !== '_changes';
-    }));
-
-    if (count($nonChanges) !== 1 || $nonChanges[0] !== 'project.txt') {
-        return;
-    }
-
-    $projectFile = $root . DIRECTORY_SEPARATOR . 'project.txt';
-    $content = is_file($projectFile) ? trim((string) file_get_contents($projectFile)) : '';
-    if (!preg_match('/^Uuid:\\s*\\S+$/', $content)) {
-        return;
-    }
-
-    @unlink($projectFile);
-    if (is_dir($root . DIRECTORY_SEPARATOR . '_changes')) {
-        $changesEntries = array_values(array_filter(scandir($root . DIRECTORY_SEPARATOR . '_changes') ?: [], function ($entry) {
-            return $entry !== '.' && $entry !== '..';
-        }));
-        if (count($changesEntries) === 0) {
-            @rmdir($root . DIRECTORY_SEPARATOR . '_changes');
-        }
-    }
-    @rmdir($root);
-}
-
-function cleanupProjectGhostDelayed(string $root): void
-{
-    register_shutdown_function(function () use ($root) {
-        cleanupProjectGhost($root);
-    });
-}
-
-function resolveProjectArchiveStatus(Page $page): string
-{
-    return trim((string) $page->project_status()->value());
-}
-
 use tobimori\DreamForm\DreamForm;
 
-@include_once __DIR__ . '/DatabaseAction.php';
-@include_once __DIR__ . '/NewsletterRecipientAction.php';
-@include_once __DIR__ . '/NewsletterRecipients.php';
-@include_once __DIR__ . '/SeoMetadata.php';
-@include_once __DIR__ . '/TextField.php';
+// All classes (GsMmh\WebPlugin\…) load on demand from classes/. Kirby loads vendor/autoload.php of a
+// plugin if there is one, but the deployed plugins come from git without `composer install`.
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'GsMmh\\WebPlugin\\';
+
+    if (str_starts_with($class, $prefix)) {
+        $file = __DIR__ . '/classes/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+
+        if (is_file($file)) {
+            require_once $file;
+        }
+    }
+});
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
-      'blocks/accordion' => __DIR__ . '/blueprints/blocks/accordion.yml',
-      'blocks/divider' => __DIR__ . '/blueprints/blocks/divider.yml',
-      'blocks/testimonial' => __DIR__ . '/blueprints/blocks/testimonial.yml',
-      'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
-      'blocks/button' => __DIR__ . '/blueprints/blocks/button.yml',
-      'blocks/download' => __DIR__ . '/blueprints/blocks/download.yml',
-      'blocks/faq' => __DIR__ . '/blueprints/blocks/faq2.yml',
-      'fields/buttonType' => __DIR__ . '/blueprints/fields/buttonType.yml',
-      'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
-      'blocks/timeline' => __DIR__ . '/blueprints/blocks/timeline.yml',
       'blocks/form' => __DIR__ . '/blueprints/blocks/form.yml',
-      'tabs/seo' => __DIR__ . '/blueprints/tabs/seo.yml',
 
     ],
     'snippets' => [
-      'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
-      'blocks/divider' => __DIR__ . '/snippets/blocks/divider.php',
-      'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
-      'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
-      'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
-      'blocks/download' => __DIR__ . '/snippets/blocks/download.php',
-      'blocks/faq' => __DIR__ . '/snippets/blocks/faq2.php',
+      'app/horoscope-list' => __DIR__ . '/snippets/app/horoscope-list.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
-      'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
       'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
-      'seo/meta' => __DIR__ . '/snippets/seo/meta.php',
-      'seo/jsonld' => __DIR__ . '/snippets/seo/jsonld.php',
       'content-elements/form' => __DIR__ . '/snippets/content-elements/form.php',
     ],
     'sections' => [
       'newsletter-recipients' => require __DIR__ . '/sections/newsletter-recipients.php',
       'seo-preview' => require __DIR__ . '/sections/seo-preview.php',
     ],
-    'pageMethods' => [
-      /**
-       * Resolved SEO and social sharing values for this page.
-       */
-      'seo' => function (): SeoMetadata {
-          return new SeoMetadata($this);
-      },
-    ],
-    'siteMethods' => [
-      /**
-       * Site-wide defaults, used where no page context exists.
-       */
-      'seo' => function (): SeoMetadata {
-          return new SeoMetadata(null);
-      },
-    ],
-    'blockMethods' => [
-      'scheduleLabel' => function ($block) {
-          $publish = $block->publish_date()->isNotEmpty()
-              ? $block->publish_date()->toDate('d.m.Y H:i')
-              : null;
-          $end = $block->end_date()->isNotEmpty()
-              ? $block->end_date()->toDate('d.m.Y H:i')
-              : null;
-
-          if ($publish && $end) {
-              return "🕒 {$publish} → {$end}";
-          }
-
-          if ($publish) {
-              return "🕒 ab {$publish}";
-          }
-
-          if ($end) {
-              return "🕒 bis {$end}";
-          }
-
-          return null;
-      },
-    ],
-    'translations' => [
-      'en' => [
-        'field.blocks.accordion.name' => 'Accordion block',
-        'field.blocks.divider.name' => 'Divider',
-        'field.blocks.faq.name' => 'FAQ Section',
-        'field.blocks.testimonial.name' => 'Testimonial',
-      ],
-      'de' => [
-        'field.blocks.accordion.name' => 'Akkordion Block',
-        'field.blocks.faq.name' => 'FAQ Sektion',
-        'field.blocks.divider.name' => 'Trenner',
-        'field.blocks.testimonial.name' => 'Testimonial',
-
-      ],
-    ],
     'routes' => [
-      [
-        'pattern' => 'sitemap.xml',
-        'action' => function () {
-            $pages = site()->index()->filter(
-                fn (Page $page) => $page->seo()->isIndexable(),
-            );
-
-            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
-
-            foreach ($pages as $page) {
-                $xml .= '  <url>' . PHP_EOL;
-                $xml .= '    <loc>' . Escape::html($page->url()) . '</loc>' . PHP_EOL;
-
-                if ($modified = $page->modified('c')) {
-                    $xml .= '    <lastmod>' . $modified . '</lastmod>' . PHP_EOL;
-                }
-
-                $xml .= '  </url>' . PHP_EOL;
-            }
-
-            $xml .= '</urlset>';
-
-            return new Response($xml, 'application/xml');
-        },
-      ],
-      [
-        'pattern' => 'robots.txt',
-        'action' => function () {
-            $lines = [
-                'User-agent: *',
-                'Disallow: /panel',
-                'Disallow: /signage',
-                '',
-                'Sitemap: ' . site()->url() . '/sitemap.xml',
-            ];
-
-            return new Response(implode(PHP_EOL, $lines) . PHP_EOL, 'text/plain');
-        },
-      ],
+      // App routes under /app/ (horoscope, request counter, Ferienpass)
+      ...require __DIR__ . '/routes/app.php',
     ],
     'hooks' => [
+      'dreamform.submitted:after' => function ($submission, $form) {
+          FormEntries::unlistNewest($form);
+      },
       'system.loadPlugins:after' => function () {
           DreamForm::register(NewsletterRecipientAction::class, TextField::class);
-      },
-      'page.update:after' => function (Page $newPage, Page $oldPage) {
-          static $isMovingProject = false;
-          if ($oldPage->intendedTemplate()->name() == 'project_step') {
-              if ($newPage->project_status_to()->isNotEmpty() && ($newPage->project_status_to() != $newPage->parent()->project_status())) {
-                  $newPage->parent()->update([
-                      'project_status' => $newPage->project_status_to(),
-                  ]);
-              }
-          }
-
-          if ($newPage->intendedTemplate()->name() === 'project') {
-              if ($isMovingProject) {
-                  return;
-              }
-              $site = $newPage->site();
-              $projectsRoot = $site->find('projects');
-              $archiveRoot = $site->find('project-archive');
-              $oldRoot = $oldPage->root();
-
-              if ($projectsRoot && $archiveRoot) {
-                  $effectiveStatus = resolveProjectArchiveStatus($newPage);
-
-                  if ($effectiveStatus !== '' && $effectiveStatus !== $newPage->project_status()->value()) {
-                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $effectiveStatus) {
-                          $newPage->update([
-                              'project_status' => $effectiveStatus,
-                          ]);
-                      });
-                      $newPage = $newPage->clone([
-                          'content' => array_replace($newPage->content()->toArray(), [
-                              'project_status' => $effectiveStatus,
-                          ]),
-                      ]);
-                  }
-
-                  $shouldArchive = $effectiveStatus === 'abgeschlossen';
-                  $isInArchive = $newPage->parent()->id() === $archiveRoot->id();
-                  $isInProjects = $newPage->parent()->id() === $projectsRoot->id();
-
-                  if ($shouldArchive && $isInProjects) {
-                      $isMovingProject = true;
-                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $archiveRoot, $oldRoot) {
-                          $newPage->move($archiveRoot);
-                          cleanupProjectGhostDelayed($oldRoot);
-                      });
-                      $isMovingProject = false;
-                  } elseif (!$shouldArchive && $isInArchive) {
-                      $isMovingProject = true;
-                      Kirby::instance()->impersonate('kirby', function () use ($newPage, $projectsRoot, $oldRoot) {
-                          $newPage->move($projectsRoot);
-                          cleanupProjectGhostDelayed($oldRoot);
-                      });
-                      $isMovingProject = false;
-                  }
-              }
-          }
-      },
-      'page.changeStatus:after' => function (Page $newPage, Page $oldPage) {
-          // Auto-set publish date for newsletters when published for the first time
-          if ($newPage->intendedTemplate()->name() === 'newsletter') {
-              // Check if page is being published (listed) and doesn't have a publish date yet
-              if (
-                  $newPage->status() === 'listed' &&
-                  $oldPage->status() !== 'listed' &&
-                  $newPage->published()->isEmpty()
-              ) {
-                  $newPage->update([
-                      'published' => date('Y-m-d'),
-                  ]);
-              }
-          }
-          if ($newPage->intendedTemplate()->name() === 'note') {
-              // Check if page is being published (listed) and doesn't have a publish date yet
-              if (
-                  $newPage->status() === 'listed' &&
-                  $oldPage->status() !== 'listed' &&
-                  $newPage->published()->isEmpty()
-              ) {
-                  $newPage->update([
-                      'published' => date('Y-m-d'),
-                  ]);
-              }
-          }
       },
     ],
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
-      'newsletter-mail' => require __DIR__ . '/areas/newsletter-mail.php',
-      'rooms-booking' => require __DIR__ . '/areas/rooms-booking.php',
     ],
     'api' => [
       'routes' => function () {
           return [
+            // App API (covers, latest update, highlights)
+            ...require __DIR__ . '/routes/app-api.php',
             [
               'pattern' => 'gs-mmh-web-plugin/forms',
               'method' => 'GET',
@@ -344,20 +107,3 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'design-system' => __DIR__ . '/src/design-system.css',
     ],
   ]);
-function getColor($status): string
-{
-    switch ($status) {
-        case 'in Planung':
-            return 'planning';
-        case 'in Vorbereitung':
-            return 'preparing';
-        case 'aktiv':
-            return 'active';
-        case 'in Auswertung':
-            return 'review';
-        case 'abgeschlossen':
-            return 'done';
-        default:
-            return 'false';
-    }
-}

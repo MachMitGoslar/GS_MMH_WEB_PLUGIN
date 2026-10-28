@@ -42,9 +42,6 @@ export default {
           ? ''
           : this.editor.state.doc.textBetween(selection.from, selection.to);
 
-        console.log('currentAttrs', currentAttrs);
-        console.log('selectedText', selectedText);
-
         window.panel.dialog.open({
           component: 'k-form-dialog',
           props: {

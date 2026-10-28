@@ -76,31 +76,13 @@ spl_autoload_register(static function (string $class): void {
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
-      'blocks/accordion' => __DIR__ . '/blueprints/blocks/accordion.yml',
-      'blocks/divider' => __DIR__ . '/blueprints/blocks/divider.yml',
-      'blocks/testimonial' => __DIR__ . '/blueprints/blocks/testimonial.yml',
-      'blocks/cta' => __DIR__ . '/blueprints/blocks/cta.yml',
-      'blocks/button' => __DIR__ . '/blueprints/blocks/button.yml',
-      'blocks/download' => __DIR__ . '/blueprints/blocks/download.yml',
-      'blocks/faq' => __DIR__ . '/blueprints/blocks/faq2.yml',
-      'fields/buttonType' => __DIR__ . '/blueprints/fields/buttonType.yml',
-      'blocks/text' => __DIR__ . '/blueprints/blocks/text.yml',
-      'blocks/timeline' => __DIR__ . '/blueprints/blocks/timeline.yml',
       'blocks/form' => __DIR__ . '/blueprints/blocks/form.yml',
       'tabs/seo' => __DIR__ . '/blueprints/tabs/seo.yml',
 
     ],
     'snippets' => [
       'app/horoscope-list' => __DIR__ . '/snippets/app/horoscope-list.php',
-      'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
-      'blocks/divider' => __DIR__ . '/snippets/blocks/divider.php',
-      'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
-      'blocks/cta' => __DIR__ . '/snippets/blocks/cta.php',
-      'blocks/button' => __DIR__ . '/snippets/blocks/button.php',
-      'blocks/download' => __DIR__ . '/snippets/blocks/download.php',
-      'blocks/faq' => __DIR__ . '/snippets/blocks/faq2.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
-      'blocks/timeline' => __DIR__ . '/snippets/blocks/timeline.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
       'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
       'seo/meta' => __DIR__ . '/snippets/seo/meta.php',
@@ -126,21 +108,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'seo' => function (): SeoMetadata {
           return new SeoMetadata(null);
       },
-    ],
-    'translations' => [
-      'en' => [
-        'field.blocks.accordion.name' => 'Accordion block',
-        'field.blocks.divider.name' => 'Divider',
-        'field.blocks.faq.name' => 'FAQ Section',
-        'field.blocks.testimonial.name' => 'Testimonial',
-      ],
-      'de' => [
-        'field.blocks.accordion.name' => 'Akkordion Block',
-        'field.blocks.faq.name' => 'FAQ Sektion',
-        'field.blocks.divider.name' => 'Trenner',
-        'field.blocks.testimonial.name' => 'Testimonial',
-
-      ],
     ],
     'routes' => [
       // App routes under /app/ (horoscope, request counter, Ferienpass)

@@ -414,9 +414,13 @@ gs-mmh-web-plugin/
 ├── assets/                      # Panel-loaded CSS assets
 │   ├── colors.css
 │   └── fonts.css
-├── DatabaseAction.php           # DreamForm custom action
-├── NewsletterRecipients.php     # Newsletter recipient store
-├── SeoMetadata.php              # SEO / social value resolution
+├── classes/                     # GsMmh\WebPlugin\… (loaded on demand, see index.php)
+│   ├── CoverImages, LatestUpdate, ProjectWidget   # app API (docs/APP-API.md in the website repo)
+│   ├── Horoscope, Ferienpass, AppRequests         # /app/ routes
+│   ├── DatabaseAction, TextField, FormEntries     # DreamForm
+│   ├── NewsletterRecipients, NewsletterRecipientAction
+│   └── SeoMetadata              # SEO / social value resolution
+├── routes/                      # app.php (/app/…), app-api.php (/api/…)
 ├── index.php                    # Plugin registration
 ├── index.js                     # Compiled panel JS (build output)
 ├── index.css                    # Compiled panel CSS (build output)
@@ -480,3 +484,10 @@ GPL-3.0
 ## App API
 
 The plugin serves the JSON endpoints of the Goslar app (`/api/…`): cover images, latest update, highlights and, per released project, a dashboard card with its project updates (`/api/projects/<slug>/card.json`, `…/index.json`). Routes: `routes/app-api.php`. Format and endpoints are documented in the main repository: `docs/APP-API.md`.
+
+## Needs from the website
+
+Two global functions of the website are used by the newsletter mail area and the recipients list:
+`mmhNewsletterMobileHtml(Page $page, array $data)` (renders a newsletter page as mail HTML) and
+`mmhAbsoluteUrl(string $url)`. The horoscope pictures (`assets/pngs/hk_*.png`) and the logo for the
+cover images are taken from the website's public folder. Everything else is self-contained.

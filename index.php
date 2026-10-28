@@ -60,7 +60,8 @@ function resolveProjectArchiveStatus(Page $page): string
 
 use tobimori\DreamForm\DreamForm;
 
-// Classes under classes/ load on demand; the older ones in the plugin root are still included by hand.
+// All classes (GsMmh\WebPlugin\…) load on demand from classes/. Kirby loads vendor/autoload.php of a
+// plugin if there is one, but the deployed plugins come from git without `composer install`.
 spl_autoload_register(static function (string $class): void {
     $prefix = 'GsMmh\\WebPlugin\\';
 
@@ -72,12 +73,6 @@ spl_autoload_register(static function (string $class): void {
         }
     }
 });
-
-@include_once __DIR__ . '/DatabaseAction.php';
-@include_once __DIR__ . '/NewsletterRecipientAction.php';
-@include_once __DIR__ . '/NewsletterRecipients.php';
-@include_once __DIR__ . '/SeoMetadata.php';
-@include_once __DIR__ . '/TextField.php';
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [

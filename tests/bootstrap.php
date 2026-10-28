@@ -26,5 +26,3 @@ new Kirby\Cms\App([
         'index' => 'https://mmh.test',
     ],
 ]);
-
-require_once dirname(__DIR__) . '/SeoMetadata.php';

@@ -1,5 +1,6 @@
 <?php
 
+use GsMmh\WebPlugin\FormEntries;
 use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
 use GsMmh\WebPlugin\SeoMetadata;
@@ -191,6 +192,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'hooks' => [
+      'dreamform.submitted:after' => function ($submission, $form) {
+          FormEntries::unlistNewest($form);
+      },
       'system.loadPlugins:after' => function () {
           DreamForm::register(NewsletterRecipientAction::class, TextField::class);
       },

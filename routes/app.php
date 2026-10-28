@@ -5,9 +5,9 @@
  * counter, Ferienpass events. (The JSON endpoints under /api/ are in
  * app-api.php.)
  *
- * The counter hands off to the next matching route via NextRouteException,
- * so it only sees requests that no route above it has answered: the
- * horoscope routes sit before it and are not counted. Kept as it was.
+ * The counter comes first: it hands off to the next matching route via
+ * NextRouteException, so it counts every /app/* request, including the
+ * horoscope routes that follow.
  */
 
 use GsMmh\WebPlugin\AppRequests;
@@ -22,6 +22,20 @@ $json = static fn (array $payload): Response => new Response(
 );
 
 return [
+
+    /**
+     * App Request Tracking
+     * Increments a per-URL/per-day counter for any /app/* request, then
+     * hands the request off to the next matching route.
+     */
+    [
+        'pattern' => '/app/(:any)',
+        'action' => function ($any) {
+            AppRequests::count($any);
+
+            throw new NextRouteException();
+        },
+    ],
     /**
      * Horoscope Card API
      * Returns the daily Goslarer Horoskope as a JSON app-card payload.
@@ -39,20 +53,6 @@ return [
     [
         'pattern' => '/app/horoskope',
         'action' => fn () => new Response(snippet('app/horoscope-list', [], true), 'text/html'),
-    ],
-
-    /**
-     * App Request Tracking
-     * Increments a per-URL/per-day counter for any /app/* request, then
-     * hands the request off to the next matching route.
-     */
-    [
-        'pattern' => '/app/(:any)',
-        'action' => function ($any) {
-            AppRequests::count($any);
-
-            throw new NextRouteException();
-        },
     ],
 
     /**

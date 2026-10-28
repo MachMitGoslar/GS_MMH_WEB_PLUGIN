@@ -38,17 +38,16 @@ final class AppApiRoutesTest extends TestCase
         }
     }
 
-    public function testTheAppRoutesKeepTheirOrder(): void
+    public function testTheCounterComesFirstSoItSeesEveryAppRequest(): void
     {
         $routes = require dirname(__DIR__, 2) . '/routes/app.php';
         $patterns = array_column($routes, 'pattern');
 
-        // The counter sits between the horoscope and the Ferienpass routes: it
-        // only sees what the routes above it have not answered.
+        // Routes are tried in order; the counter hands off via NextRouteException.
         $this->assertSame([
+            '/app/(:any)',
             '/app/horoskop_card',
             '/app/horoskope',
-            '/app/(:any)',
             '/app/ferienpass.json',
             '/app/ferienpass_index.json',
         ], $patterns);

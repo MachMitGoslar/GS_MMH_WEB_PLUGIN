@@ -52,8 +52,7 @@ The website handles **page-specific implementation** that only applies to mmh.go
 | **Page blueprints** | `pages/home.yml`, `pages/newsletter.yml`, ... |
 | **Layout snippets** | Header, footer, sections, content-type renderers |
 | **Controllers** | Template controllers (`home.php`, `events.php`, ...) |
-| **Site-specific hooks** | Booking request emails, Nextcloud calendar integration |
-| **Site-specific routes** | Booking request API |
+| **Room booking** | Its own plugin: `gs-mmh-rooms-plugin` (rooms, booking requests, availability, mails) |
 | **Frontend CSS** | Design-system tokens + page/component styles |
 
 ### Rule of thumb
@@ -345,20 +344,6 @@ When a `project_step` page is updated and its `project_status_to` field has a va
 
 When a `newsletter` or `notes` page is published (status changes to `listed`) for the first time and has no `published` date, the current date is automatically set.
 
-## Helper Functions
-
-### `getColor(string $status): string`
-
-Maps German project status labels to CSS color keys:
-
-| Input             | Output       |
-|-------------------|--------------|
-| `in Planung`      | `planning`   |
-| `in Vorbereitung` | `preparing`  |
-| `aktiv`           | `active`     |
-| `in Auswertung`   | `review`     |
-| `abgeschlossen`   | `done`       |
-
 ## Directory Structure
 
 ```
@@ -429,9 +414,13 @@ gs-mmh-web-plugin/
 ├── assets/                      # Panel-loaded CSS assets
 │   ├── colors.css
 │   └── fonts.css
-├── DatabaseAction.php           # DreamForm custom action
-├── NewsletterRecipients.php     # Newsletter recipient store
-├── SeoMetadata.php              # SEO / social value resolution
+├── classes/                     # GsMmh\WebPlugin\… (loaded on demand, see index.php)
+│   ├── CoverImages, LatestUpdate, ProjectWidget   # app API (docs/APP-API.md in the website repo)
+│   ├── Horoscope, Ferienpass, AppRequests         # /app/ routes
+│   ├── DatabaseAction, TextField, FormEntries     # DreamForm
+│   ├── NewsletterRecipients, NewsletterRecipientAction
+│   └── SeoMetadata              # SEO / social value resolution
+├── routes/                      # app.php (/app/…), app-api.php (/api/…)
 ├── index.php                    # Plugin registration
 ├── index.js                     # Compiled panel JS (build output)
 ├── index.css                    # Compiled panel CSS (build output)
@@ -491,3 +480,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, code standards, an
 ## License
 
 GPL-3.0
+
+## App API
+
+The plugin serves the JSON endpoints of the Goslar app (`/api/…`): cover images, latest update, highlights and, per released project, a dashboard card with its project updates (`/api/projects/<slug>/card.json`, `…/index.json`). Routes: `routes/app-api.php`. Format and endpoints are documented in the main repository: `docs/APP-API.md`.
+
+## Needs from the website
+
+No functions. The only things taken from the website's public folder are the horoscope pictures
+(`assets/pngs/hk_*.png`) and the logo for the cover images (`assets/svg/`). The newsletter mail area
+(sending, rendering the page as mail HTML) lives in the website (`mmh-site`) and uses the recipients
+of this plugin (`NewsletterRecipients`, `unsubscribeToken()`).

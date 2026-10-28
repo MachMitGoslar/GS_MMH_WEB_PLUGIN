@@ -1,5 +1,6 @@
 <?php
 
+use GsMmh\WebPlugin\FormEntries;
 use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
 use GsMmh\WebPlugin\SeoMetadata;
@@ -59,11 +60,19 @@ function resolveProjectArchiveStatus(Page $page): string
 
 use tobimori\DreamForm\DreamForm;
 
-@include_once __DIR__ . '/DatabaseAction.php';
-@include_once __DIR__ . '/NewsletterRecipientAction.php';
-@include_once __DIR__ . '/NewsletterRecipients.php';
-@include_once __DIR__ . '/SeoMetadata.php';
-@include_once __DIR__ . '/TextField.php';
+// All classes (GsMmh\WebPlugin\…) load on demand from classes/. Kirby loads vendor/autoload.php of a
+// plugin if there is one, but the deployed plugins come from git without `composer install`.
+spl_autoload_register(static function (string $class): void {
+    $prefix = 'GsMmh\\WebPlugin\\';
+
+    if (str_starts_with($class, $prefix)) {
+        $file = __DIR__ . '/classes/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+
+        if (is_file($file)) {
+            require_once $file;
+        }
+    }
+});
 
 Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'blueprints' => [
@@ -82,6 +91,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
 
     ],
     'snippets' => [
+      'app/horoscope-list' => __DIR__ . '/snippets/app/horoscope-list.php',
       'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
       'blocks/divider' => __DIR__ . '/snippets/blocks/divider.php',
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
@@ -117,30 +127,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           return new SeoMetadata(null);
       },
     ],
-    'blockMethods' => [
-      'scheduleLabel' => function ($block) {
-          $publish = $block->publish_date()->isNotEmpty()
-              ? $block->publish_date()->toDate('d.m.Y H:i')
-              : null;
-          $end = $block->end_date()->isNotEmpty()
-              ? $block->end_date()->toDate('d.m.Y H:i')
-              : null;
-
-          if ($publish && $end) {
-              return "🕒 {$publish} → {$end}";
-          }
-
-          if ($publish) {
-              return "🕒 ab {$publish}";
-          }
-
-          if ($end) {
-              return "🕒 bis {$end}";
-          }
-
-          return null;
-      },
-    ],
     'translations' => [
       'en' => [
         'field.blocks.accordion.name' => 'Accordion block',
@@ -157,6 +143,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'routes' => [
+      // App routes under /app/ (horoscope, request counter, Ferienpass)
+      ...require __DIR__ . '/routes/app.php',
       [
         'pattern' => 'sitemap.xml',
         'action' => function () {
@@ -199,6 +187,9 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'hooks' => [
+      'dreamform.submitted:after' => function ($submission, $form) {
+          FormEntries::unlistNewest($form);
+      },
       'system.loadPlugins:after' => function () {
           DreamForm::register(NewsletterRecipientAction::class, TextField::class);
       },
@@ -289,12 +280,12 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
-      'newsletter-mail' => require __DIR__ . '/areas/newsletter-mail.php',
-      'rooms-booking' => require __DIR__ . '/areas/rooms-booking.php',
     ],
     'api' => [
       'routes' => function () {
           return [
+            // App API (covers, latest update, highlights)
+            ...require __DIR__ . '/routes/app-api.php',
             [
               'pattern' => 'gs-mmh-web-plugin/forms',
               'method' => 'GET',
@@ -344,20 +335,3 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'design-system' => __DIR__ . '/src/design-system.css',
     ],
   ]);
-function getColor($status): string
-{
-    switch ($status) {
-        case 'in Planung':
-            return 'planning';
-        case 'in Vorbereitung':
-            return 'preparing';
-        case 'aktiv':
-            return 'active';
-        case 'in Auswertung':
-            return 'review';
-        case 'abgeschlossen':
-            return 'done';
-        default:
-            return 'false';
-    }
-}

@@ -28,13 +28,6 @@ export default {
       return type;
     },
   },
-  watch: {
-    linkTextField: {
-      handler(value) {
-        console.log('Hallo:', value);
-      },
-    },
-  },
   methods: {
     updateItem(content, index, name, value) {
       content.buttons[index].content[name] = value;

@@ -24,7 +24,6 @@ export default {
         }
 
         if (attrs.href) {
-          console.log('TZhis:', attrs);
           return this.update(attrs);
         }
       },
@@ -41,7 +40,6 @@ export default {
       openButtonDialog: () => {
         const currentAttrs = this.editor.getMarkAttrs('button') || {};
         const selection = this.editor.state.selection;
-        console.log('currentAttrs', currentAttrs);
 
         window.panel.dialog.open({
           component: 'k-form-dialog',
@@ -111,7 +109,6 @@ export default {
           },
           on: {
             submit: value => {
-              console.log('Saving: ', value);
               this.editor.command('toggleButton', value);
               if (window.panel && window.panel.dialog) {
                 window.panel.dialog.close();
@@ -174,7 +171,6 @@ export default {
           priority: 60,
           tag: 'a[data-button].gs-c-btn',
           getAttrs(node) {
-            console.log('getting attrs:', node);
             return {
               href: node.getAttribute('href'),
               target: node.getAttribute('target'),
@@ -187,7 +183,6 @@ export default {
         },
       ],
       toDOM(mark) {
-        console.log('Mark is: ', mark.attrs);
         const { href, target, buttonColor, buttonSize, buttonStyle, title } = mark.attrs;
         const attrs = {
           href: href || '#',

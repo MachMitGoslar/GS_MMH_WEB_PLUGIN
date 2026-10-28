@@ -13,10 +13,7 @@
     </testsuites>
     <source>
         <include>
-            <file>DatabaseAction.php</file>
-            <file>NewsletterRecipients.php</file>
-            <file>SeoMetadata.php</file>
-            <file>TextField.php</file>
+            <directory>classes</directory>
         </include>
     </source>
 </phpunit>

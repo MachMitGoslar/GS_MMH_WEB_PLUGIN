@@ -286,7 +286,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'areas' => [
       'formular-eingaenge' => require __DIR__ . '/areas/submissions.php',
       'newsletter-mail' => require __DIR__ . '/areas/newsletter-mail.php',
-      'rooms-booking' => require __DIR__ . '/areas/rooms-booking.php',
     ],
     'api' => [
       'routes' => function () {

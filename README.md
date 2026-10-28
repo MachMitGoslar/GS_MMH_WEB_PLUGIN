@@ -52,8 +52,7 @@ The website handles **page-specific implementation** that only applies to mmh.go
 | **Page blueprints** | `pages/home.yml`, `pages/newsletter.yml`, ... |
 | **Layout snippets** | Header, footer, sections, content-type renderers |
 | **Controllers** | Template controllers (`home.php`, `events.php`, ...) |
-| **Site-specific hooks** | Booking request emails, Nextcloud calendar integration |
-| **Site-specific routes** | Booking request API |
+| **Room booking** | Its own plugin: `gs-mmh-rooms-plugin` (rooms, booking requests, availability, mails) |
 | **Frontend CSS** | Design-system tokens + page/component styles |
 
 ### Rule of thumb

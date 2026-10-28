@@ -22,6 +22,9 @@ final class AppApiRoutesTest extends TestCase
             'app-cover/(:any).svg',
             'latest-update',
             'highlights',
+            'projects/index.json',
+            'projects/(:any)/card.json',
+            'projects/(:any)/index.json',
         ], $patterns);
         $this->assertSame($patterns, array_values(array_unique($patterns)), 'each pattern once');
     }

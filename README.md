@@ -477,3 +477,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, code standards, an
 ## License
 
 GPL-3.0
+
+## App API
+
+The plugin serves the JSON endpoints of the Goslar app (`/api/…`): cover images, latest update, highlights and, per released project, a dashboard card with its project updates (`/api/projects/<slug>/card.json`, `…/index.json`). Routes: `routes/app-api.php`. Format and endpoints are documented in the main repository: `docs/APP-API.md`.

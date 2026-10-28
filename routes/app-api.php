@@ -7,6 +7,17 @@
 
 use GsMmh\WebPlugin\CoverImages;
 use GsMmh\WebPlugin\LatestUpdate;
+use GsMmh\WebPlugin\ProjectWidget;
+use Kirby\Cms\Response;
+
+/**
+ * 404 for projects that do not exist or are not released for the app.
+ */
+$projectNotFound = static fn (): Response => new Response(
+    json_encode(['status' => 'error', 'message' => 'Projekt nicht gefunden'], JSON_UNESCAPED_UNICODE),
+    'application/json',
+    404,
+);
 
 return [
     /**
@@ -184,6 +195,35 @@ return [
             ];
 
             return $highlights;
+        },
+    ],
+    /**
+     * Project updates for the dashboard widget (docs/APP-API.md)
+     */
+    [
+        'pattern' => 'projects/index.json',
+        'method' => 'GET',
+        'auth' => false,
+        'action' => fn () => ProjectWidget::projects(),
+    ],
+    [
+        'pattern' => 'projects/(:any)/card.json',
+        'method' => 'GET',
+        'auth' => false,
+        'action' => function ($slug) use ($projectNotFound) {
+            $project = ProjectWidget::project($slug);
+
+            return $project !== null ? ProjectWidget::card($project) : $projectNotFound();
+        },
+    ],
+    [
+        'pattern' => 'projects/(:any)/index.json',
+        'method' => 'GET',
+        'auth' => false,
+        'action' => function ($slug) use ($projectNotFound) {
+            $project = ProjectWidget::project($slug);
+
+            return $project !== null ? ProjectWidget::index($project) : $projectNotFound();
         },
     ],
 ];

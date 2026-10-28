@@ -37,4 +37,20 @@ final class AppApiRoutesTest extends TestCase
             $this->assertIsCallable($route['action']);
         }
     }
+
+    public function testTheAppRoutesKeepTheirOrder(): void
+    {
+        $routes = require dirname(__DIR__, 2) . '/routes/app.php';
+        $patterns = array_column($routes, 'pattern');
+
+        // The counter sits between the horoscope and the Ferienpass routes: it
+        // only sees what the routes above it have not answered.
+        $this->assertSame([
+            '/app/horoskop_card',
+            '/app/horoskope',
+            '/app/(:any)',
+            '/app/ferienpass.json',
+            '/app/ferienpass_index.json',
+        ], $patterns);
+    }
 }

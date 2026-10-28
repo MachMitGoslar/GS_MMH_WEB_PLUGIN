@@ -95,6 +95,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
 
     ],
     'snippets' => [
+      'app/horoscope-list' => __DIR__ . '/snippets/app/horoscope-list.php',
       'blocks/accordion' => __DIR__ . '/snippets/blocks/accordion.php',
       'blocks/divider' => __DIR__ . '/snippets/blocks/divider.php',
       'blocks/testimonial' => __DIR__ . '/snippets/blocks/testimonial.php',
@@ -146,6 +147,8 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       ],
     ],
     'routes' => [
+      // App routes under /app/ (horoscope, request counter, Ferienpass)
+      ...require __DIR__ . '/routes/app.php',
       [
         'pattern' => 'sitemap.xml',
         'action' => function () {

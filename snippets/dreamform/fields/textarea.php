@@ -37,7 +37,7 @@ snippet('dreamform/fields/partials/label', $arguments); ?>
     $field->htmxAttr($form),
 )) ?>><?= $form->valueFor($block->key())?->escape() ?></textarea>
 
-<?php if ($maxLength > 0): ?>
+<?php if ($maxLength > 0) : ?>
 <p class="dreamform-counter" id="<?= esc($counterId, 'attr') ?>" aria-live="polite">
     <span data-counter-value><?= mb_strlen($value) ?></span> / <?= $maxLength ?>
 </p>

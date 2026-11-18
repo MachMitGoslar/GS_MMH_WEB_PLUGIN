@@ -8,6 +8,7 @@
  */
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/stubs/dreamform.php';
 
 $tmp = sys_get_temp_dir() . '/gs-mmh-web-plugin-phpunit';
 

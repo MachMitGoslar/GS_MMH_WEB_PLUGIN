@@ -6,16 +6,13 @@ use tobimori\DreamForm\Fields\TextField as DreamFormTextField;
 
 class TextField extends DreamFormTextField
 {
+    use MaxLengthValidation;
+
     public static function blueprint(): array
     {
         $blueprint = parent::blueprint();
 
-        $blueprint['tabs']['validation']['fields']['maxLength'] = [
-            'label' => 'Maximale Zeichen',
-            'type' => 'number',
-            'min' => 1,
-            'width' => '1/2',
-        ];
+        $blueprint['tabs']['validation']['fields']['maxLength'] = static::maxLengthBlueprintField();
 
         $blueprint['tabs']['validation']['fields']['allowedCharacters'] = [
             'label' => 'Erlaubte Zeichen',
@@ -30,12 +27,8 @@ class TextField extends DreamFormTextField
             ],
         ];
 
-        $blueprint['tabs']['validation']['fields']['maxLengthErrorMessage'] = [
-            'label' => 'Fehlermeldung maximale Zeichen',
-            'type' => 'text',
-            'placeholder' => 'Der Text ist zu lang.',
-            'width' => '1/2',
-        ];
+        $blueprint['tabs']['validation']['fields']['maxLengthErrorMessage'] =
+            static::maxLengthErrorMessageBlueprintField();
 
         $blueprint['tabs']['validation']['fields']['charactersErrorMessage'] = [
             'label' => 'Fehlermeldung erlaubte Zeichen',
@@ -63,10 +56,10 @@ class TextField extends DreamFormTextField
         }
 
         $value = trim((string) $this->value()->value());
-        $maxLength = $this->block()->maxLength()->toInt();
+        $maxLengthValidation = $this->validateMaxLength($value);
 
-        if ($maxLength > 0 && mb_strlen($value) > $maxLength) {
-            return $this->validationMessage('maxLengthErrorMessage', 'Der Text ist zu lang.');
+        if ($maxLengthValidation !== true) {
+            return $maxLengthValidation;
         }
 
         return $this->validateAllowedCharacters($value);
@@ -87,12 +80,5 @@ class TextField extends DreamFormTextField
         }
 
         return $this->validationMessage('charactersErrorMessage', 'Der Text enthält nicht erlaubte Zeichen.');
-    }
-
-    private function validationMessage(string $field, string $fallback): string
-    {
-        return $this->block()->{$field}()->isNotEmpty()
-            ? $this->block()->{$field}()->value()
-            : $fallback;
     }
 }

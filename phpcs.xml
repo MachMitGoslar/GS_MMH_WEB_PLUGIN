@@ -47,6 +47,11 @@
         </properties>
     </rule>
     <!-- Test classes live in the global namespace. -->
+    <!-- Test stubs bundle several stand-in classes per file -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>*/tests/stubs/*</exclude-pattern>
+    </rule>
+
     <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>

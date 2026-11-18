@@ -3,6 +3,7 @@
 use GsMmh\WebPlugin\FormEntries;
 use GsMmh\WebPlugin\NewsletterRecipientAction;
 use GsMmh\WebPlugin\NewsletterRecipients;
+use GsMmh\WebPlugin\TextareaField;
 use GsMmh\WebPlugin\TextField;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page as Page;
@@ -32,6 +33,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
       'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
+      'dreamform/fields/textarea' => __DIR__ . '/snippets/dreamform/fields/textarea.php',
       'content-elements/form' => __DIR__ . '/snippets/content-elements/form.php',
     ],
     'sections' => [
@@ -47,7 +49,7 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
           FormEntries::unlistNewest($form);
       },
       'system.loadPlugins:after' => function () {
-          DreamForm::register(NewsletterRecipientAction::class, TextField::class);
+          DreamForm::register(NewsletterRecipientAction::class, TextField::class, TextareaField::class);
       },
     ],
     'areas' => [

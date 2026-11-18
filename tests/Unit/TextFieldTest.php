@@ -55,4 +55,12 @@ final class TextFieldTest extends TestCase
             self::field('Anna1', ['allowedCharacters' => 'letters'])->validate(),
         );
     }
+
+    public function testTheLimitReachesTheMarkupAsMaxlength(): void
+    {
+        $form = new tobimori\DreamForm\Models\FormPage(['slug' => 'kontakt']);
+
+        $this->assertSame(40, self::field(null, ['maxLength' => 40])->htmxAttr($form)['maxlength']);
+        $this->assertArrayNotHasKey('maxlength', self::field(null)->htmxAttr($form));
+    }
 }

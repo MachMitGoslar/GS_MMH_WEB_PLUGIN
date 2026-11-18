@@ -2,6 +2,8 @@
 
 namespace GsMmh\WebPlugin;
 
+use tobimori\DreamForm\Models\FormPage;
+
 /**
  * Character limit for DreamForm fields: panel fields `maxLength` and
  * `maxLengthErrorMessage`, plus the check via mb_strlen.
@@ -33,6 +35,23 @@ trait MaxLengthValidation
     public function maxLength(): int
     {
         return $this->block()->maxLength()->toInt();
+    }
+
+    /**
+     * DreamForm's text and textarea snippets merge htmxAttr() into the input's attributes
+     * as the last step. It is the only per-field hook into that markup, so the browser
+     * limit `maxlength` goes in here instead of in a copied snippet.
+     * The limit itself is enforced on the server in validate().
+     */
+    public function htmxAttr(FormPage $form): array
+    {
+        $attributes = parent::htmxAttr($form);
+
+        if ($this->maxLength() > 0) {
+            $attributes['maxlength'] = $this->maxLength();
+        }
+
+        return $attributes;
     }
 
     protected function validateMaxLength(string $value): true|string

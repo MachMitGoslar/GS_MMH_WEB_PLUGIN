@@ -6,6 +6,7 @@ namespace tobimori\DreamForm\Fields;
 
 use Kirby\Cms\Block;
 use Kirby\Content\Field as ContentField;
+use tobimori\DreamForm\Models\FormPage;
 
 abstract class Field
 {
@@ -42,6 +43,12 @@ abstract class Field
         }
 
         return true;
+    }
+
+    /** Without htmx (the default) DreamForm adds no attributes. */
+    public function htmxAttr(FormPage $form): array
+    {
+        return [];
     }
 
     public static function blueprint(): array

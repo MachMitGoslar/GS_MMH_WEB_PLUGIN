@@ -32,8 +32,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
       'app/horoscope-list' => __DIR__ . '/snippets/app/horoscope-list.php',
       'writer-marks/button' => __DIR__ . '/snippets/writer-marks/button.php',
       'blocks/form' => __DIR__ . '/snippets/blocks/form.php',
-      'dreamform/fields/text' => __DIR__ . '/snippets/dreamform/fields/text.php',
-      'dreamform/fields/textarea' => __DIR__ . '/snippets/dreamform/fields/textarea.php',
       'content-elements/form' => __DIR__ . '/snippets/content-elements/form.php',
     ],
     'sections' => [
@@ -47,6 +45,21 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     'hooks' => [
       'dreamform.submitted:after' => function ($submission, $form) {
           FormEntries::unlistNewest($form);
+      },
+      // Character counter for limited DreamForm textareas (see assets/js/dreamform-maxlength.js).
+      // Injected here so it covers every form renderer, including the project modals in the site.
+      'page.render:after' => function (string $contentType, array $data, string $html) {
+          if ($contentType !== 'html' || preg_match('/<textarea[^>]*\\smaxlength=/', $html) !== 1) {
+              return $html;
+          }
+
+          $script = kirby()->plugin('gs-mmh/gs-mmh-web-plugin')->asset('js/dreamform-maxlength.js');
+
+          if ($script === null) {
+              return $html;
+          }
+
+          return str_replace('</body>', js($script->url(), ['defer' => true]) . '</body>', $html);
       },
       'system.loadPlugins:after' => function () {
           DreamForm::register(NewsletterRecipientAction::class, TextField::class, TextareaField::class);
@@ -107,5 +120,6 @@ Kirby::plugin('gs-mmh/gs-mmh-web-plugin', [
     ],
     'assets' => [
       'design-system' => __DIR__ . '/src/design-system.css',
+      'js/dreamform-maxlength.js' => __DIR__ . '/assets/js/dreamform-maxlength.js',
     ],
   ]);

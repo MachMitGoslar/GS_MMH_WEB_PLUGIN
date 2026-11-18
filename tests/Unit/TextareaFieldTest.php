@@ -88,4 +88,12 @@ final class TextareaFieldTest extends TestCase
     {
         $this->assertTrue(self::field('', ['maxLength' => 140])->validate());
     }
+
+    public function testTheLimitReachesTheMarkupAsMaxlength(): void
+    {
+        $form = new tobimori\DreamForm\Models\FormPage(['slug' => 'weihnachtsgruesse']);
+
+        $this->assertSame(140, self::field(null, ['maxLength' => 140])->htmxAttr($form)['maxlength']);
+        $this->assertArrayNotHasKey('maxlength', self::field(null)->htmxAttr($form));
+    }
 }
